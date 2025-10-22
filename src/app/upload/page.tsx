@@ -41,33 +41,34 @@ export default function UploadPage(){
   };
 
   const regenerateScripts = async (documentId: string) => {
-    if (!confirm('Regenerate scripts using default inspiration profile style?')) return;
-    
-    try {
-      setRegenerating(documentId);
+  if (!confirm('Regenerate scripts using default inspiration profile style?')) return;
+  
+  try {
+    setRegenerating(documentId);
 
-      // Clear existing scripts
-      await supabase.from('beads').update({ script_text: null }).eq('document_id', documentId);
+    // Clear existing scripts
+    await supabase.from('beads').update({ script_text: null }).eq('document_id', documentId);
 
-      // Regenerate with default profile style
-      const response = await fetch(`${BACKEND_URL}/generate-scripts/${documentId}`, {
-        method: 'POST'
-      });
+    // Regenerate with default profile style
+    const response = await fetch(`${BACKEND_URL}/generate-scripts/${documentId}`, {
+      method: 'POST'
+    });
 
-      const result = await response.json();
+    const result = await response.json();
+    console.log('Backend response:', result); // Debug
 
-      if (result.success) {
-        alert(`✓ Generated ${result.scripts_generated} scripts!`);
-      } else {
-        alert(`Error: ${result.error || 'Failed to generate scripts'}`);
-      }
-    } catch (e: any) {
-      console.error('Error:', e);
-      alert('Failed to regenerate scripts');
-    } finally {
-      setRegenerating(null);
+    if (result.success) {
+      alert(`✓ Generated ${result.scripts_generated} scripts!`);
+    } else {
+      alert(`Error: ${JSON.stringify(result)}`); // Show full response
     }
-  };
+  } catch (e: any) {
+    console.error('Error:', e);
+    alert('Failed to regenerate scripts: ' + e.message);
+  } finally {
+    setRegenerating(null);
+  }
+};
 
   return (
     <Stack spacing={2}>

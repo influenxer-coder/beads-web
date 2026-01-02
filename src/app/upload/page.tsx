@@ -4,6 +4,8 @@ import { supabase } from '@/lib/supabase';
 import { Typography, Card, CardContent, CardHeader, Button, Table, TableHead, TableBody, TableCell, TableRow, Stack, IconButton, CircularProgress, Box } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+export const dynamic = 'force-dynamic';
+
 type Doc = { id: string; title: string; url: string; type?: string };
 
 export default function UploadPage(){

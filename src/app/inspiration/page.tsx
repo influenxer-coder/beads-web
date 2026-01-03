@@ -6,6 +6,7 @@ import {
   TextField, Stack, Chip, Avatar, Tooltip, Box, CircularProgress
 } from '@mui/material';
 import { Add, Edit, Delete, PlayArrow } from '@mui/icons-material';
+import ProfileIngestionStatus, { IngestionStatus } from '@/components/ProfileIngestionStatus';
 
 type Profile = {
   id: string;
@@ -16,6 +17,18 @@ type Profile = {
   bead_count?: number;
   analyzed_from_urls?: string[];
   is_default?: boolean;
+  ingestion_status?: 'pending' | 'downloading' | 'analyzing' | 'processing_audio' | 'processing_video' | 'aggregating' | 'completed' | 'failed';
+  ingestion_progress?: {
+    total_videos: number;
+    videos_completed: number;
+    videos_downloaded: number;
+    videos_analyzed: number;
+    videos_audio_processed: number;
+    videos_video_processed: number;
+    percentage: number;
+    current_stage: string;
+  };
+  ingestion_error?: string | null;
 };
 
 export default function InspirationPage(){
@@ -65,7 +78,22 @@ export default function InspirationPage(){
     const r = await fetch(`/api/inspirations/${p.id}/analyze`, { method:'POST' });
     if(!r.ok){ alert(await r.text()); return; }
     alert('Analysis started');
+    // Reload to get updated status
+    setTimeout(() => load(), 1000);
   };
+
+  const handleStatusChange = React.useCallback((profileId: string, status: IngestionStatus) => {
+    setItems(prev => prev.map(p => 
+      p.id === profileId 
+        ? {
+            ...p,
+            ingestion_status: status.status,
+            ingestion_progress: status.progress,
+            ingestion_error: status.error,
+          }
+        : p
+    ));
+  }, []);
 
   const submit = async ()=>{
     const payload = {
@@ -170,9 +198,31 @@ export default function InspirationPage(){
                   </Avatar>
                 }
                 title={
-                  <Typography variant="h6" sx={{ fontSize: { xs: '1rem', md: '1.125rem' } }}>
-                    {p.name}
-                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                    <Typography variant="h6" sx={{ fontSize: { xs: '1rem', md: '1.125rem' } }}>
+                      {p.name}
+                    </Typography>
+                    {p.ingestion_status && (
+                      <Chip
+                        label={
+                          p.ingestion_status === 'completed' ? 'Ready' :
+                          p.ingestion_status === 'failed' ? 'Failed' :
+                          'Processing'
+                        }
+                        size="small"
+                        sx={{
+                          bgcolor: 
+                            p.ingestion_status === 'completed' ? '#4caf50' :
+                            p.ingestion_status === 'failed' ? '#f44336' :
+                            '#ffc107',
+                          color: '#ffffff',
+                          fontSize: '0.7rem',
+                          height: 20,
+                          fontWeight: 600,
+                        }}
+                      />
+                    )}
+                  </Stack>
                 }
                 subheader={
                   <Typography 
@@ -211,8 +261,17 @@ export default function InspirationPage(){
                     />
                   )}
                 </Stack>
+
+                {/* Ingestion Status */}
+                {p.ingestion_status && p.ingestion_status !== 'completed' && (
+                  <ProfileIngestionStatus
+                    profileId={p.id}
+                    onStatusChange={(status) => handleStatusChange(p.id, status)}
+                  />
+                )}
+
                 {!!(p.analyzed_from_urls?.length) && (
-                  <Stack spacing={1}>
+                  <Stack spacing={1} sx={{ mt: p.ingestion_status && p.ingestion_status !== 'completed' ? 2 : 0 }}>
                     <Typography variant="subtitle2" sx={{ fontSize: '0.875rem', mb: 0.5 }}>
                       TikTok Links
                     </Typography>
@@ -265,11 +324,16 @@ export default function InspirationPage(){
                 <Tooltip title="Analyze inspiration links into sources & beads">
                   <IconButton 
                     onClick={()=>onAnalyze(p)}
+                    disabled={p.ingestion_status && p.ingestion_status !== 'completed' && p.ingestion_status !== 'failed'}
                     sx={{
                       bgcolor: '#fe2c55',
                       color: '#ffffff',
                       '&:hover': {
                         bgcolor: '#e91e63',
+                      },
+                      '&:disabled': {
+                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                        color: 'rgba(255, 255, 255, 0.3)',
                       }
                     }}
                   >

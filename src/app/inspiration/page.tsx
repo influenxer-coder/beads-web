@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { Add, Edit, Delete, PlayArrow } from '@mui/icons-material';
 import ProfileIngestionStatus, { IngestionStatus } from '@/components/ProfileIngestionStatus';
+import VoiceCloneBadge, { VoiceCloneInfo, VoiceCloneStatus } from '@/components/VoiceCloneBadge';
 
 type Profile = {
   id: string;
@@ -29,6 +30,18 @@ type Profile = {
     current_stage: string;
   };
   ingestion_error?: string | null;
+  voice_clone_id?: string | null;
+  voice_clone_status?: VoiceCloneStatus;
+  voice_clone_error?: string | null;
+  voice_clone_started_at?: string | null;
+  voice_clone_completed_at?: string | null;
+  has_voice_clone?: boolean;
+  voice_status?: {
+    status: string;
+    voice_id: string;
+    voice_name: string;
+    ready: boolean;
+  };
 };
 
 export default function InspirationPage(){
@@ -94,6 +107,45 @@ export default function InspirationPage(){
         : p
     ));
   }, []);
+
+  // Poll voice clone status for profiles that are cloning
+  React.useEffect(() => {
+    const cloningProfiles = items.filter(p => p.voice_clone_status === 'cloning');
+    
+    if (cloningProfiles.length === 0) return;
+
+    const fetchVoiceStatus = async (profileId: string) => {
+      try {
+        const r = await fetch(`/api/inspirations/${profileId}/voice-clone`);
+        if (r.ok) {
+          const data = await r.json();
+          setItems(prev => prev.map(p => 
+            p.id === profileId 
+              ? {
+                  ...p,
+                  voice_clone_id: data.voice_clone_id,
+                  voice_clone_status: data.voice_clone_status,
+                  voice_clone_error: data.voice_clone_error,
+                  voice_clone_started_at: data.voice_clone_started_at,
+                  voice_clone_completed_at: data.voice_clone_completed_at,
+                  has_voice_clone: data.has_voice_clone,
+                  voice_status: data.voice_status,
+                }
+              : p
+          ));
+        }
+      } catch (e) {
+        console.error('Error fetching voice clone status:', e);
+      }
+    };
+
+    // Poll every 5 seconds for cloning profiles
+    const interval = setInterval(() => {
+      cloningProfiles.forEach(p => fetchVoiceStatus(p.id));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [items]);
 
   const submit = async ()=>{
     const payload = {
@@ -222,6 +274,7 @@ export default function InspirationPage(){
                         }}
                       />
                     )}
+                    <VoiceCloneBadge profile={p} size="small" showLabel={true} />
                   </Stack>
                 }
                 subheader={
@@ -268,6 +321,32 @@ export default function InspirationPage(){
                     profileId={p.id}
                     onStatusChange={(status) => handleStatusChange(p.id, status)}
                   />
+                )}
+
+                {/* Voice Clone Status Details */}
+                {p.voice_clone_status && p.voice_clone_status !== 'pending' && (
+                  <Box sx={{ mt: 2, p: 1.5, borderRadius: 2, bgcolor: 'rgba(255, 255, 255, 0.05)' }}>
+                    <Stack spacing={1}>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <VoiceCloneBadge profile={p} size="small" showLabel={true} />
+                        {p.voice_clone_status === 'completed' && p.voice_clone_id && (
+                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                            ID: {p.voice_clone_id.substring(0, 8)}...
+                          </Typography>
+                        )}
+                      </Stack>
+                      {p.voice_clone_status === 'failed' && p.voice_clone_error && (
+                        <Typography variant="caption" color="error" sx={{ fontSize: '0.75rem' }}>
+                          Error: {p.voice_clone_error}
+                        </Typography>
+                      )}
+                      {p.voice_clone_status === 'completed' && p.voice_clone_completed_at && (
+                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                          Completed: {new Date(p.voice_clone_completed_at).toLocaleDateString()}
+                        </Typography>
+                      )}
+                    </Stack>
+                  </Box>
                 )}
 
                 {!!(p.analyzed_from_urls?.length) && (

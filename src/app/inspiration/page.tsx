@@ -5,7 +5,7 @@ import {
   IconButton, Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Stack, Chip, Avatar, Tooltip, Box, CircularProgress
 } from '@mui/material';
-import { Add, Edit, Delete, PlayArrow } from '@mui/icons-material';
+import { Add, Edit, Delete, PlayArrow, CheckCircle } from '@mui/icons-material';
 import ProfileIngestionStatus, { IngestionStatus } from '@/components/ProfileIngestionStatus';
 import VoiceCloneBadge, { VoiceCloneInfo, VoiceCloneStatus } from '@/components/VoiceCloneBadge';
 
@@ -259,6 +259,7 @@ export default function InspirationPage(){
                         label={
                           p.ingestion_status === 'completed' ? 'Ready' :
                           p.ingestion_status === 'failed' ? 'Failed' :
+                          (p.ingestion_progress && p.ingestion_progress.percentage >= 75) ? 'Ready' :
                           'Processing'
                         }
                         size="small"
@@ -266,6 +267,7 @@ export default function InspirationPage(){
                           bgcolor: 
                             p.ingestion_status === 'completed' ? '#4caf50' :
                             p.ingestion_status === 'failed' ? '#f44336' :
+                            (p.ingestion_progress && p.ingestion_progress.percentage >= 75) ? '#4caf50' :
                             '#ffc107',
                           color: '#ffffff',
                           fontSize: '0.7rem',
@@ -316,11 +318,30 @@ export default function InspirationPage(){
                 </Stack>
 
                 {/* Ingestion Status */}
-                {p.ingestion_status && p.ingestion_status !== 'completed' && (
+                {p.ingestion_status && 
+                 p.ingestion_status !== 'completed' && 
+                 p.ingestion_status !== 'failed' &&
+                 (!p.ingestion_progress || p.ingestion_progress.percentage < 75) && (
                   <ProfileIngestionStatus
                     profileId={p.id}
                     onStatusChange={(status) => handleStatusChange(p.id, status)}
                   />
+                )}
+                
+                {/* Show completion message when >= 75% */}
+                {p.ingestion_status && 
+                 p.ingestion_status !== 'completed' && 
+                 p.ingestion_status !== 'failed' &&
+                 p.ingestion_progress && 
+                 p.ingestion_progress.percentage >= 75 && (
+                  <Box sx={{ mt: 2, p: 1.5, borderRadius: 2, bgcolor: 'rgba(76, 175, 80, 0.1)', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <CheckCircle sx={{ color: '#4caf50', fontSize: '20px' }} />
+                      <Typography variant="body2" sx={{ fontSize: '0.875rem', color: '#4caf50', fontWeight: 600 }}>
+                        Profile ready! You can now analyze and generate content.
+                      </Typography>
+                    </Stack>
+                  </Box>
                 )}
 
                 {/* Voice Clone Status Details */}
@@ -400,15 +421,37 @@ export default function InspirationPage(){
                     Delete
                   </Button>
                 </Stack>
-                <Tooltip title="Analyze inspiration links into sources & beads">
+                <Tooltip 
+                  title={
+                    p.ingestion_status && 
+                    p.ingestion_status !== 'completed' && 
+                    p.ingestion_status !== 'failed' && 
+                    (!p.ingestion_progress || (p.ingestion_progress.percentage || 0) < 75)
+                      ? `Profile processing: ${p.ingestion_progress?.percentage || 0}% complete. Analyze available at 75%+.`
+                      : p.ingestion_progress && p.ingestion_progress.percentage >= 75
+                      ? "Profile ready! Analyze inspiration links into sources & beads"
+                      : "Analyze inspiration links into sources & beads"
+                  }
+                >
                   <IconButton 
                     onClick={()=>onAnalyze(p)}
-                    disabled={p.ingestion_status && p.ingestion_status !== 'completed' && p.ingestion_status !== 'failed'}
+                    disabled={
+                      p.ingestion_status && 
+                      p.ingestion_status !== 'completed' && 
+                      p.ingestion_status !== 'failed' && 
+                      (!p.ingestion_progress || (p.ingestion_progress.percentage || 0) < 75)
+                    }
                     sx={{
-                      bgcolor: '#fe2c55',
+                      bgcolor: 
+                        (p.ingestion_progress && p.ingestion_progress.percentage >= 75) 
+                          ? '#4caf50' 
+                          : '#fe2c55',
                       color: '#ffffff',
                       '&:hover': {
-                        bgcolor: '#e91e63',
+                        bgcolor: 
+                          (p.ingestion_progress && p.ingestion_progress.percentage >= 75) 
+                            ? '#45a049' 
+                            : '#e91e63',
                       },
                       '&:disabled': {
                         bgcolor: 'rgba(255, 255, 255, 0.1)',

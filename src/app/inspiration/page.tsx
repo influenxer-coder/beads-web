@@ -108,12 +108,8 @@ export default function InspirationPage(){
     ));
   }, []);
 
-  // Poll voice clone status for profiles that are cloning
+  // Check voice clone status for profiles that are >= 75% ready or cloning
   React.useEffect(() => {
-    const cloningProfiles = items.filter(p => p.voice_clone_status === 'cloning');
-    
-    if (cloningProfiles.length === 0) return;
-
     const fetchVoiceStatus = async (profileId: string) => {
       try {
         const r = await fetch(`/api/inspirations/${profileId}/voice-clone`);
@@ -139,12 +135,29 @@ export default function InspirationPage(){
       }
     };
 
-    // Poll every 5 seconds for cloning profiles
-    const interval = setInterval(() => {
-      cloningProfiles.forEach(p => fetchVoiceStatus(p.id));
-    }, 5000);
+    // Profiles that need voice clone status checked:
+    // 1. Profiles that are cloning (need polling)
+    // 2. Profiles that are >= 75% ready but don't have voice clone status yet
+    const profilesToCheck = items.filter(p => {
+      const isCloning = p.voice_clone_status === 'cloning';
+      const isReady = p.ingestion_progress && p.ingestion_progress.percentage >= 75;
+      const needsStatusCheck = isReady && !p.voice_clone_status;
+      return isCloning || needsStatusCheck;
+    });
 
-    return () => clearInterval(interval);
+    if (profilesToCheck.length === 0) return;
+
+    // Initial fetch for all profiles that need checking
+    profilesToCheck.forEach(p => fetchVoiceStatus(p.id));
+
+    // Poll every 5 seconds only for profiles that are cloning
+    const cloningProfiles = profilesToCheck.filter(p => p.voice_clone_status === 'cloning');
+    if (cloningProfiles.length > 0) {
+      const interval = setInterval(() => {
+        cloningProfiles.forEach(p => fetchVoiceStatus(p.id));
+      }, 5000);
+      return () => clearInterval(interval);
+    }
   }, [items]);
 
   const submit = async ()=>{

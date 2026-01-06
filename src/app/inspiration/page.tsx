@@ -213,7 +213,7 @@ export default function InspirationPage(){
 
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress sx={{ color: '#fe2c55' }} />
+          <CircularProgress sx={{ color: 'primary.main' }} />
         </Box>
       )}
       {error && (
@@ -254,7 +254,7 @@ export default function InspirationPage(){
                     src={p.hero_image_url} 
                     alt={p.name}
                     sx={{ 
-                      bgcolor: '#fe2c55',
+                      bgcolor: 'primary.main',
                       width: { xs: 48, md: 56 },
                       height: { xs: 48, md: 56 }
                     }}
@@ -322,7 +322,7 @@ export default function InspirationPage(){
                       label="Default" 
                       size="small"
                       sx={{ 
-                        bgcolor: '#fe2c55',
+                        bgcolor: 'primary.main',
                         color: '#ffffff',
                         fontSize: '0.75rem'
                       }}
@@ -395,7 +395,7 @@ export default function InspirationPage(){
                         target="_blank" 
                         rel="noreferrer" 
                         style={{ 
-                          color: '#fe2c55', 
+                          color: 'primary.main', 
                           fontSize: '0.8rem',
                           textDecoration: 'none',
                           overflow: 'hidden',
@@ -458,13 +458,13 @@ export default function InspirationPage(){
                       bgcolor: 
                         (p.ingestion_progress && p.ingestion_progress.percentage >= 75) 
                           ? '#4caf50' 
-                          : '#fe2c55',
+                          : 'primary.main',
                       color: '#ffffff',
                       '&:hover': {
                         bgcolor: 
                           (p.ingestion_progress && p.ingestion_progress.percentage >= 75) 
                             ? '#45a049' 
-                            : '#e91e63',
+                            : 'primary.dark',
                       },
                       '&:disabled': {
                         bgcolor: 'rgba(255, 255, 255, 0.1)',

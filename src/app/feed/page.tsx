@@ -64,7 +64,7 @@ export default function FeedPage(){
   if(loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
-        <CircularProgress sx={{ color: '#fe2c55' }} />
+        <CircularProgress sx={{ color: 'primary.main' }} />
       </Box>
     );
   }
@@ -115,7 +115,7 @@ export default function FeedPage(){
               <Stack direction="row" spacing={2} alignItems="center">
                 <Avatar 
                   sx={{ 
-                    bgcolor: '#fe2c55',
+                    bgcolor: 'primary.main',
                     width: { xs: 40, md: 48 },
                     height: { xs: 40, md: 48 },
                     fontSize: { xs: '1rem', md: '1.25rem' }
@@ -187,12 +187,12 @@ export default function FeedPage(){
                   <IconButton
                     onClick={() => togglePlay(it.id, it.audio_url!)}
                     sx={{
-                      bgcolor: '#fe2c55',
+                      bgcolor: 'primary.main',
                       color: '#ffffff',
                       width: { xs: 48, md: 56 },
                       height: { xs: 48, md: 56 },
                       '&:hover': {
-                        bgcolor: '#e91e63',
+                        bgcolor: 'primary.dark',
                       }
                     }}
                   >

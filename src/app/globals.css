@@ -1,4 +1,4 @@
-/* TikTok-style global styles */
+/* Burmese Ruby & Yellow Sapphire Theme - Apple-inspired */
 * {
   box-sizing: border-box;
 }
@@ -6,12 +6,16 @@
 html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   margin: 0;
   padding: 0;
-  background-color: #000000;
+  background-color: #0A0A0A;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(220, 38, 38, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.03) 0px, transparent 50%);
   color: #ffffff;
   overflow-x: hidden;
 }
@@ -21,23 +25,24 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar for webkit browsers */
+/* Custom scrollbar with ruby accents */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #000000;
+  background: #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(220, 38, 38, 0.4), rgba(245, 158, 11, 0.4));
+  border-radius: 5px;
+  border: 2px solid #0A0A0A;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(180deg, rgba(220, 38, 38, 0.6), rgba(245, 158, 11, 0.6));
 }
 
 /* Mobile touch improvements */
@@ -47,21 +52,33 @@ html {
   }
   
   button, a {
-    -webkit-tap-highlight-color: rgba(254, 44, 85, 0.2);
+    -webkit-tap-highlight-color: rgba(220, 38, 38, 0.2);
   }
 }
 
-/* Audio player styling */
+/* Audio player styling with ruby theme */
 audio {
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
 audio::-webkit-media-controls-panel {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
 }
 
 audio::-webkit-media-controls-play-button {
-  background-color: #fe2c55;
+  background-color: #DC2626;
   border-radius: 50%;
+}
+
+/* Selection color with pastel ruby */
+::selection {
+  background-color: rgba(252, 165, 165, 0.3);
+  color: #ffffff;
+}
+
+::-moz-selection {
+  background-color: rgba(252, 165, 165, 0.3);
+  color: #ffffff;
 }
 

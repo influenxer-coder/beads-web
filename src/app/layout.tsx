@@ -100,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body style={{ margin: 0, padding: 0, backgroundColor: '#000000' }}>
+      <body style={{ margin: 0, padding: 0, backgroundColor: '#0A0A0A' }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Navigation />
@@ -108,7 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             sx={{
               minHeight: '100vh',
               pb: { xs: 8, md: 0 }, // Padding for mobile bottom nav
-              backgroundColor: '#000000'
+              backgroundColor: '#0A0A0A'
             }}
           >
             <Container 

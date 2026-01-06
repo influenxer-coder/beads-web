@@ -26,7 +26,14 @@ export default function FeedPage(){
         const r = await fetch('/api/feed');
         if(!r.ok) throw new Error(await r.text());
         const d = await r.json();
-        setItems(d.feed ?? []);
+        const feedItems = d.feed ?? [];
+        // Sort by created_at descending (newest first)
+        const sortedItems = feedItems.sort((a: Bead, b: Bead) => {
+          const dateA = new Date(a.created_at).getTime();
+          const dateB = new Date(b.created_at).getTime();
+          return dateB - dateA; // Descending order
+        });
+        setItems(sortedItems);
       } catch(e:any){ setError(e.message); }
       finally{ setLoading(false); }
     })();

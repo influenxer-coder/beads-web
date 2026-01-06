@@ -28,7 +28,12 @@ function Navigation() {
           '& .MuiBottomNavigationAction-root': {
             color: 'rgba(255, 255, 255, 0.6)',
             '&.Mui-selected': {
-              color: '#fe2c55',
+              color: 'primary.main',
+            },
+            '&:nth-of-type(2)': {
+              '&.Mui-selected': {
+                color: 'secondary.main',
+              }
             }
           }
         }}
@@ -46,6 +51,11 @@ function Navigation() {
           value="/upload"
           icon={<Upload />}
           label="Upload"
+          sx={{
+            '&.Mui-selected': {
+              color: 'secondary.main',
+            }
+          }}
         />
         <BottomNavigationAction
           component={Link}
@@ -76,6 +86,7 @@ function Navigation() {
             component={Link} 
             href="/upload"
             variant={pathname === '/upload' ? 'contained' : 'text'}
+            color={pathname === '/upload' ? 'secondary' : 'inherit'}
           >
             Upload
           </Button>

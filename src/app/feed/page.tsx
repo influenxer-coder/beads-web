@@ -115,10 +115,12 @@ export default function FeedPage(){
               <Stack direction="row" spacing={2} alignItems="center">
                 <Avatar 
                   sx={{ 
-                    bgcolor: 'primary.main',
+                    bgcolor: index % 2 === 0 ? 'primary.main' : 'secondary.main',
+                    color: index % 2 === 0 ? '#ffffff' : '#000000',
                     width: { xs: 40, md: 48 },
                     height: { xs: 40, md: 48 },
-                    fontSize: { xs: '1rem', md: '1.25rem' }
+                    fontSize: { xs: '1rem', md: '1.25rem' },
+                    transition: 'all 0.3s ease',
                   }}
                 >
                   {it.author?.[0]?.toUpperCase() || 'B'}

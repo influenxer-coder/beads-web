@@ -200,7 +200,8 @@ export default function InspirationPage(){
         </Typography>
         <Button 
           startIcon={<Add />} 
-          variant="contained" 
+          variant="contained"
+          color="secondary"
           onClick={onNew}
           sx={{ 
             width: { xs: '100%', sm: 'auto' },
@@ -227,7 +228,7 @@ export default function InspirationPage(){
           <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
             No inspiration profiles yet
           </Typography>
-          <Button variant="contained" onClick={onNew} startIcon={<Add />}>
+          <Button variant="contained" color="secondary" onClick={onNew} startIcon={<Add />}>
             Create Your First Profile
           </Button>
         </Box>
@@ -254,9 +255,11 @@ export default function InspirationPage(){
                     src={p.hero_image_url} 
                     alt={p.name}
                     sx={{ 
-                      bgcolor: 'primary.main',
+                      bgcolor: p.is_default ? 'secondary.main' : 'primary.main',
+                      color: p.is_default ? '#000000' : '#ffffff',
                       width: { xs: 48, md: 56 },
-                      height: { xs: 48, md: 56 }
+                      height: { xs: 48, md: 56 },
+                      transition: 'all 0.3s ease',
                     }}
                   >
                     {p.name?.[0]?.toUpperCase() || 'I'}
@@ -281,8 +284,11 @@ export default function InspirationPage(){
                             p.ingestion_status === 'completed' ? '#4caf50' :
                             p.ingestion_status === 'failed' ? '#f44336' :
                             (p.ingestion_progress && p.ingestion_progress.percentage >= 75) ? '#4caf50' :
-                            '#ffc107',
-                          color: '#ffffff',
+                            'secondary.main',
+                          color: 
+                            (p.ingestion_progress && p.ingestion_progress.percentage < 75 && p.ingestion_status !== 'completed' && p.ingestion_status !== 'failed')
+                              ? '#000000'
+                              : '#ffffff',
                           fontSize: '0.7rem',
                           height: 20,
                           fontWeight: 600,

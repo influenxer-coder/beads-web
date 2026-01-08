@@ -149,17 +149,28 @@ export default function UploadPage(){
                   }}
                 />
                 
-                <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
-                  <Stack direction="row" spacing={1}>
+                <Stack 
+                  direction={{ xs: 'column', sm: 'row' }} 
+                  spacing={1.5} 
+                  justifyContent="space-between" 
+                  alignItems={{ xs: 'stretch', sm: 'center' }}
+                  sx={{ flexWrap: 'wrap' }}
+                >
+                  <Stack 
+                    direction={{ xs: 'column', sm: 'row' }} 
+                    spacing={1.5}
+                    sx={{ flex: 1, minWidth: 0 }}
+                  >
                     <Button
                       variant="outlined"
                       startIcon={<AttachFile />}
                       onClick={handleUpload}
                       disabled={uploading}
-                      size="small"
+                      fullWidth={isMobile}
                       sx={{
                         borderColor: 'rgba(255, 255, 255, 0.2)',
                         color: 'text.primary',
+                        whiteSpace: 'nowrap',
                         '&:hover': {
                           borderColor: 'primary.main',
                           backgroundColor: 'rgba(220, 38, 38, 0.05)',
@@ -172,10 +183,11 @@ export default function UploadPage(){
                       variant="outlined"
                       startIcon={<QrCodeScanner />}
                       onClick={() => setShowScan(true)}
-                      size="small"
+                      fullWidth={isMobile}
                       sx={{
                         borderColor: 'rgba(255, 255, 255, 0.2)',
                         color: 'text.primary',
+                        whiteSpace: 'nowrap',
                         '&:hover': {
                           borderColor: 'primary.main',
                           backgroundColor: 'rgba(220, 38, 38, 0.05)',
@@ -190,8 +202,10 @@ export default function UploadPage(){
                     endIcon={<Send />}
                     onClick={handleSend}
                     disabled={!content.trim()}
+                    fullWidth={isMobile}
                     sx={{
-                      minWidth: 120,
+                      minWidth: { xs: '100%', sm: 120 },
+                      whiteSpace: 'nowrap',
                     }}
                   >
                     Send

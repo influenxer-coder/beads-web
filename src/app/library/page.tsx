@@ -1,0 +1,184 @@
+'use client';
+import * as React from 'react';
+import { supabase } from '@/lib/supabase';
+import { Typography, Card, CardContent, CardHeader, Button, Table, TableHead, TableBody, TableCell, TableRow, Stack, IconButton, CircularProgress, Box } from '@mui/material';
+import RefreshIcon from '@mui/icons-material/Refresh';
+
+export const dynamic = 'force-dynamic';
+
+type Doc = { id: string; title: string; url: string; type?: string };
+
+export default function LibraryPage(){
+  const [docs, setDocs] = React.useState<Doc[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string|null>(null);
+  const [regenerating, setRegenerating] = React.useState<string|null>(null);
+
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://beads-mvp-backend-production.up.railway.app';
+
+  const listDocs = async ()=>{
+    const { data, error } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
+    if(error){ setError(error.message); } else setDocs((data as any) ?? []);
+    setLoading(false);
+  };
+
+  React.useEffect(()=>{ listDocs(); },[]);
+
+  const regenerateScripts = async (documentId: string) => {
+    if (!confirm('Regenerate scripts using default inspiration profile style?')) return;
+    
+    try {
+      setRegenerating(documentId);
+
+      // Clear existing scripts
+      await supabase.from('beads').update({ script_text: null }).eq('document_id', documentId);
+
+      // Regenerate with default profile style
+      const response = await fetch(`${BACKEND_URL}/generate-scripts/${documentId}`, {
+        method: 'POST'
+      });
+
+      const result = await response.json();
+      console.log('Backend response:', result); // Debug
+
+      if (result.success) {
+        alert(`✓ Generated ${result.scripts_generated} scripts!`);
+      } else {
+        alert(`Error: ${JSON.stringify(result)}`); // Show full response
+      }
+    } catch (e: any) {
+      console.error('Error:', e);
+      alert('Failed to regenerate scripts: ' + e.message);
+    } finally {
+      setRegenerating(null);
+    }
+  };
+
+  return (
+    <Stack spacing={3} sx={{ pb: { xs: 4, md: 0 } }}>
+      <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', md: '1.75rem' } }}>
+        Library
+      </Typography>
+
+      <Card sx={{ borderRadius: 3 }}>
+        <CardHeader 
+          title={
+            <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
+              Documents
+            </Typography>
+          }
+          subheader={
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              All your uploaded documents
+            </Typography>
+          }
+        />
+        <CardContent>
+          {loading && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress sx={{ color: 'primary.main' }} />
+            </Box>
+          )}
+          {error && (
+            <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'rgba(244, 67, 54, 0.1)', border: '1px solid rgba(244, 67, 54, 0.3)', mb: 2 }}>
+              <Typography color="error">Error: {error}</Typography>
+            </Box>
+          )}
+          {!loading && !error && docs.length === 0 && (
+            <Box sx={{ textAlign: 'center', py: 6 }}>
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
+                No documents yet
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Upload documents from the Create tab to see them here
+              </Typography>
+            </Box>
+          )}
+          {!loading && docs.length > 0 && (
+            <Box sx={{ overflowX: 'auto' }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', md: '0.9rem' } }}>
+                      Title
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', md: '0.9rem' }, display: { xs: 'none', sm: 'table-cell' } }}>
+                      Type
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', md: '0.9rem' } }}>
+                      Link
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 600, fontSize: { xs: '0.875rem', md: '0.9rem' } }}>
+                      Actions
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {docs.map(d=> (
+                    <TableRow key={d.id}>
+                      <TableCell sx={{ fontSize: { xs: '0.875rem', md: '0.9rem' } }}>
+                        <Typography 
+                          sx={{ 
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            maxWidth: { xs: 150, sm: 300 }
+                          }}
+                        >
+                          {d.title}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ fontSize: { xs: '0.875rem', md: '0.9rem' }, display: { xs: 'none', sm: 'table-cell' } }}>
+                        {d.type ?? 'PDF'}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          component="a"
+                          href={d.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          size="small"
+                          sx={{ 
+                            color: 'primary.main',
+                            textTransform: 'none',
+                            fontSize: { xs: '0.8rem', md: '0.875rem' }
+                          }}
+                        >
+                          Open
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          size="small"
+                          onClick={() => regenerateScripts(d.id)}
+                          disabled={regenerating === d.id}
+                          title="Regenerate scripts with inspiration style"
+                          sx={{
+                            color: 'primary.main',
+                            '&:hover': {
+                              bgcolor: 'rgba(220, 38, 38, 0.1)',
+                            },
+                            '&:disabled': {
+                              color: 'rgba(255, 255, 255, 0.3)',
+                            }
+                          }}
+                        >
+                          {regenerating === d.id ? (
+                            <CircularProgress size={20} sx={{ color: 'primary.main' }} />
+                          ) : (
+                            <RefreshIcon />
+                          )}
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    </Stack>
+  );
+}
+

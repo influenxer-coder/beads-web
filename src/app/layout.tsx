@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { theme } from '@/theme';
 import { ThemeProvider } from '@mui/material/styles';
-import { Home, AddCircle, AutoAwesome } from '@mui/icons-material';
+import { Home, LibraryBooks, AddCircle, AutoAwesome } from '@mui/icons-material';
 import './globals.css';
 
 function Navigation() {
@@ -30,7 +30,7 @@ function Navigation() {
             '&.Mui-selected': {
               color: 'primary.main',
             },
-            '&:nth-of-type(2)': {
+            '&:nth-of-type(3)': {
               '&.Mui-selected': {
                 color: 'secondary.main',
               }
@@ -44,6 +44,13 @@ function Navigation() {
           value="/feed"
           icon={<Home />}
           label="Feed"
+        />
+        <BottomNavigationAction
+          component={Link}
+          href="/library"
+          value="/library"
+          icon={<LibraryBooks />}
+          label="Library"
         />
         <BottomNavigationAction
           component={Link}
@@ -81,6 +88,13 @@ function Navigation() {
             variant={pathname === '/feed' ? 'contained' : 'text'}
           >
             Feed
+          </Button>
+          <Button 
+            component={Link} 
+            href="/library"
+            variant={pathname === '/library' ? 'contained' : 'text'}
+          >
+            Library
           </Button>
           <Button 
             component={Link} 

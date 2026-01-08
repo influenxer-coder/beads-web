@@ -2,15 +2,23 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabase';
 import { 
-  Typography, Card, CardContent, Stack, Box, Button, 
-  TextField, IconButton, useMediaQuery, useTheme, InputAdornment
+  Typography, Box, Button, TextField, IconButton, 
+  Menu, MenuItem, ListItemIcon, ListItemText, Stack,
+  useMediaQuery, useTheme
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { 
-  Send,
+  Add,
   AttachFile, 
   QrCodeScanner,
-  Close
+  Mic,
+  MicOff,
+  GraphicEq,
+  Image as ImageIcon,
+  Lightbulb,
+  TravelExplore,
+  ShoppingBag,
+  MoreHoriz
 } from '@mui/icons-material';
 
 export const dynamic = 'force-dynamic';
@@ -18,11 +26,14 @@ export const dynamic = 'force-dynamic';
 export default function UploadPage(){
   const [uploading, setUploading] = React.useState(false);
   const [content, setContent] = React.useState('');
-  const [showScan, setShowScan] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [micMuted, setMicMuted] = React.useState(true);
   const router = useRouter();
   const fileRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const open = Boolean(anchorEl);
 
   const upload = async (file: File)=>{
     try{
@@ -43,6 +54,7 @@ export default function UploadPage(){
       alert(e.message || 'Failed to create content'); 
     } finally {
       setUploading(false);
+      setAnchorEl(null);
     }
   };
 
@@ -52,8 +64,22 @@ export default function UploadPage(){
     console.log('Sending content:', content);
   };
 
-  const handleUpload = () => {
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleUploadFile = () => {
+    handleMenuClose();
     fileRef.current?.click();
+  };
+
+  const handleScan = () => {
+    handleMenuClose();
+    alert('Scan feature coming soon');
   };
 
   return (
@@ -64,174 +90,194 @@ export default function UploadPage(){
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        pb: { xs: 4, md: 0 }
+        pb: { xs: 4, md: 0 },
+        px: { xs: 2, md: 3 }
       }}
     >
       <Typography 
         variant="h6" 
-        fontWeight={600} 
+        fontWeight={400} 
         sx={{ 
           fontSize: { xs: '1rem', md: '1.125rem' },
-          mb: 4,
-          color: 'text.secondary'
+          mb: 6,
+          color: 'text.secondary',
+          textAlign: 'center'
         }}
       >
-        Create Content
+        Ready when you are.
       </Typography>
 
       <Box
         sx={{
           width: '100%',
           maxWidth: { xs: '100%', sm: '600px', md: '700px' },
+          position: 'relative'
         }}
       >
-        {showScan ? (
-          // Scan Content View
-          <Card
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
+            bgcolor: 'background.paper',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: 8,
+            px: 2,
+            py: 1.5,
+            transition: 'all 0.2s ease',
+            '&:hover': {
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+            },
+            '&:focus-within': {
+              borderColor: 'primary.main',
+              boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.1)',
+            }
+          }}
+        >
+          {/* Plus Button */}
+          <IconButton
+            onClick={handleMenuClick}
             sx={{
-              borderRadius: 4,
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+              bgcolor: 'transparent',
+              color: 'text.primary',
+              p: 1,
+              '&:hover': {
+                bgcolor: 'rgba(255, 255, 255, 0.05)',
+              }
             }}
           >
-            <CardContent sx={{ p: { xs: 3, md: 4 } }}>
-              <Stack spacing={3}>
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography variant="h6" fontWeight={600}>
-                    Scan Content
-                  </Typography>
-                  <IconButton onClick={() => setShowScan(false)} size="small">
-                    <Close />
-                  </IconButton>
-                </Stack>
-                <Box sx={{ textAlign: 'center', py: 4 }}>
-                  <QrCodeScanner sx={{ fontSize: 64, color: 'text.secondary', mb: 2 }} />
-                  <Typography variant="body1" color="text.secondary">
-                    Scan feature coming soon
-                  </Typography>
-                </Box>
-              </Stack>
-            </CardContent>
-          </Card>
-        ) : (
-          // Main Create Box with Text Input
-          <Card
-            sx={{
-              borderRadius: 4,
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
-              overflow: 'hidden',
+            <Add />
+          </IconButton>
+
+          {/* Text Input */}
+          <TextField
+            fullWidth
+            placeholder="Ask anything"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
             }}
-          >
-            <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-              <Stack spacing={2}>
-                <TextField
-                  multiline
-                  rows={8}
-                  fullWidth
-                  placeholder="Type your content here or paste text to convert into a short story..."
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      fontSize: '1rem',
-                      lineHeight: 1.6,
-                      '& fieldset': {
-                        borderColor: 'rgba(255, 255, 255, 0.2)',
-                      },
-                      '&:hover fieldset': {
-                        borderColor: 'rgba(255, 255, 255, 0.3)',
-                      },
-                      '&.Mui-focused fieldset': {
-                        borderColor: 'primary.main',
-                      }
-                    }
-                  }}
-                />
-                
-                <Stack 
-                  direction={{ xs: 'column', sm: 'row' }} 
-                  spacing={1.5} 
-                  justifyContent="space-between" 
-                  alignItems={{ xs: 'stretch', sm: 'center' }}
-                  sx={{ flexWrap: 'wrap' }}
-                >
-                  <Stack 
-                    direction={{ xs: 'column', sm: 'row' }} 
-                    spacing={1.5}
-                    sx={{ flex: 1, minWidth: 0 }}
-                  >
-                    <Button
-                      variant="outlined"
-                      startIcon={<AttachFile />}
-                      onClick={handleUpload}
-                      disabled={uploading}
-                      fullWidth={isMobile}
-                      sx={{
-                        borderColor: 'rgba(255, 255, 255, 0.2)',
-                        color: 'text.primary',
-                        whiteSpace: 'nowrap',
-                        '&:hover': {
-                          borderColor: 'primary.main',
-                          backgroundColor: 'rgba(220, 38, 38, 0.05)',
-                        }
-                      }}
-                    >
-                      Upload File
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      startIcon={<QrCodeScanner />}
-                      onClick={() => setShowScan(true)}
-                      fullWidth={isMobile}
-                      sx={{
-                        borderColor: 'rgba(255, 255, 255, 0.2)',
-                        color: 'text.primary',
-                        whiteSpace: 'nowrap',
-                        '&:hover': {
-                          borderColor: 'primary.main',
-                          backgroundColor: 'rgba(220, 38, 38, 0.05)',
-                        }
-                      }}
-                    >
-                      Scan Content
-                    </Button>
-                  </Stack>
-                  <Button
-                    variant="contained"
-                    endIcon={<Send />}
-                    onClick={handleSend}
-                    disabled={!content.trim()}
-                    fullWidth={isMobile}
-                    sx={{
-                      minWidth: { xs: '100%', sm: 120 },
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    Send
-                  </Button>
-                </Stack>
-                
-                <input
-                  ref={fileRef}
-                  type="file"
-                  hidden
-                  accept="application/pdf"
-                  onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
-                  disabled={uploading}
-                />
-                
-                {uploading && (
-                  <Box sx={{ textAlign: 'center', py: 1 }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Uploading...
-                    </Typography>
-                  </Box>
-                )}
-              </Stack>
-            </CardContent>
-          </Card>
-        )}
+            variant="standard"
+            InputProps={{
+              disableUnderline: true,
+            }}
+            sx={{
+              flex: 1,
+              '& .MuiInputBase-input': {
+                fontSize: '1rem',
+                py: 0.5,
+                color: 'text.primary',
+              }
+            }}
+          />
+
+          {/* Right Side Icons */}
+          <Stack direction="row" spacing={0.5} alignItems="center">
+            <IconButton
+              size="small"
+              onClick={() => setMicMuted(!micMuted)}
+              sx={{
+                color: micMuted ? 'text.secondary' : 'primary.main',
+                p: 1,
+              }}
+            >
+              {micMuted ? <MicOff fontSize="small" /> : <Mic fontSize="small" />}
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={handleSend}
+              disabled={!content.trim()}
+              sx={{
+                bgcolor: content.trim() ? 'primary.main' : 'rgba(255, 255, 255, 0.1)',
+                color: content.trim() ? '#ffffff' : 'text.secondary',
+                p: 1,
+                '&:hover': {
+                  bgcolor: content.trim() ? 'primary.dark' : 'rgba(255, 255, 255, 0.15)',
+                },
+                '&:disabled': {
+                  bgcolor: 'rgba(255, 255, 255, 0.05)',
+                }
+              }}
+            >
+              <GraphicEq fontSize="small" />
+            </IconButton>
+          </Stack>
+        </Box>
+
+        {/* Dropdown Menu */}
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          PaperProps={{
+            sx: {
+              mt: 1,
+              minWidth: 220,
+              bgcolor: 'background.paper',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: 2,
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            }
+          }}
+        >
+          <MenuItem onClick={handleUploadFile}>
+            <ListItemIcon>
+              <AttachFile fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Add photos & files</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleScan}>
+            <ListItemIcon>
+              <ImageIcon fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Create image</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <ListItemIcon>
+              <Lightbulb fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Thinking</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <ListItemIcon>
+              <TravelExplore fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Deep research</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <ListItemIcon>
+              <ShoppingBag fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Shopping research</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <ListItemIcon>
+              <MoreHoriz fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>More</ListItemText>
+          </MenuItem>
+        </Menu>
+
+        <input
+          ref={fileRef}
+          type="file"
+          hidden
+          accept="application/pdf,image/*"
+          onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
+          disabled={uploading}
+        />
       </Box>
     </Box>
   );

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { theme } from '@/theme';
 import { ThemeProvider } from '@mui/material/styles';
-import { Home, Upload, AutoAwesome } from '@mui/icons-material';
+import { Home, AddCircle, AutoAwesome } from '@mui/icons-material';
 import './globals.css';
 
 function Navigation() {
@@ -49,8 +49,8 @@ function Navigation() {
           component={Link}
           href="/upload"
           value="/upload"
-          icon={<Upload />}
-          label="Upload"
+          icon={<AddCircle />}
+          label="Create"
           sx={{
             '&.Mui-selected': {
               color: 'secondary.main',
@@ -88,7 +88,7 @@ function Navigation() {
             variant={pathname === '/upload' ? 'contained' : 'text'}
             color={pathname === '/upload' ? 'secondary' : 'inherit'}
           >
-            Upload
+            Create
           </Button>
           <Button 
             component={Link} 

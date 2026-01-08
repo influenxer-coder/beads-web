@@ -39,7 +39,7 @@ export default function UploadPage(){
       const ins = await supabase.from('documents').insert({ title: file.name, url, type:'PDF' });
       if(ins.error) throw ins.error;
       await listDocs();
-    }catch(e:any){ alert(e.message || 'Upload failed'); }
+    }catch(e:any){ alert(e.message || 'Failed to create content'); }
   };
 
   const regenerateScripts = async (documentId: string) => {
@@ -88,12 +88,12 @@ export default function UploadPage(){
         <CardHeader 
           title={
             <Typography variant="h6" sx={{ fontSize: { xs: '1.1rem', md: '1.25rem' } }}>
-              Upload PDF
+              Create Content
             </Typography>
           }
           subheader={
             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-              Add a document and it will be processed into audio beads
+              Upload a PDF document to create audio beads
             </Typography>
           }
         />
@@ -150,7 +150,7 @@ export default function UploadPage(){
                 No documents yet
               </Typography>
               <Button variant="contained" onClick={()=>fileRef.current?.click()}>
-                Upload Your First Document
+                Create Your First Content
               </Button>
             </Box>
           )}

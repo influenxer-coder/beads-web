@@ -12,7 +12,11 @@ import {
   AttachFile, 
   Mic,
   MicOff,
-  GraphicEq
+  GraphicEq,
+  MenuBook,
+  Article,
+  Person,
+  Slideshow
 } from '@mui/icons-material';
 
 export const dynamic = 'force-dynamic';
@@ -22,6 +26,7 @@ type ContentFlow = {
   title: string;
   description: string;
   imageUrl?: string;
+  icon?: React.ComponentType;
 };
 
 const contentFlows: ContentFlow[] = [
@@ -29,21 +34,25 @@ const contentFlows: ContentFlow[] = [
     id: 'book-page',
     title: 'Scan a book page into a story',
     description: 'Transform book pages into engaging stories',
+    icon: MenuBook,
   },
   {
     id: 'research-paper',
     title: 'A research paper into set of stories',
     description: 'Convert research papers into multiple story formats',
+    icon: Article,
   },
   {
     id: 'founder-video',
     title: 'Script to a founder style video',
     description: 'Turn scripts into founder-style video content',
+    icon: Person,
   },
   {
     id: 'pitch-video',
     title: 'Slide deck into a 30 sec pitch video',
     description: 'Transform slide decks into concise pitch videos',
+    icon: Slideshow,
   },
 ];
 
@@ -292,7 +301,7 @@ export default function UploadPage(){
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
             gap: 3,
             overflowX: 'auto',
             pb: 1,
@@ -326,7 +335,9 @@ export default function UploadPage(){
                 component="div"
                 sx={{
                   height: { xs: 180, md: 200 },
-                  bgcolor: index % 2 === 0 ? 'primary.main' : 'secondary.main',
+                  background: index % 2 === 0 
+                    ? 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #EF4444 100%)'
+                    : 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #FBBF24 100%)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -342,19 +353,31 @@ export default function UploadPage(){
                   }
                 }}
               >
-                <Typography
-                  variant="h4"
-                  sx={{
-                    fontSize: { xs: '3rem', md: '4rem' },
-                    fontWeight: 700,
-                    color: index % 2 === 0 ? '#ffffff' : '#000000',
-                    opacity: 0.3,
-                    position: 'relative',
-                    zIndex: 1,
-                  }}
-                >
-                  {index + 1}
-                </Typography>
+                {flow.icon ? (
+                  <flow.icon
+                    sx={{
+                      fontSize: { xs: '4rem', md: '5rem' },
+                      color: index % 2 === 0 ? '#ffffff' : '#000000',
+                      opacity: 0.8,
+                      position: 'relative',
+                      zIndex: 1,
+                    }}
+                  />
+                ) : (
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      fontSize: { xs: '3rem', md: '4rem' },
+                      fontWeight: 700,
+                      color: index % 2 === 0 ? '#ffffff' : '#000000',
+                      opacity: 0.3,
+                      position: 'relative',
+                      zIndex: 1,
+                    }}
+                  >
+                    {index + 1}
+                  </Typography>
+                )}
               </CardMedia>
               <CardContent sx={{ p: 2.5 }}>
                 <Typography

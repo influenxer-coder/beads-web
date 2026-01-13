@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabase';
 import { 
-  Typography, Card, CardContent, CardMedia, Stack, Box, CircularProgress, 
+  Typography, Card, CardContent, Stack, Box, CircularProgress, 
   IconButton, Collapse, Avatar, useMediaQuery, useTheme
 } from '@mui/material';
 import { ExpandMore, ExpandLess, PlayArrow, Pause, Refresh } from '@mui/icons-material';
@@ -205,42 +205,6 @@ export default function LibraryPage(){
                 }
               }}
             >
-              <CardMedia
-                component="div"
-                sx={{
-                  height: { xs: 100, md: 120 },
-                  background: docIndex % 2 === 0 
-                    ? 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #EF4444 100%)'
-                    : 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #FBBF24 100%)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%)',
-                  }
-                }}
-              >
-                <Typography
-                  variant="h3"
-                  sx={{
-                    fontSize: { xs: '3rem', md: '4rem' },
-                    fontWeight: 700,
-                    color: docIndex % 2 === 0 ? '#ffffff' : '#000000',
-                    opacity: 0.2,
-                    position: 'relative',
-                    zIndex: 1,
-                  }}
-                >
-                  {doc.title?.[0]?.toUpperCase() || 'D'}
-                </Typography>
-              </CardMedia>
               {/* Playlist Header */}
               <CardContent
                 sx={{
@@ -342,42 +306,6 @@ export default function LibraryPage(){
                             }
                           }}
                         >
-                          <CardMedia
-                            component="div"
-                            sx={{
-                              height: { xs: 80, md: 100 },
-                              background: beadIndex % 2 === 0 
-                                ? 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #EF4444 100%)'
-                                : 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #FBBF24 100%)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              position: 'relative',
-                              '&::after': {
-                                content: '""',
-                                position: 'absolute',
-                                top: 0,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%)',
-                              }
-                            }}
-                          >
-                            <Typography
-                              variant="h4"
-                              sx={{
-                                fontSize: { xs: '2rem', md: '2.5rem' },
-                                fontWeight: 700,
-                                color: beadIndex % 2 === 0 ? '#ffffff' : '#000000',
-                                opacity: 0.2,
-                                position: 'relative',
-                                zIndex: 1,
-                              }}
-                            >
-                              {bead.title?.[0]?.toUpperCase() || 'B'}
-                            </Typography>
-                          </CardMedia>
                           <CardContent sx={{ p: { xs: 2, md: 2.5 } }}>
                             <Stack spacing={2}>
                               {/* Header */}

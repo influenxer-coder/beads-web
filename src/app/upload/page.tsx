@@ -4,7 +4,8 @@ import { supabase } from '@/lib/supabase';
 import { 
   Typography, Box, TextField, IconButton, 
   Menu, MenuItem, ListItemIcon, ListItemText, Stack,
-  Card, CardContent, CardMedia, useMediaQuery, useTheme
+  Card, CardContent, CardMedia, useMediaQuery, useTheme,
+  Tabs, Tab
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { 
@@ -22,13 +23,6 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-type ContentFlow = {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl?: string;
-  icon?: React.ComponentType;
-};
 
 const contentFlows: ContentFlow[] = [
   {
@@ -36,38 +30,85 @@ const contentFlows: ContentFlow[] = [
     title: 'Scan a book page into a story',
     description: 'Transform book pages into engaging stories',
     icon: MenuBook,
+    category: 'books',
+  },
+  {
+    id: 'book-summary',
+    title: 'Book chapter summary',
+    description: 'Create concise summaries from book chapters',
+    icon: MenuBook,
+    category: 'books',
   },
   {
     id: 'research-paper',
     title: 'A research paper into set of stories',
     description: 'Convert research papers into multiple story formats',
     icon: Article,
+    category: 'research',
+  },
+  {
+    id: 'research-summary',
+    title: 'Research paper summary',
+    description: 'Summarize research papers into key insights',
+    icon: Article,
+    category: 'research',
   },
   {
     id: 'founder-video',
     title: 'Script to a founder style video',
     description: 'Turn scripts into founder-style video content',
     icon: Person,
+    category: 'workplace',
   },
   {
     id: 'pitch-video',
     title: 'Slide deck into a 30 sec pitch video',
     description: 'Transform slide decks into concise pitch videos',
     icon: Slideshow,
+    category: 'workplace',
+  },
+  {
+    id: 'meeting-notes',
+    title: 'Meeting notes to action items',
+    description: 'Convert meeting notes into actionable tasks',
+    icon: Article,
+    category: 'workplace',
+  },
+  {
+    id: 'presentation',
+    title: 'Document to presentation',
+    description: 'Transform documents into presentation slides',
+    icon: Slideshow,
+    category: 'workplace',
   },
 ];
+
+type ContentFlow = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  icon?: React.ComponentType;
+  category?: 'books' | 'workplace' | 'research';
+};
 
 export default function UploadPage(){
   const [uploading, setUploading] = React.useState(false);
   const [content, setContent] = React.useState('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [micMuted, setMicMuted] = React.useState(true);
+  const [activeTab, setActiveTab] = React.useState<string>('all');
   const router = useRouter();
   const fileRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const open = Boolean(anchorEl);
+
+  const filteredFlows = React.useMemo(() => {
+    if (activeTab === 'all') return contentFlows;
+    return contentFlows.filter(flow => flow.category === activeTab);
+  }, [activeTab]);
 
   const upload = async (file: File)=>{
     try{
@@ -126,26 +167,13 @@ export default function UploadPage(){
         px: { xs: 2, md: 3 }
       }}
     >
-      <Typography 
-        variant="h5" 
-        fontWeight={400} 
-        sx={{ 
-          fontSize: { xs: '1.25rem', md: '1.5rem' },
-          mb: 4,
-          color: 'text.primary',
-          textAlign: 'center'
-        }}
-      >
-        Let's create memorable stories from your content.
-      </Typography>
-
-      {/* AI Content Templates Search Bar */}
+      {/* Search Bar */}
       <Box
         sx={{
           width: '100%',
           maxWidth: { xs: '100%', sm: '600px', md: '700px' },
           mx: 'auto',
-          mb: 6,
+          mb: 4,
           position: 'relative'
         }}
       >
@@ -153,35 +181,32 @@ export default function UploadPage(){
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 1,
-            bgcolor: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 3,
-            px: 2,
-            py: 1.5,
+            gap: 2,
+            bgcolor: 'rgba(255, 255, 255, 0.08)',
+            border: '1px solid rgba(255, 255, 255, 0.15)',
+            borderRadius: 8,
+            px: 3,
+            py: 2,
             transition: 'all 0.2s ease',
-            backdropFilter: 'blur(10px)',
             '&:hover': {
-              borderColor: 'rgba(255, 255, 255, 0.2)',
-              bgcolor: 'rgba(255, 255, 255, 0.08)',
+              borderColor: 'rgba(255, 255, 255, 0.25)',
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
             },
             '&:focus-within': {
-              borderColor: 'primary.main',
-              boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.15)',
-              bgcolor: 'rgba(255, 255, 255, 0.08)',
+              borderColor: 'rgba(255, 255, 255, 0.3)',
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.3)',
             }
           }}
         >
-          {/* Search Icon */}
           <Search 
             sx={{ 
-              color: 'text.secondary',
-              fontSize: '1.25rem',
+              color: 'rgba(255, 255, 255, 0.6)',
+              fontSize: '1.5rem',
               flexShrink: 0
             }} 
           />
-
-          {/* Text Input */}
           <TextField
             fullWidth
             placeholder="Search AI content templates..."
@@ -204,15 +229,14 @@ export default function UploadPage(){
                 py: 0.5,
                 color: 'text.primary',
                 '&::placeholder': {
-                  color: 'text.secondary',
-                  opacity: 0.7,
+                  color: 'rgba(255, 255, 255, 0.5)',
+                  opacity: 1,
                 }
               }
             }}
           />
         </Box>
 
-        {/* Dropdown Menu */}
         <Menu
           anchorEl={anchorEl}
           open={open}
@@ -254,38 +278,51 @@ export default function UploadPage(){
         />
       </Box>
 
-      {/* Content Flows Carousel */}
-      <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: '1200px' }, mx: 'auto' }}>
-        <Typography 
-          variant="h6" 
-          fontWeight={400} 
-          sx={{ 
-            fontSize: { xs: '1.125rem', md: '1.25rem' },
-            mb: 3,
-            color: 'text.primary',
-            textAlign: 'center'
+      {/* Horizontal Tabs */}
+      <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: '1200px' }, mx: 'auto', mb: 3 }}>
+        <Tabs
+          value={activeTab}
+          onChange={(e, newValue) => setActiveTab(newValue)}
+          sx={{
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            '& .MuiTab-root': {
+              color: 'rgba(255, 255, 255, 0.7)',
+              textTransform: 'none',
+              fontSize: '0.9375rem',
+              fontWeight: 400,
+              minHeight: 48,
+              px: 2,
+              '&.Mui-selected': {
+                color: '#ffffff',
+                fontWeight: 500,
+              },
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: '#ffffff',
+              height: 2,
+            },
           }}
+          variant="scrollable"
+          scrollButtons="auto"
         >
-          Most common content templates
-        </Typography>
+          <Tab label="All" value="all" />
+          <Tab label="Books" value="books" />
+          <Tab label="Workplace" value="workplace" />
+          <Tab label="Research" value="research" />
+        </Tabs>
+      </Box>
 
+      {/* Template Cards Grid */}
+      <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: '1200px' }, mx: 'auto' }}>
         <Box
           sx={{
             display: 'grid',
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' },
-            gap: 3,
-            overflowX: 'auto',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' },
+            gap: 2,
             pb: 1,
-            '&::-webkit-scrollbar': {
-              height: 8,
-            },
-            '&::-webkit-scrollbar-thumb': {
-              bgcolor: 'rgba(255, 255, 255, 0.2)',
-              borderRadius: 4,
-            }
           }}
         >
-          {contentFlows.map((flow, index) => (
+          {filteredFlows.map((flow) => (
             <Card
               key={flow.id}
               onClick={() => handleFlowClick(flow)}
@@ -293,37 +330,34 @@ export default function UploadPage(){
                 borderRadius: 1,
                 overflow: 'hidden',
                 cursor: 'pointer',
-                transition: 'all 0.3s ease',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                bgcolor: '#000000',
+                transition: 'all 0.2s ease',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                bgcolor: 'rgba(255, 255, 255, 0.03)',
                 '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)',
-                  borderColor: 'rgba(255, 255, 255, 0.4)',
+                  bgcolor: 'rgba(255, 255, 255, 0.06)',
+                  borderColor: 'rgba(255, 255, 255, 0.15)',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
                 }
               }}
             >
               <CardMedia
                 component="div"
                 sx={{
-                  height: { xs: 180, md: 200 },
-                  bgcolor: '#ffffff',
+                  height: { xs: 140, md: 160 },
+                  bgcolor: 'rgba(255, 255, 255, 0.05)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  position: 'relative',
                 }}
               >
-                {flow.icon ? (
+                {flow.icon && (
                   <Box
                     sx={{
-                      position: 'relative',
-                      zIndex: 1,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: { xs: '4rem', md: '5rem' },
-                      color: '#000000',
+                      fontSize: { xs: '2.5rem', md: '3rem' },
+                      color: 'rgba(255, 255, 255, 0.8)',
                       '& svg': {
                         fontSize: 'inherit',
                         color: 'inherit',
@@ -334,38 +368,36 @@ export default function UploadPage(){
                   >
                     <flow.icon />
                   </Box>
-                ) : (
-                  <Typography
-                    variant="h4"
-                    sx={{
-                      fontSize: { xs: '3rem', md: '4rem' },
-                      fontWeight: 400,
-                      color: '#000000',
-                      position: 'relative',
-                      zIndex: 1,
-                    }}
-                  >
-                    {index + 1}
-                  </Typography>
                 )}
               </CardMedia>
-              <CardContent sx={{ p: 2.5, bgcolor: '#000000' }}>
+              <CardContent sx={{ p: 1.5, bgcolor: 'transparent', '&:last-child': { pb: 1.5 } }}>
                 <Typography
-                  variant="h6"
-                  fontWeight={400}
+                  variant="body2"
                   sx={{
-                    fontSize: { xs: '1rem', md: '1.125rem' },
-                    mb: 1,
-                    color: '#ffffff',
+                    fontSize: '0.8125rem',
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    lineHeight: 1.4,
+                    mb: 0.5,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
                   }}
                 >
                   {flow.title}
                 </Typography>
                 <Typography
-                  variant="body2"
+                  variant="caption"
                   sx={{
-                    fontSize: { xs: '0.875rem', md: '0.9rem' },
-                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.75rem',
+                    color: 'rgba(255, 255, 255, 0.5)',
+                    lineHeight: 1.3,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
                   }}
                 >
                   {flow.description}

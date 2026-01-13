@@ -1,7 +1,7 @@
 'use client';
 import * as React from 'react';
 import {
-  Grid2 as Grid, Card, CardContent, CardActions, CardHeader, Typography, Button,
+  Grid2 as Grid, Card, CardContent, CardActions, CardHeader, CardMedia, Typography, Button,
   IconButton, Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Stack, Chip, Avatar, Tooltip, Box, CircularProgress
 } from '@mui/material';
@@ -249,6 +249,51 @@ export default function InspirationPage(){
                 }
               }}
             >
+              <CardMedia
+                component="div"
+                image={p.hero_image_url}
+                sx={{
+                  height: { xs: 160, md: 200 },
+                  background: p.hero_image_url 
+                    ? undefined
+                    : (p.is_default 
+                        ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #FBBF24 100%)'
+                        : 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #EF4444 100%)'),
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: p.hero_image_url 
+                      ? 'linear-gradient(135deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%)'
+                      : 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%)',
+                  }
+                }}
+              >
+                {!p.hero_image_url && (
+                  <Typography
+                    variant="h3"
+                    sx={{
+                      fontSize: { xs: '3rem', md: '4rem' },
+                      fontWeight: 700,
+                      color: p.is_default ? '#000000' : '#ffffff',
+                      opacity: 0.2,
+                      position: 'relative',
+                      zIndex: 1,
+                    }}
+                  >
+                    {p.name?.[0]?.toUpperCase() || 'I'}
+                  </Typography>
+                )}
+              </CardMedia>
               <CardHeader
                 avatar={
                   <Avatar 

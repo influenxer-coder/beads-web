@@ -16,7 +16,8 @@ import {
   MenuBook,
   Article,
   Person,
-  Slideshow
+  Slideshow,
+  Search
 } from '@mui/icons-material';
 
 export const dynamic = 'force-dynamic';
@@ -138,7 +139,7 @@ export default function UploadPage(){
         Let's create memorable stories from your content.
       </Typography>
 
-      {/* Input Bar */}
+      {/* AI Content Templates Search Bar */}
       <Box
         sx={{
           width: '100%',
@@ -153,40 +154,37 @@ export default function UploadPage(){
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            bgcolor: 'background.paper',
+            bgcolor: 'rgba(255, 255, 255, 0.05)',
             border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 8,
+            borderRadius: 3,
             px: 2,
             py: 1.5,
             transition: 'all 0.2s ease',
+            backdropFilter: 'blur(10px)',
             '&:hover': {
               borderColor: 'rgba(255, 255, 255, 0.2)',
+              bgcolor: 'rgba(255, 255, 255, 0.08)',
             },
             '&:focus-within': {
               borderColor: 'primary.main',
-              boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.1)',
+              boxShadow: '0 0 0 3px rgba(220, 38, 38, 0.15)',
+              bgcolor: 'rgba(255, 255, 255, 0.08)',
             }
           }}
         >
-          {/* Plus Button */}
-          <IconButton
-            onClick={handleMenuClick}
-            sx={{
-              bgcolor: 'transparent',
-              color: 'text.primary',
-              p: 1,
-              '&:hover': {
-                bgcolor: 'rgba(255, 255, 255, 0.05)',
-              }
-            }}
-          >
-            <Add />
-          </IconButton>
+          {/* Search Icon */}
+          <Search 
+            sx={{ 
+              color: 'text.secondary',
+              fontSize: '1.25rem',
+              flexShrink: 0
+            }} 
+          />
 
           {/* Text Input */}
           <TextField
             fullWidth
-            placeholder="Ask anything"
+            placeholder="Search AI content templates..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             onKeyDown={(e) => {
@@ -205,18 +203,39 @@ export default function UploadPage(){
                 fontSize: '1rem',
                 py: 0.5,
                 color: 'text.primary',
+                '&::placeholder': {
+                  color: 'text.secondary',
+                  opacity: 0.7,
+                }
               }
             }}
           />
 
-          {/* Right Side Icons */}
+          {/* Right Side Actions */}
           <Stack direction="row" spacing={0.5} alignItems="center">
+            <IconButton
+              size="small"
+              onClick={handleMenuClick}
+              sx={{
+                color: 'text.secondary',
+                p: 1,
+                '&:hover': {
+                  bgcolor: 'rgba(255, 255, 255, 0.05)',
+                  color: 'text.primary',
+                }
+              }}
+            >
+              <Add fontSize="small" />
+            </IconButton>
             <IconButton
               size="small"
               onClick={() => setMicMuted(!micMuted)}
               sx={{
                 color: micMuted ? 'text.secondary' : 'primary.main',
                 p: 1,
+                '&:hover': {
+                  bgcolor: 'rgba(255, 255, 255, 0.05)',
+                }
               }}
             >
               {micMuted ? <MicOff fontSize="small" /> : <Mic fontSize="small" />}
@@ -226,14 +245,15 @@ export default function UploadPage(){
               onClick={handleSend}
               disabled={!content.trim()}
               sx={{
-                bgcolor: content.trim() ? 'primary.main' : 'rgba(255, 255, 255, 0.1)',
+                bgcolor: content.trim() ? 'primary.main' : 'transparent',
                 color: content.trim() ? '#ffffff' : 'text.secondary',
                 p: 1,
                 '&:hover': {
-                  bgcolor: content.trim() ? 'primary.dark' : 'rgba(255, 255, 255, 0.15)',
+                  bgcolor: content.trim() ? 'primary.dark' : 'rgba(255, 255, 255, 0.05)',
                 },
                 '&:disabled': {
-                  bgcolor: 'rgba(255, 255, 255, 0.05)',
+                  bgcolor: 'transparent',
+                  color: 'rgba(255, 255, 255, 0.2)',
                 }
               }}
             >

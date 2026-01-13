@@ -354,15 +354,26 @@ export default function UploadPage(){
                 }}
               >
                 {flow.icon ? (
-                  <flow.icon
+                  <Box
                     sx={{
+                      position: 'relative',
+                      zIndex: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       fontSize: { xs: '4rem', md: '5rem' },
                       color: index % 2 === 0 ? '#ffffff' : '#000000',
                       opacity: 0.8,
-                      position: 'relative',
-                      zIndex: 1,
+                      '& svg': {
+                        fontSize: 'inherit',
+                        color: 'inherit',
+                        width: '1em',
+                        height: '1em',
+                      }
                     }}
-                  />
+                  >
+                    <flow.icon />
+                  </Box>
                 ) : (
                   <Typography
                     variant="h4"

@@ -210,56 +210,6 @@ export default function UploadPage(){
               }
             }}
           />
-
-          {/* Right Side Actions */}
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <IconButton
-              size="small"
-              onClick={handleMenuClick}
-              sx={{
-                color: 'text.secondary',
-                p: 1,
-                '&:hover': {
-                  bgcolor: 'rgba(255, 255, 255, 0.05)',
-                  color: 'text.primary',
-                }
-              }}
-            >
-              <Add fontSize="small" />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => setMicMuted(!micMuted)}
-              sx={{
-                color: micMuted ? 'text.secondary' : 'primary.main',
-                p: 1,
-                '&:hover': {
-                  bgcolor: 'rgba(255, 255, 255, 0.05)',
-                }
-              }}
-            >
-              {micMuted ? <MicOff fontSize="small" /> : <Mic fontSize="small" />}
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={handleSend}
-              disabled={!content.trim()}
-              sx={{
-                bgcolor: content.trim() ? 'primary.main' : 'transparent',
-                color: content.trim() ? '#ffffff' : 'text.secondary',
-                p: 1,
-                '&:hover': {
-                  bgcolor: content.trim() ? 'primary.dark' : 'rgba(255, 255, 255, 0.05)',
-                },
-                '&:disabled': {
-                  bgcolor: 'transparent',
-                  color: 'rgba(255, 255, 255, 0.2)',
-                }
-              }}
-            >
-              <GraphicEq fontSize="small" />
-            </IconButton>
-          </Stack>
         </Box>
 
         {/* Dropdown Menu */}
@@ -308,14 +258,15 @@ export default function UploadPage(){
       <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: '1200px' }, mx: 'auto' }}>
         <Typography 
           variant="h6" 
-          fontWeight={600} 
+          fontWeight={400} 
           sx={{ 
             fontSize: { xs: '1.125rem', md: '1.25rem' },
             mb: 3,
-            color: 'text.primary'
+            color: 'text.primary',
+            textAlign: 'center'
           }}
         >
-          Most common content flows
+          Most common content templates
         </Typography>
 
         <Box
@@ -339,15 +290,16 @@ export default function UploadPage(){
               key={flow.id}
               onClick={() => handleFlowClick(flow)}
               sx={{
-                borderRadius: 3,
+                borderRadius: 1,
                 overflow: 'hidden',
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                bgcolor: '#000000',
                 '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: '0 8px 24px rgba(220, 38, 38, 0.2)',
-                  borderColor: 'primary.main',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 4px 12px rgba(255, 255, 255, 0.1)',
+                  borderColor: 'rgba(255, 255, 255, 0.4)',
                 }
               }}
             >
@@ -355,22 +307,11 @@ export default function UploadPage(){
                 component="div"
                 sx={{
                   height: { xs: 180, md: 200 },
-                  background: index % 2 === 0 
-                    ? 'linear-gradient(135deg, #DC2626 0%, #B91C1C 50%, #EF4444 100%)'
-                    : 'linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #FBBF24 100%)',
+                  bgcolor: '#ffffff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   position: 'relative',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%)',
-                  }
                 }}
               >
                 {flow.icon ? (
@@ -382,8 +323,7 @@ export default function UploadPage(){
                       alignItems: 'center',
                       justifyContent: 'center',
                       fontSize: { xs: '4rem', md: '5rem' },
-                      color: index % 2 === 0 ? '#ffffff' : '#000000',
-                      opacity: 0.8,
+                      color: '#000000',
                       '& svg': {
                         fontSize: 'inherit',
                         color: 'inherit',
@@ -399,9 +339,8 @@ export default function UploadPage(){
                     variant="h4"
                     sx={{
                       fontSize: { xs: '3rem', md: '4rem' },
-                      fontWeight: 700,
-                      color: index % 2 === 0 ? '#ffffff' : '#000000',
-                      opacity: 0.3,
+                      fontWeight: 400,
+                      color: '#000000',
                       position: 'relative',
                       zIndex: 1,
                     }}
@@ -410,22 +349,23 @@ export default function UploadPage(){
                   </Typography>
                 )}
               </CardMedia>
-              <CardContent sx={{ p: 2.5 }}>
+              <CardContent sx={{ p: 2.5, bgcolor: '#000000' }}>
                 <Typography
                   variant="h6"
-                  fontWeight={600}
+                  fontWeight={400}
                   sx={{
                     fontSize: { xs: '1rem', md: '1.125rem' },
                     mb: 1,
+                    color: '#ffffff',
                   }}
                 >
                   {flow.title}
                 </Typography>
                 <Typography
                   variant="body2"
-                  color="text.secondary"
                   sx={{
                     fontSize: { xs: '0.875rem', md: '0.9rem' },
+                    color: 'rgba(255, 255, 255, 0.7)',
                   }}
                 >
                   {flow.description}

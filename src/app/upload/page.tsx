@@ -2,9 +2,9 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabase';
 import { 
-  Typography, Box, Button, TextField, IconButton, 
+  Typography, Box, TextField, IconButton, 
   Menu, MenuItem, ListItemIcon, ListItemText, Stack,
-  useMediaQuery, useTheme
+  Card, CardContent, CardMedia, useMediaQuery, useTheme
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { 
@@ -16,6 +16,36 @@ import {
 } from '@mui/icons-material';
 
 export const dynamic = 'force-dynamic';
+
+type ContentFlow = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+};
+
+const contentFlows: ContentFlow[] = [
+  {
+    id: 'book-page',
+    title: 'Scan a book page into a story',
+    description: 'Transform book pages into engaging stories',
+  },
+  {
+    id: 'research-paper',
+    title: 'A research paper into set of stories',
+    description: 'Convert research papers into multiple story formats',
+  },
+  {
+    id: 'founder-video',
+    title: 'Script to a founder style video',
+    description: 'Turn scripts into founder-style video content',
+  },
+  {
+    id: 'pitch-video',
+    title: 'Slide deck into a 30 sec pitch video',
+    description: 'Transform slide decks into concise pitch videos',
+  },
+];
 
 export default function UploadPage(){
   const [uploading, setUploading] = React.useState(false);
@@ -71,35 +101,41 @@ export default function UploadPage(){
     fileRef.current?.click();
   };
 
+  const handleFlowClick = (flow: ContentFlow) => {
+    // TODO: Handle flow selection
+    console.log('Selected flow:', flow);
+  };
+
   return (
     <Box
       sx={{
         minHeight: 'calc(100vh - 200px)',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
         pb: { xs: 4, md: 0 },
         px: { xs: 2, md: 3 }
       }}
     >
       <Typography 
-        variant="h6" 
+        variant="h5" 
         fontWeight={400} 
         sx={{ 
-          fontSize: { xs: '1rem', md: '1.125rem' },
-          mb: 6,
-          color: 'text.secondary',
+          fontSize: { xs: '1.25rem', md: '1.5rem' },
+          mb: 4,
+          color: 'text.primary',
           textAlign: 'center'
         }}
       >
-        Ready when you are.
+        Let's create memorable stories from your content.
       </Typography>
 
+      {/* Input Bar */}
       <Box
         sx={{
           width: '100%',
           maxWidth: { xs: '100%', sm: '600px', md: '700px' },
+          mx: 'auto',
+          mb: 6,
           position: 'relative'
         }}
       >
@@ -237,6 +273,113 @@ export default function UploadPage(){
           onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
           disabled={uploading}
         />
+      </Box>
+
+      {/* Content Flows Carousel */}
+      <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: '1200px' }, mx: 'auto' }}>
+        <Typography 
+          variant="h6" 
+          fontWeight={600} 
+          sx={{ 
+            fontSize: { xs: '1.125rem', md: '1.25rem' },
+            mb: 3,
+            color: 'text.primary'
+          }}
+        >
+          Most common content flows
+        </Typography>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' },
+            gap: 3,
+            overflowX: 'auto',
+            pb: 1,
+            '&::-webkit-scrollbar': {
+              height: 8,
+            },
+            '&::-webkit-scrollbar-thumb': {
+              bgcolor: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: 4,
+            }
+          }}
+        >
+          {contentFlows.map((flow, index) => (
+            <Card
+              key={flow.id}
+              onClick={() => handleFlowClick(flow)}
+              sx={{
+                borderRadius: 3,
+                overflow: 'hidden',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 8px 24px rgba(220, 38, 38, 0.2)',
+                  borderColor: 'primary.main',
+                }
+              }}
+            >
+              <CardMedia
+                component="div"
+                sx={{
+                  height: { xs: 180, md: 200 },
+                  bgcolor: index % 2 === 0 ? 'primary.main' : 'secondary.main',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'linear-gradient(135deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.3) 100%)',
+                  }
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  sx={{
+                    fontSize: { xs: '3rem', md: '4rem' },
+                    fontWeight: 700,
+                    color: index % 2 === 0 ? '#ffffff' : '#000000',
+                    opacity: 0.3,
+                    position: 'relative',
+                    zIndex: 1,
+                  }}
+                >
+                  {index + 1}
+                </Typography>
+              </CardMedia>
+              <CardContent sx={{ p: 2.5 }}>
+                <Typography
+                  variant="h6"
+                  fontWeight={600}
+                  sx={{
+                    fontSize: { xs: '1rem', md: '1.125rem' },
+                    mb: 1,
+                  }}
+                >
+                  {flow.title}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    fontSize: { xs: '0.875rem', md: '0.9rem' },
+                  }}
+                >
+                  {flow.description}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))}
+        </Box>
       </Box>
     </Box>
   );

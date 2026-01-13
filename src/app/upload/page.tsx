@@ -10,15 +10,9 @@ import { useRouter } from 'next/navigation';
 import { 
   Add,
   AttachFile, 
-  QrCodeScanner,
   Mic,
   MicOff,
-  GraphicEq,
-  Image as ImageIcon,
-  Lightbulb,
-  TravelExplore,
-  ShoppingBag,
-  MoreHoriz
+  GraphicEq
 } from '@mui/icons-material';
 
 export const dynamic = 'force-dynamic';
@@ -75,11 +69,6 @@ export default function UploadPage(){
   const handleUploadFile = () => {
     handleMenuClose();
     fileRef.current?.click();
-  };
-
-  const handleScan = () => {
-    handleMenuClose();
-    alert('Scan feature coming soon');
   };
 
   return (
@@ -237,36 +226,6 @@ export default function UploadPage(){
               <AttachFile fontSize="small" />
             </ListItemIcon>
             <ListItemText>Add photos & files</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={handleScan}>
-            <ListItemIcon>
-              <ImageIcon fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Create image</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>
-            <ListItemIcon>
-              <Lightbulb fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Thinking</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>
-            <ListItemIcon>
-              <TravelExplore fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Deep research</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>
-            <ListItemIcon>
-              <ShoppingBag fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Shopping research</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>
-            <ListItemIcon>
-              <MoreHoriz fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>More</ListItemText>
           </MenuItem>
         </Menu>
 

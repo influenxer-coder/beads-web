@@ -209,7 +209,7 @@ export default function UploadPage(){
           />
           <TextField
             fullWidth
-            placeholder="Search AI content templates..."
+            placeholder="Search content workflows..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             onKeyDown={(e) => {
@@ -312,7 +312,7 @@ export default function UploadPage(){
         </Tabs>
       </Box>
 
-      {/* Template Cards Grid */}
+      {/* Content Workflow Cards Grid */}
       <Box sx={{ width: '100%', maxWidth: { xs: '100%', md: '1200px' }, mx: 'auto' }}>
         <Box
           sx={{

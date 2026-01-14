@@ -5,7 +5,7 @@ import {
   Typography, Box, TextField, IconButton, 
   Menu, MenuItem, ListItemIcon, ListItemText, Stack,
   Card, CardContent, CardMedia, useMediaQuery, useTheme,
-  Tabs, Tab
+  Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { 
@@ -18,7 +18,8 @@ import {
   Article,
   Person,
   Slideshow,
-  Search
+  Search,
+  CameraAlt
 } from '@mui/icons-material';
 
 export const dynamic = 'force-dynamic';
@@ -98,8 +99,11 @@ export default function UploadPage(){
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [micMuted, setMicMuted] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState<string>('all');
+  const [uploadDialogOpen, setUploadDialogOpen] = React.useState(false);
+  const [selectedFlow, setSelectedFlow] = React.useState<ContentFlow | null>(null);
   const router = useRouter();
   const fileRef = React.useRef<HTMLInputElement>(null);
+  const cameraRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -153,8 +157,50 @@ export default function UploadPage(){
   };
 
   const handleFlowClick = (flow: ContentFlow) => {
-    // TODO: Handle flow selection
-    console.log('Selected flow:', flow);
+    if (flow.id === 'book-page') {
+      setSelectedFlow(flow);
+      setUploadDialogOpen(true);
+    } else {
+      // TODO: Handle other flow selections
+      console.log('Selected flow:', flow);
+    }
+  };
+
+  const handleDialogClose = () => {
+    setUploadDialogOpen(false);
+    setSelectedFlow(null);
+  };
+
+  const handleOpenCamera = () => {
+    handleDialogClose();
+    cameraRef.current?.click();
+  };
+
+  const handleOpenFileUpload = () => {
+    handleDialogClose();
+    fileRef.current?.click();
+  };
+
+  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      upload(file);
+    }
+    // Reset input so same file can be selected again
+    if (cameraRef.current) {
+      cameraRef.current.value = '';
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      upload(file);
+    }
+    // Reset input so same file can be selected again
+    if (fileRef.current) {
+      fileRef.current.value = '';
+    }
   };
 
   return (
@@ -273,7 +319,16 @@ export default function UploadPage(){
           type="file"
           hidden
           accept="application/pdf,image/*"
-          onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
+          onChange={handleFileSelect}
+          disabled={uploading}
+        />
+        <input
+          ref={cameraRef}
+          type="file"
+          hidden
+          accept="image/*"
+          capture="environment"
+          onChange={handleCameraCapture}
           disabled={uploading}
         />
       </Box>
@@ -407,6 +462,69 @@ export default function UploadPage(){
           ))}
         </Box>
       </Box>
+
+      {/* Upload Dialog */}
+      <Dialog
+        open={uploadDialogOpen}
+        onClose={handleDialogClose}
+        PaperProps={{
+          sx: {
+            bgcolor: 'background.paper',
+            borderRadius: 3,
+            minWidth: { xs: '90%', sm: '400px' },
+          }
+        }}
+      >
+        <DialogTitle sx={{ fontSize: '1.25rem', pb: 1 }}>
+          {selectedFlow?.title}
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Choose how you'd like to add your book page:
+          </Typography>
+          <Stack spacing={2}>
+            <Button
+              variant="outlined"
+              fullWidth
+              startIcon={<CameraAlt />}
+              onClick={handleOpenCamera}
+              sx={{
+                py: 1.5,
+                borderColor: 'rgba(255, 255, 255, 0.2)',
+                color: 'text.primary',
+                '&:hover': {
+                  borderColor: 'primary.main',
+                  bgcolor: 'rgba(220, 38, 38, 0.08)',
+                }
+              }}
+            >
+              Open Camera
+            </Button>
+            <Button
+              variant="outlined"
+              fullWidth
+              startIcon={<AttachFile />}
+              onClick={handleOpenFileUpload}
+              sx={{
+                py: 1.5,
+                borderColor: 'rgba(255, 255, 255, 0.2)',
+                color: 'text.primary',
+                '&:hover': {
+                  borderColor: 'primary.main',
+                  bgcolor: 'rgba(220, 38, 38, 0.08)',
+                }
+              }}
+            >
+              Upload File
+            </Button>
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+          <Button onClick={handleDialogClose} sx={{ minWidth: 100 }}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

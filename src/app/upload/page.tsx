@@ -114,9 +114,9 @@ export default function UploadPage(){
   const [selectedInspiration, setSelectedInspiration] = React.useState<Inspiration | null>(null);
   const [inspirations, setInspirations] = React.useState<Inspiration[]>([]);
   const [loadingInspirations, setLoadingInspirations] = React.useState(false);
+  const [uploadedFile, setUploadedFile] = React.useState<File | null>(null);
   const [processingFile, setProcessingFile] = React.useState<File | null>(null);
   const [processingProgress, setProcessingProgress] = React.useState(false);
-  const [pendingAction, setPendingAction] = React.useState<'camera' | 'file' | null>(null);
   const router = useRouter();
   const fileRef = React.useRef<HTMLInputElement>(null);
   const cameraRef = React.useRef<HTMLInputElement>(null);
@@ -211,33 +211,52 @@ export default function UploadPage(){
   const handleInspirationDialogClose = () => {
     setInspirationDialogOpen(false);
     setSelectedInspiration(null);
-    setPendingAction(null);
+    setUploadedFile(null);
   };
 
   const handleOpenCamera = () => {
     handleDialogClose();
-    setPendingAction('camera');
-    loadInspirations();
-    setInspirationDialogOpen(true);
+    cameraRef.current?.click();
   };
 
   const handleOpenFileUpload = () => {
     handleDialogClose();
-    setPendingAction('file');
-    loadInspirations();
-    setInspirationDialogOpen(true);
+    fileRef.current?.click();
+  };
+
+  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+      loadInspirations();
+      setInspirationDialogOpen(true);
+    }
+    // Reset input so same file can be selected again
+    if (cameraRef.current) {
+      cameraRef.current.value = '';
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+      loadInspirations();
+      setInspirationDialogOpen(true);
+    }
+    // Reset input so same file can be selected again
+    if (fileRef.current) {
+      fileRef.current.value = '';
+    }
   };
 
   const handleInspirationSelect = (inspiration: Inspiration) => {
     setSelectedInspiration(inspiration);
     handleInspirationDialogClose();
-    // Trigger the appropriate input based on pending action
-    if (pendingAction === 'camera') {
-      setTimeout(() => cameraRef.current?.click(), 100);
-    } else if (pendingAction === 'file') {
-      setTimeout(() => fileRef.current?.click(), 100);
+    // Now process with the uploaded file and selected inspiration
+    if (uploadedFile) {
+      processPageImage(uploadedFile, inspiration.id);
     }
-    setPendingAction(null);
   };
 
   const processPageImage = async (file: File, inspirationId: string) => {
@@ -268,23 +287,7 @@ export default function UploadPage(){
       setProcessingProgress(false);
       setProcessingFile(null);
       setSelectedInspiration(null);
-      // Reset inputs
-      if (cameraRef.current) cameraRef.current.value = '';
-      if (fileRef.current) fileRef.current.value = '';
-    }
-  };
-
-  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && selectedInspiration) {
-      processPageImage(file, selectedInspiration.id);
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && selectedInspiration) {
-      processPageImage(file, selectedInspiration.id);
+      setUploadedFile(null);
     }
   };
 
@@ -628,6 +631,16 @@ export default function UploadPage(){
           Select Inspiration Style
         </DialogTitle>
         <DialogContent>
+          {uploadedFile && (
+            <Box sx={{ mb: 3, p: 2, bgcolor: 'rgba(255, 255, 255, 0.05)', borderRadius: 2 }}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
+                Uploaded file:
+              </Typography>
+              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                {uploadedFile.name}
+              </Typography>
+            </Box>
+          )}
           {loadingInspirations ? (
             <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
               <CircularProgress />

@@ -5,7 +5,8 @@ import {
   Typography, Box, TextField, IconButton, 
   Menu, MenuItem, ListItemIcon, ListItemText, Stack,
   Card, CardContent, CardMedia, useMediaQuery, useTheme,
-  Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button
+  Tabs, Tab, Dialog, DialogTitle, DialogContent, DialogActions, Button,
+  CircularProgress, LinearProgress, Avatar
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { 
@@ -93,6 +94,14 @@ type ContentFlow = {
   category?: 'books' | 'workplace' | 'research';
 };
 
+type Inspiration = {
+  id: string;
+  name: string;
+  description?: string;
+  hero_image_url?: string;
+  is_default?: boolean;
+};
+
 export default function UploadPage(){
   const [uploading, setUploading] = React.useState(false);
   const [content, setContent] = React.useState('');
@@ -100,7 +109,14 @@ export default function UploadPage(){
   const [micMuted, setMicMuted] = React.useState(true);
   const [activeTab, setActiveTab] = React.useState<string>('all');
   const [uploadDialogOpen, setUploadDialogOpen] = React.useState(false);
+  const [inspirationDialogOpen, setInspirationDialogOpen] = React.useState(false);
   const [selectedFlow, setSelectedFlow] = React.useState<ContentFlow | null>(null);
+  const [selectedInspiration, setSelectedInspiration] = React.useState<Inspiration | null>(null);
+  const [inspirations, setInspirations] = React.useState<Inspiration[]>([]);
+  const [loadingInspirations, setLoadingInspirations] = React.useState(false);
+  const [processingFile, setProcessingFile] = React.useState<File | null>(null);
+  const [processingProgress, setProcessingProgress] = React.useState(false);
+  const [pendingAction, setPendingAction] = React.useState<'camera' | 'file' | null>(null);
   const router = useRouter();
   const fileRef = React.useRef<HTMLInputElement>(null);
   const cameraRef = React.useRef<HTMLInputElement>(null);
@@ -156,6 +172,27 @@ export default function UploadPage(){
     fileRef.current?.click();
   };
 
+  const loadInspirations = React.useCallback(async () => {
+    setLoadingInspirations(true);
+    try {
+      const r = await fetch('/api/inspirations');
+      if (!r.ok) throw new Error(await r.text());
+      const d = await r.json();
+      const profiles = d.profiles ?? [];
+      // Filter only completed inspirations
+      const completed = profiles.filter((p: any) => 
+        p.ingestion_status === 'completed' || 
+        (p.ingestion_progress && p.ingestion_progress.percentage >= 75)
+      );
+      setInspirations(completed);
+    } catch (e: any) {
+      console.error('Failed to load inspirations:', e);
+      setInspirations([]);
+    } finally {
+      setLoadingInspirations(false);
+    }
+  }, []);
+
   const handleFlowClick = (flow: ContentFlow) => {
     if (flow.id === 'book-page') {
       setSelectedFlow(flow);
@@ -171,35 +208,83 @@ export default function UploadPage(){
     setSelectedFlow(null);
   };
 
+  const handleInspirationDialogClose = () => {
+    setInspirationDialogOpen(false);
+    setSelectedInspiration(null);
+    setPendingAction(null);
+  };
+
   const handleOpenCamera = () => {
     handleDialogClose();
-    cameraRef.current?.click();
+    setPendingAction('camera');
+    loadInspirations();
+    setInspirationDialogOpen(true);
   };
 
   const handleOpenFileUpload = () => {
     handleDialogClose();
-    fileRef.current?.click();
+    setPendingAction('file');
+    loadInspirations();
+    setInspirationDialogOpen(true);
+  };
+
+  const handleInspirationSelect = (inspiration: Inspiration) => {
+    setSelectedInspiration(inspiration);
+    handleInspirationDialogClose();
+    // Trigger the appropriate input based on pending action
+    if (pendingAction === 'camera') {
+      setTimeout(() => cameraRef.current?.click(), 100);
+    } else if (pendingAction === 'file') {
+      setTimeout(() => fileRef.current?.click(), 100);
+    }
+    setPendingAction(null);
+  };
+
+  const processPageImage = async (file: File, inspirationId: string) => {
+    try {
+      setProcessingProgress(true);
+      setProcessingFile(file);
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('inspiration_id', inspirationId);
+
+      const response = await fetch('/api/process-page-image', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to process page image');
+      }
+
+      const data = await response.json();
+      alert('Bead generated successfully! View it in the Library tab.');
+      router.push('/library');
+    } catch (e: any) {
+      alert(e.message || 'Failed to process page image');
+    } finally {
+      setProcessingProgress(false);
+      setProcessingFile(null);
+      setSelectedInspiration(null);
+      // Reset inputs
+      if (cameraRef.current) cameraRef.current.value = '';
+      if (fileRef.current) fileRef.current.value = '';
+    }
   };
 
   const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      upload(file);
-    }
-    // Reset input so same file can be selected again
-    if (cameraRef.current) {
-      cameraRef.current.value = '';
+    if (file && selectedInspiration) {
+      processPageImage(file, selectedInspiration.id);
     }
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      upload(file);
-    }
-    // Reset input so same file can be selected again
-    if (fileRef.current) {
-      fileRef.current.value = '';
+    if (file && selectedInspiration) {
+      processPageImage(file, selectedInspiration.id);
     }
   };
 
@@ -525,6 +610,161 @@ export default function UploadPage(){
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Inspiration Selection Dialog */}
+      <Dialog
+        open={inspirationDialogOpen}
+        onClose={handleInspirationDialogClose}
+        maxWidth="md"
+        fullWidth
+        PaperProps={{
+          sx: {
+            bgcolor: 'background.paper',
+            borderRadius: 3,
+          }
+        }}
+      >
+        <DialogTitle sx={{ fontSize: '1.25rem', pb: 1 }}>
+          Select Inspiration Style
+        </DialogTitle>
+        <DialogContent>
+          {loadingInspirations ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : inspirations.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', py: 4 }}>
+              No inspirations available. Please create one in the Inspiration tab.
+            </Typography>
+          ) : (
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                overflowX: 'auto',
+                pb: 2,
+                '&::-webkit-scrollbar': {
+                  height: 8,
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  bgcolor: 'rgba(255, 255, 255, 0.2)',
+                  borderRadius: 4,
+                }
+              }}
+            >
+              {inspirations.map((inspiration) => (
+                <Card
+                  key={inspiration.id}
+                  onClick={() => handleInspirationSelect(inspiration)}
+                  sx={{
+                    minWidth: { xs: 200, sm: 240 },
+                    cursor: 'pointer',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    bgcolor: 'rgba(255, 255, 255, 0.03)',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      borderColor: 'primary.main',
+                      bgcolor: 'rgba(255, 255, 255, 0.06)',
+                      transform: 'translateY(-2px)',
+                    }
+                  }}
+                >
+                  <CardMedia
+                    component="div"
+                    sx={{
+                      height: 120,
+                      bgcolor: 'rgba(255, 255, 255, 0.05)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundImage: inspiration.hero_image_url ? `url(${inspiration.hero_image_url})` : 'none',
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                    }}
+                  >
+                    {!inspiration.hero_image_url && (
+                      <Avatar
+                        sx={{
+                          bgcolor: inspiration.is_default ? 'secondary.main' : 'primary.main',
+                          color: inspiration.is_default ? '#000000' : '#ffffff',
+                          width: 56,
+                          height: 56,
+                          fontSize: '1.5rem',
+                        }}
+                      >
+                        {inspiration.name?.[0]?.toUpperCase() || 'I'}
+                      </Avatar>
+                    )}
+                  </CardMedia>
+                  <CardContent sx={{ p: 1.5 }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 500,
+                        color: 'text.primary',
+                        mb: 0.5,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {inspiration.name}
+                    </Typography>
+                    {inspiration.description && (
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'text.secondary',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                        }}
+                      >
+                        {inspiration.description}
+                      </Typography>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+          <Button onClick={handleInspirationDialogClose} sx={{ minWidth: 100 }}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Processing Progress Indicator */}
+      {processingProgress && processingFile && (
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: 24,
+            bgcolor: 'background.paper',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: 2,
+            p: 2,
+            minWidth: 300,
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+            zIndex: 1300,
+          }}
+        >
+          <Stack spacing={1.5}>
+            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              Generating bead...
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {processingFile.name}
+            </Typography>
+            <LinearProgress sx={{ height: 6, borderRadius: 3 }} />
+          </Stack>
+        </Box>
+      )}
     </Box>
   );
 }

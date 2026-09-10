@@ -13,6 +13,9 @@ function Navigation() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
+  // The landing page carries its own header
+  if (pathname === '/') return null;
+
   if (isMobile) {
     return (
       <BottomNavigation
@@ -78,7 +81,20 @@ function Navigation() {
   return (
     <AppBar position="sticky" elevation={0}>
       <Toolbar sx={{ gap: 2, justifyContent: 'space-between' }}>
-        <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.5rem' }}>
+        <Typography
+          component={Link}
+          href="/"
+          variant="h6"
+          aria-label="Beads home"
+          sx={{
+            fontWeight: 700,
+            fontSize: '1.5rem',
+            color: 'inherit',
+            textDecoration: 'none',
+            cursor: 'pointer',
+            '&:hover': { opacity: 0.75 },
+          }}
+        >
           Beads
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -117,6 +133,35 @@ function Navigation() {
   );
 }
 
+function Shell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  // Landing page renders full-bleed, with no app chrome
+  if (pathname === '/') {
+    return <Box sx={{ minHeight: '100vh', backgroundColor: '#000' }}>{children}</Box>;
+  }
+
+  return (
+    <Box
+      sx={{
+        minHeight: '100vh',
+        pb: { xs: 8, md: 0 }, // Padding for mobile bottom nav
+        backgroundColor: '#0A0A0A'
+      }}
+    >
+      <Container
+        maxWidth="lg"
+        sx={{
+          py: { xs: 2, md: 4 },
+          px: { xs: 1, md: 3 }
+        }}
+      >
+        {children}
+      </Container>
+    </Box>
+  );
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -129,23 +174,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Navigation />
-          <Box
-            sx={{
-              minHeight: '100vh',
-              pb: { xs: 8, md: 0 }, // Padding for mobile bottom nav
-              backgroundColor: '#0A0A0A'
-            }}
-          >
-            <Container 
-              maxWidth="lg" 
-              sx={{ 
-                py: { xs: 2, md: 4 },
-                px: { xs: 1, md: 3 }
-              }}
-            >
-              {children}
-            </Container>
-          </Box>
+          <Shell>{children}</Shell>
         </ThemeProvider>
       </body>
     </html>

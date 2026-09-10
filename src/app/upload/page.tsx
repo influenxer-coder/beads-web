@@ -265,8 +265,9 @@ export default function UploadPage(){
       setProcessingFile(file);
       
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('inspiration_id', inspirationId);
+      formData.append('image', file);
+      formData.append('profile_id', inspirationId);
+      formData.append('document_title', file.name || 'Scanned Page');
 
       const response = await fetch('/api/process-page-image', {
         method: 'POST',

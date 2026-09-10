@@ -107,6 +107,14 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.12)',
   },
   cell: { background: '#000', padding: '34px 28px' },
+  grid2: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+    gap: 1,
+    background: 'rgba(255,255,255,0.12)',
+    border: '1px solid rgba(255,255,255,0.12)',
+  },
+  momentWhen: { fontSize: 17, fontWeight: 600, margin: '0 0 8px', letterSpacing: '-0.01em' },
   stepNum: {
     fontFamily: MONO,
     fontSize: 12,
@@ -143,27 +151,34 @@ const styles: Record<string, React.CSSProperties> = {
 const STEPS = [
   {
     n: '01',
-    title: 'Add a source',
-    body: 'Upload a PDF — a book, a research paper, a slide deck — or scan a single page with your camera.',
+    title: 'Drop it in',
+    body: 'A PDF, a paper, a deck, your meeting notes — or scan a single page with your camera.',
   },
   {
     n: '02',
-    title: 'Pick a voice',
-    body: 'Choose an inspiration. Beads clones the voice, pacing, and background music from creators you admire.',
+    title: 'Choose the voice',
+    body: 'Pick a creator whose delivery you like. Beads learns their voice, pace, and music.',
   },
   {
     n: '03',
-    title: 'Listen',
-    body: 'Your document comes back as short narrated lessons you can scroll through like a feed.',
+    title: 'Press play, go',
+    body: 'It comes back as a feed of one-minute lessons. Headphones in, hands free.',
   },
 ];
 
 const SOURCES = [
-  'Books and long-form PDFs',
-  'Research papers',
-  'Scanned book pages',
-  'Slide decks and pitch decks',
-  'Meeting notes',
+  'The book you bought and never opened',
+  'Research papers stacked in your downloads',
+  'A photo of one page, mid-chapter',
+  'Slide decks you were sent before the call',
+  'Yesterday\'s meeting notes',
+];
+
+const MOMENTS = [
+  { when: 'The commute', what: 'Two papers, door to desk.' },
+  { when: 'The walk', what: 'A chapter, without looking at anything.' },
+  { when: 'The gym', what: 'Something better than a third rerun podcast.' },
+  { when: 'The queue', what: 'One idea, in the time you would have scrolled.' },
 ];
 
 const VOICE_STEPS = [
@@ -191,19 +206,41 @@ export default function Landing() {
 
       <div style={styles.wrap}>
         <section style={styles.hero}>
-          <p style={styles.eyebrow}>Documents → audio lessons</p>
+          <p style={styles.eyebrow}>Written → spoken</p>
           <h1 style={styles.h1}>
-            Anything worth reading,
+            You are never going to read it.
             <br />
-            <span style={styles.dim}>in a voice worth hearing.</span>
+            <span style={styles.dim}>Listen to it on the way there.</span>
           </h1>
           <p style={styles.sub}>
-            Beads turns a book, paper, or deck into a feed of short narrated
-            lessons — spoken in a voice and style you choose.
+            Beads turns anything written — a book, a paper, a deck, yesterday's
+            meeting notes — into sixty-second audio lessons. Built for the time
+            you already have: the drive, the walk, the queue.
           </p>
           <div style={styles.ctaRow}>
             <Link href="/upload" style={styles.ctaSolid}>Create your first bead</Link>
             <Link href="/feed" style={styles.ctaGhost}>Listen to the feed</Link>
+          </div>
+        </section>
+      </div>
+
+      <hr style={styles.rule} />
+
+      <div style={styles.wrap}>
+        <section style={styles.section}>
+          <p style={styles.sectionLabel}>The time you already have</p>
+          <h2 style={{ ...styles.h2, marginBottom: 44 }}>
+            Hands busy. Eyes busy.
+            <br />
+            <span style={styles.dim}>Attention free.</span>
+          </h2>
+          <div style={styles.grid2}>
+            {MOMENTS.map((m) => (
+              <div key={m.when} style={styles.cell}>
+                <h3 style={styles.momentWhen}>{m.when}</h3>
+                <p style={styles.cellBody}>{m.what}</p>
+              </div>
+            ))}
           </div>
         </section>
       </div>
@@ -231,11 +268,12 @@ export default function Landing() {
         <section style={styles.section}>
           <div style={styles.twoCol}>
             <div>
-              <p style={styles.sectionLabel}>What you can turn into beads</p>
+              <p style={styles.sectionLabel}>Anything written</p>
               <h2 style={styles.h2}>Long things, made short.</h2>
               <p style={styles.body}>
-                Beads reads the whole document, finds the ideas actually worth
-                keeping, and writes each one as a lesson of about a minute.
+                Beads reads the whole thing, keeps only the ideas worth keeping,
+                and writes each one as a lesson of about a minute. A 300-page
+                book becomes a playlist, not a project.
               </p>
             </div>
             <ul style={styles.list}>
@@ -254,12 +292,11 @@ export default function Landing() {
           <div style={styles.twoCol}>
             <div>
               <p style={styles.sectionLabel}>Inspirations</p>
-              <h2 style={styles.h2}>Learn in a voice you already like.</h2>
+              <h2 style={styles.h2}>In a voice you actually want in your ear.</h2>
               <p style={styles.body}>
-                Point Beads at creators whose delivery you enjoy. It listens to
-                their videos and builds a profile — voice, tone, speaking pace,
-                even the music underneath. Your lessons come back sounding like
-                that.
+                Nobody finishes a lesson read by a robot. Point Beads at creators
+                whose delivery you enjoy — it learns their voice, tone, pace, even
+                the music underneath, and narrates your material that way.
               </p>
             </div>
             <ul style={styles.list}>
@@ -275,9 +312,9 @@ export default function Landing() {
 
       <div style={styles.wrap}>
         <section style={styles.section}>
-          <h2 style={styles.h2}>Start with one document.</h2>
+          <h2 style={styles.h2}>Start with the one you feel guilty about.</h2>
           <p style={{ ...styles.body, marginBottom: 36 }}>
-            Upload something you have been meaning to read.
+            Upload it now, listen to it tomorrow morning.
           </p>
           <div style={styles.ctaRow}>
             <Link href="/upload" style={styles.ctaSolid}>Create your first bead</Link>

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import HeroFan from '@/components/HeroFan';
 
 const MONO = "'SF Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 
@@ -28,7 +29,13 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: 14,
     marginLeft: 26,
   },
-  hero: { padding: '96px 0 88px' },
+  hero: {
+    padding: '48px 0 72px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+  },
   eyebrow: {
     fontFamily: MONO,
     fontSize: 12,
@@ -38,46 +45,58 @@ const styles: Record<string, React.CSSProperties> = {
     margin: '0 0 26px',
   },
   h1: {
-    fontSize: 'clamp(38px, 6.2vw, 66px)',
+    fontSize: 'clamp(34px, 5.6vw, 60px)',
     lineHeight: 1.06,
     letterSpacing: '-0.035em',
     fontWeight: 600,
-    margin: '0 0 26px',
-    maxWidth: 780,
-  },
+    margin: '40px 0 22px',
+    // keeps the headline to two balanced lines instead of a long widow
+    maxWidth: '14ch',
+    textWrap: 'balance',
+  } as React.CSSProperties,
   dim: { color: 'rgba(255,255,255,0.45)' },
   sub: {
-    fontSize: 19,
+    fontSize: 18,
     lineHeight: 1.6,
-    color: 'rgba(255,255,255,0.62)',
-    maxWidth: 560,
-    margin: '0 0 44px',
+    color: 'rgba(255,255,255,0.58)',
+    maxWidth: 440,
+    margin: '0 0 34px',
   },
-  ctaRow: { display: 'flex', flexWrap: 'wrap', gap: 12 },
-  ctaNote: {
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.4)',
-    margin: '20px 0 0',
+  ctaRow: { display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
+  badgeRow: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 'clamp(18px, 5vw, 56px)',
+    marginTop: 54,
   },
+  badge: { display: 'flex', alignItems: 'center', gap: 8 },
+  badgeText: { fontSize: 15, color: 'rgba(255,255,255,0.8)', whiteSpace: 'nowrap' },
   ctaSolid: {
-    display: 'inline-block',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
     background: '#fff',
     color: '#000',
-    padding: '14px 28px',
-    borderRadius: 2,
+    padding: '0 30px',
+    borderRadius: 999,
     textDecoration: 'none',
-    fontSize: 15,
-    fontWeight: 500,
+    fontSize: 15.5,
+    fontWeight: 550,
   },
   ctaGhost: {
-    display: 'inline-block',
-    border: '1px solid rgba(255,255,255,0.22)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 48,
+    border: '1px solid rgba(255,255,255,0.25)',
     color: '#fff',
-    padding: '14px 28px',
-    borderRadius: 2,
+    padding: '0 30px',
+    borderRadius: 999,
     textDecoration: 'none',
-    fontSize: 15,
-    fontWeight: 500,
+    fontSize: 15.5,
+    fontWeight: 550,
   },
   rule: { height: 1, background: 'rgba(255,255,255,0.12)', border: 0, margin: 0 },
   section: { padding: '84px 0' },
@@ -153,6 +172,41 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
+const BADGES = ['Free to start', 'Your own PDFs', '1-minute lessons'];
+
+function Laurel({ flip = false }: { flip?: boolean }) {
+  return (
+    <svg
+      width="15"
+      height="20"
+      viewBox="0 0 16 22"
+      fill="none"
+      aria-hidden="true"
+      style={{ transform: flip ? 'scaleX(-1)' : undefined, opacity: 0.45 }}
+    >
+      <path
+        d="M12 1.5C6.5 4 3.2 8.5 3.2 13.4c0 3 1.2 5.6 3.3 7.1"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+      />
+      {[3.2, 6.2, 9.2, 12.2].map((y, i) => (
+        <ellipse
+          key={i}
+          cx={8.6 - i * 1.25}
+          cy={y + 1.6}
+          rx="2.6"
+          ry="1.35"
+          transform={`rotate(${-34 + i * 5} ${8.6 - i * 1.25} ${y + 1.6})`}
+          stroke="currentColor"
+          strokeWidth="1.1"
+          fill="none"
+        />
+      ))}
+    </svg>
+  );
+}
+
 const STEPS = [
   {
     n: '01',
@@ -210,21 +264,31 @@ export default function Landing() {
 
       <div style={styles.wrap}>
         <section style={styles.hero}>
-          <p style={styles.eyebrow}>Read less. Learn more.</p>
-          <h1 style={styles.h1}>
-            Turn your reading
-            <br />
-            <span style={styles.dim}>into short audio.</span>
-          </h1>
+          <HeroFan />
+
+          <h1 style={styles.h1}>Turn your PDFs and notes into audio you can trust.</h1>
+
           <p style={styles.sub}>
-            Add a book, a PDF, or your notes. Beads turns it into one minute
-            lessons, read in a voice you pick. Listen while you drive or walk.
+            Upload a reading, hear a 1-minute lesson to review on the commute.
+            Cited and offline.
           </p>
+
           <div style={styles.ctaRow}>
-            <Link href="/upload" style={styles.ctaSolid}>Upload a file</Link>
-            <Link href="/feed" style={styles.ctaGhost}>Hear an example</Link>
+            <Link href="/upload" style={styles.ctaSolid}>Start free</Link>
+            <Link href="/upload" style={styles.ctaGhost}>Upload a PDF</Link>
           </div>
-          <p style={styles.ctaNote}>Start with one book. See how it sounds.</p>
+
+          {/* Swap these for real numbers once we have them. Nothing here claims
+              a rating, an award or an install count we have not earned. */}
+          <div style={styles.badgeRow}>
+            {BADGES.map((b) => (
+              <div key={b} style={styles.badge}>
+                <Laurel />
+                <span style={styles.badgeText}>{b}</span>
+                <Laurel flip />
+              </div>
+            ))}
+          </div>
         </section>
       </div>
 

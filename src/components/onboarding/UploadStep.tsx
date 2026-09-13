@@ -6,6 +6,10 @@ import { ui } from './ui';
 const ACCEPT = '.pdf,.docx,.epub,.txt,.md,.ppt,.pptx,.png,.jpg,.jpeg,.heic';
 const FORMATS = 'PDF · DOCX · EPUB · slides · notes · photos';
 
+/** Supabase rejects anything larger with a 413 and an opaque message. */
+const MAX_BYTES = 50 * 1024 * 1024;
+const MAX_LABEL = '50 MB';
+
 export default function UploadStep({
   onFile,
   onLink,
@@ -20,11 +24,24 @@ export default function UploadStep({
   const [over, setOver] = React.useState(false);
   const [link, setLink] = React.useState('');
   const [file, setFile] = React.useState<File | null>(null);
+  const [tooBig, setTooBig] = React.useState<string | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const pick = (files: FileList | null) => {
     const f = files?.[0];
-    if (f) setFile(f);
+    if (!f) return;
+    // Check before uploading, so a 150 MB file fails in a second with a clear
+    // reason rather than after a long upload with a 413.
+    if (f.size > MAX_BYTES) {
+      setFile(null);
+      setTooBig(
+        `${f.name} is ${(f.size / 1048576).toFixed(0)} MB. The limit is ${MAX_LABEL}. ` +
+          'Try a single chapter, or split the file and upload one part.',
+      );
+      return;
+    }
+    setTooBig(null);
+    setFile(f);
   };
 
   const openPicker = () => inputRef.current?.click();
@@ -72,7 +89,9 @@ export default function UploadStep({
           {file ? file.name : 'Drop a file or click to upload'}
         </div>
         <div style={styles.dropHint}>
-          {file ? `${(file.size / 1024 / 1024).toFixed(1)} MB · tap to choose another` : FORMATS}
+          {file
+            ? `${(file.size / 1048576).toFixed(1)} MB · tap to choose another`
+            : `${FORMATS} · up to ${MAX_LABEL}`}
         </div>
       </div>
 
@@ -121,7 +140,7 @@ export default function UploadStep({
         {busy ? 'Working...' : 'Make it audio'}
       </button>
 
-      {error && <p style={styles.error}>{error}</p>}
+      {(tooBig || error) && <p style={styles.error}>{tooBig || error}</p>}
 
       <p style={styles.footnote}>Nothing is saved until you ask us to.</p>
     </div>

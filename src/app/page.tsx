@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import HeroFan from '@/components/HeroFan';
+import SocialProof from '@/components/SocialProof';
 
 const MONO = "'SF Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 
@@ -274,8 +275,8 @@ export default function Landing() {
           </p>
 
           <div style={styles.ctaRow}>
-            <Link href="/upload" style={styles.ctaSolid}>Start free</Link>
-            <Link href="/upload" style={styles.ctaGhost}>Upload a PDF</Link>
+            <Link href="/start" style={styles.ctaSolid}>Start free</Link>
+            <Link href="/start" style={styles.ctaGhost}>Upload a PDF</Link>
           </div>
 
           {/* Swap these for real numbers once we have them. Nothing here claims
@@ -377,13 +378,17 @@ export default function Landing() {
       <hr style={styles.rule} />
 
       <div style={styles.wrap}>
+        <SocialProof />
+      </div>
+
+      <div style={styles.wrap}>
         <section style={styles.section}>
           <h2 style={styles.h2}>Try it with one book.</h2>
           <p style={{ ...styles.body, marginBottom: 36 }}>
             Add it today. Listen to it tomorrow.
           </p>
           <div style={styles.ctaRow}>
-            <Link href="/upload" style={styles.ctaSolid}>Upload a file</Link>
+            <Link href="/start" style={styles.ctaSolid}>Upload a file</Link>
           </div>
         </section>
       </div>

@@ -159,9 +159,18 @@ export default function HeroFan() {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    // next frame, so the collapsed state paints first and the fan animates open
-    const id = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(id);
+    // Two frames, not one. A single rAF can land in the same paint as the
+    // initial render, so the browser sees one style instead of two and skips
+    // the transition entirely. Waiting a second frame guarantees the collapsed
+    // state is painted before the open state is applied.
+    let inner = 0;
+    const outer = requestAnimationFrame(() => {
+      inner = requestAnimationFrame(() => setMounted(true));
+    });
+    return () => {
+      cancelAnimationFrame(outer);
+      cancelAnimationFrame(inner);
+    };
   }, []);
 
   const open = mounted || reduced;

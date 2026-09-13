@@ -82,3 +82,68 @@ audio::-webkit-media-controls-play-button {
   color: #ffffff;
 }
 
+
+/* Social proof band
+   Desktop: review cards stack vertically beside a sticky heading column.
+   Mobile:  cards become a horizontal scroll-snap row so the band stays short. */
+.sp-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 899px) {
+  .sp-left {
+    position: static;
+  }
+  .sp-scroller {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    /* bleed to the screen edges so cards can scroll past the container padding */
+    margin: 0 -24px;
+    padding: 0 24px 4px;
+  }
+  .sp-cards {
+    flex-direction: row;
+  }
+  .sp-cards > * {
+    flex: 0 0 auto;
+    width: min(78vw, 340px);
+  }
+}
+
+/* Onboarding flow */
+.onb-spin { animation: onb-spin 900ms linear infinite; }
+@keyframes onb-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .onb-spin { animation: none; }
+}
+
+/* Scrubber: thin track that fills as the lesson plays */
+.onb-scrub {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.16);
+  background-image: linear-gradient(#fff, #fff);
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.onb-scrub::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+.onb-scrub::-moz-range-thumb {
+  width: 13px;
+  height: 13px;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}

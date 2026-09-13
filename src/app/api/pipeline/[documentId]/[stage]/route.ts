@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
  * "we'll notify you when it's ready" toast.
  */
 
-type Stage = 'parse' | 'chunk' | 'beads' | 'scripts' | 'audio';
+type Stage = 'parse' | 'chunk' | 'beads' | 'scripts' | 'audio' | 'bead-audio';
 
 const STAGES: Record<Stage, { method: 'GET' | 'POST'; path: (id: string) => string }> = {
   parse: { method: 'GET', path: (id) => `/test-parse/${id}` },
@@ -18,6 +18,8 @@ const STAGES: Record<Stage, { method: 'GET' | 'POST'; path: (id: string) => stri
   beads: { method: 'GET', path: (id) => `/test-bead-generation/${id}?count=1` },
   scripts: { method: 'POST', path: (id) => `/generate-scripts/${id}` },
   audio: { method: 'POST', path: (id) => `/generate-audio-document/${id}?limit=1` },
+  // Re-narrate one bead. Takes a bead id, not a document id.
+  'bead-audio': { method: 'POST', path: (id) => `/generate-audio/${id}` },
 };
 
 export async function POST(

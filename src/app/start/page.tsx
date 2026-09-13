@@ -31,6 +31,7 @@ export default function StartPage() {
   const [busy, setBusy] = React.useState(false);
 
   const [lesson, setLesson] = React.useState<Lesson | null>(null);
+  const [documentId, setDocumentId] = React.useState<string | null>(null);
   const [others, setOthers] = React.useState<{ id: string; title: string }[]>([]);
   const [toast, setToast] = React.useState<string | null>(null);
 
@@ -130,6 +131,7 @@ export default function StartPage() {
 
       if (!first) throw new Error('We could not make a lesson from that file.');
 
+      setDocumentId(documentId);
       setLesson({
         id: first.id,
         title: first.title,
@@ -210,16 +212,58 @@ export default function StartPage() {
   };
 
   const applyVoice = async (v: Voice) => {
+    if (!lesson || !documentId) return;
+
     setVoice(v);
     setVoicesOpen(false);
-    setToast(`Re-narrating in ${v.name}...`);
+    setToast(`Re-narrating in ${v.name}. This takes a minute...`);
+
+    const wasPlaying = playing;
+    audioRef.current?.pause();
+
     try {
-      await fetch(`/api/pipeline/${lesson?.id}/audio`, { method: 'POST' });
+      // The backend reads the voice off the document's profile, so point the
+      // document at the chosen inspiration before asking for new audio.
+      const upd = await supabase
+        .from('documents')
+        .update({ profile_id: v.id })
+        .eq('id', documentId);
+      if (upd.error) throw upd.error;
+
+      // Re-narrate this one bead, not the whole document.
+      const r = await fetch(`/api/pipeline/${lesson.id}/bead-audio`, { method: 'POST' });
+      const out = await r.json();
+      if (!out.success) throw new Error(out?.error?.error ?? 'Could not re-narrate');
+
+      // Read the fresh URL back.
+      const { data: row } = await supabase
+        .from('beads')
+        .select('audio_url')
+        .eq('id', lesson.id)
+        .single();
+
+      const fresh = row?.audio_url ?? lesson.audioUrl;
+      if (!fresh) throw new Error('No audio came back');
+
+      // The regenerated file keeps the same path, so without a cache buster the
+      // browser just replays the old narration.
+      const busted = `${fresh}${fresh.includes('?') ? '&' : '?'}v=${Date.now()}`;
+
+      setLesson((l) => (l ? { ...l, audioUrl: busted } : l));
+
+      // Point the element at the new file and pick up where we were.
+      requestAnimationFrame(() => {
+        const a = audioRef.current;
+        if (!a) return;
+        a.load();
+        if (wasPlaying) a.play().catch(() => undefined);
+      });
+
       setToast(`Now reading in ${v.name}`);
-    } catch {
-      setToast('Could not change the voice. The original is still playing.');
+    } catch (e: any) {
+      setToast(e?.message ?? 'Could not change the voice. The original is still playing.');
     }
-    setTimeout(() => setToast(null), 5000);
+    setTimeout(() => setToast(null), 6000);
   };
 
   /* -------------------------------- render -------------------------------- */

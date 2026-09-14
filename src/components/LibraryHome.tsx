@@ -19,6 +19,7 @@ import { fmtTime } from '@/components/onboarding/ui';
 
 type Row = {
   id: string;
+  documentId: string | null;
   title: string;
   sourceTitle: string;
   audioUrl: string | null;
@@ -43,12 +44,13 @@ export default function LibraryHome({ email }: { email?: string | null }) {
       try {
         const { data } = await supabase
           .from('beads')
-          .select('id, title, audio_url, order_index, created_at, documents(title)')
+          .select('id, title, audio_url, order_index, created_at, document_id, documents(title)')
           .order('created_at', { ascending: false })
           .limit(500);
 
         const mapped: Row[] = (data ?? []).map((b: any) => ({
           id: b.id,
+          documentId: b.document_id ?? null,
           title: b.title,
           sourceTitle: b.documents?.title ?? 'Your upload',
           audioUrl: b.audio_url,
@@ -196,6 +198,11 @@ export default function LibraryHome({ email }: { email?: string | null }) {
           <div style={styles.rowChips}>
             {row.citedTo && <span style={styles.chip}>cited to {row.citedTo}</span>}
             {!row.audioUrl && <span style={styles.chipMuted}>no audio yet</span>}
+            {row.documentId && (
+              <Link href={`/studio/${row.documentId}`} style={styles.chipLink} onClick={(e) => e.stopPropagation()}>
+                Studio
+              </Link>
+            )}
           </div>
         </div>
       </article>
@@ -546,6 +553,14 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.16)',
     color: 'rgba(255,255,255,0.6)',
+  },
+  chipLink: {
+    fontSize: 11.5,
+    padding: '3px 9px',
+    borderRadius: 999,
+    border: '1px solid rgba(255,255,255,0.22)',
+    color: 'rgba(255,255,255,0.8)',
+    textDecoration: 'none',
   },
   chipMuted: { fontSize: 11.5, padding: '3px 9px', borderRadius: 999, background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)' },
   empty: { textAlign: 'center', padding: '54px 20px' },

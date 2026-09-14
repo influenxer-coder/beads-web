@@ -9,6 +9,7 @@ import LessonCard, { type Lesson } from '@/components/onboarding/LessonCard';
 import MiniPlayer from '@/components/onboarding/MiniPlayer';
 import VoicesPanel, { loadLastVoiceId, type Voice } from '@/components/onboarding/VoicesPanel';
 import SaveSheet from '@/components/onboarding/SaveSheet';
+import Studio from '@/components/studio/Studio';
 
 type Screen = 'upload' | 'parsing' | 'ready';
 
@@ -308,6 +309,12 @@ export default function StartPage() {
               onOpenVoices={openVoices}
               others={others}
             />
+            {documentId && (
+              <div style={styles.studioWrap}>
+                <Studio documentId={documentId} documentTitle={lesson.sourceTitle} />
+              </div>
+            )}
+
             <div style={styles.saveRow}>
               <button
                 type="button"
@@ -376,6 +383,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '48px 20px 160px',
   },
   inner: { width: '100%' },
+  studioWrap: { maxWidth: 560, margin: '40px auto 0' },
   saveRow: { maxWidth: 560, margin: '22px auto 0', textAlign: 'center' },
   saveLink: {
     background: 'none',

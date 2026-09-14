@@ -28,6 +28,19 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '28px 0',
   },
   wordmark: { fontSize: 17, fontWeight: 600, letterSpacing: '-0.02em' },
+  navSignIn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    minHeight: 38,
+    marginLeft: 22,
+    padding: '0 16px',
+    borderRadius: 999,
+    border: '1px solid rgba(255,255,255,0.28)',
+    color: '#fff',
+    textDecoration: 'none',
+    fontSize: 14,
+    fontWeight: 600,
+  },
   navLink: {
     color: 'rgba(255,255,255,0.55)',
     textDecoration: 'none',
@@ -306,6 +319,7 @@ export default function Home() {
             <Link href="/feed" style={styles.navLink}>Feed</Link>
             <Link href="/library" style={styles.navLink}>Library</Link>
             <Link href="/inspiration" style={styles.navLink}>Inspiration</Link>
+            <Link href="/login" style={styles.navSignIn}>Sign in</Link>
           </div>
         </nav>
       </div>

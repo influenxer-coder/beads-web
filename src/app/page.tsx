@@ -5,6 +5,7 @@ import Link from 'next/link';
 import HeroFan from '@/components/HeroFan';
 import LibraryHome from '@/components/LibraryHome';
 import { supabase } from '@/lib/supabase';
+import { identify } from '@/lib/analytics';
 import SocialProof from '@/components/SocialProof';
 
 const MONO = "'SF Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
@@ -266,10 +267,13 @@ export default function Home() {
     let alive = true;
     supabase.auth.getSession().then(({ data }: any) => {
       if (!alive) return;
-      setSession(data?.session?.user ? { email: data.session.user.email } : null);
+      const u = data?.session?.user;
+      if (u) identify(u.id, { email: u.email });
+      setSession(u ? { email: u.email } : null);
       setChecked(true);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e: any, s: any) => {
+      if (s?.user) identify(s.user.id, { email: s.user.email });
       setSession(s?.user ? { email: s.user.email } : null);
       setChecked(true);
     });

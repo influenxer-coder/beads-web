@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { supabase } from '@/lib/supabase';
+import { track } from '@/lib/analytics';
 import UploadStep from '@/components/onboarding/UploadStep';
 import ParsingStep from '@/components/onboarding/ParsingStep';
 import LessonCard, { type Lesson } from '@/components/onboarding/LessonCard';
@@ -70,6 +71,11 @@ export default function StartPage() {
   /* ------------------------------- the flow ------------------------------ */
 
   const start = async (file: File) => {
+    const startedAt = Date.now();
+    track('upload_started', {
+      size_mb: +(file.size / 1048576).toFixed(2),
+      file_type: file.type || file.name.split('.').pop(),
+    });
     setError(null);
     setBusy(true);
     setScreen('parsing');
@@ -129,7 +135,10 @@ export default function StartPage() {
       const list = beads ?? [];
       const first = list.find((b: any) => b.audio_url) ?? list[0];
 
-      if (!first) throw new Error('We could not make a lesson from that file.');
+      if (!first) {
+        track('upload_failed', { reason: 'no_beads_generated', seconds: Math.round((Date.now() - startedAt) / 1000) });
+        throw new Error('We could not make a lesson from that file.');
+      }
 
       setDocumentId(documentId);
       setLesson({
@@ -142,10 +151,19 @@ export default function StartPage() {
         durationSec: null,
       });
       setOthers(list.filter((b: any) => b.id !== first.id).map((b: any) => ({ id: b.id, title: b.title })));
+      track('lesson_ready', {
+        seconds_elapsed: Math.round((Date.now() - startedAt) / 1000),
+        has_audio: !!first.audio_url,
+        degraded,
+      });
       setScreen('ready');
       setToast('Your lesson is ready');
       setTimeout(() => setToast(null), 5000);
     } catch (e: any) {
+      track('upload_failed', {
+        reason: e?.message ?? 'unknown',
+        seconds: Math.round((Date.now() - startedAt) / 1000),
+      });
       setError(e?.message ?? 'Something went wrong. Try another file.');
       setScreen('upload');
     } finally {
@@ -164,6 +182,7 @@ export default function StartPage() {
     const a = audioRef.current;
     if (!a) return;
     if (a.paused) {
+      if (a.currentTime === 0) track('play_started');
       a.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
     } else {
       a.pause();
@@ -213,6 +232,7 @@ export default function StartPage() {
 
   const applyVoice = async (v: Voice) => {
     if (!lesson || !documentId) return;
+    track('voice_applied', { voice: v.name });
 
     setVoice(v);
     setVoicesOpen(false);
@@ -289,7 +309,14 @@ export default function StartPage() {
               others={others}
             />
             <div style={styles.saveRow}>
-              <button type="button" onClick={() => setSaveOpen(true)} style={styles.saveLink}>
+              <button
+                type="button"
+                onClick={() => {
+                  track('save_clicked');
+                  setSaveOpen(true);
+                }}
+                style={styles.saveLink}
+              >
                 Save this lesson
               </button>
             </div>

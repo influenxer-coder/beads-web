@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import MiniPlayer from '@/components/onboarding/MiniPlayer';
+import { track as capture } from '@/lib/analytics';
 
 /**
  * One player for the whole app.
@@ -37,6 +38,10 @@ export function usePlayer() {
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [track, setTrack] = React.useState<Track | null>(null);
+  const trackRef = React.useRef<Track | null>(null);
+  React.useEffect(() => {
+    trackRef.current = track;
+  }, [track]);
   const [playing, setPlaying] = React.useState(false);
   const audioRef = React.useRef<HTMLAudioElement>(null);
 
@@ -69,6 +74,30 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     setPlaying(false);
     setTrack(null);
   }, []);
+
+  // Fire 25/50/100% once each per track: how far people actually get is the
+  // real measure of whether a lesson landed.
+  const milestones = React.useRef<Set<number>>(new Set());
+  React.useEffect(() => {
+    milestones.current = new Set();
+  }, [track?.id]);
+
+  React.useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    const onProgress = () => {
+      if (!a.duration || !isFinite(a.duration)) return;
+      const pct = (a.currentTime / a.duration) * 100;
+      for (const m of [25, 50, 100]) {
+        if (pct >= m && !milestones.current.has(m)) {
+          milestones.current.add(m);
+          capture('play_progress', { percent: m, title: trackRef.current?.title });
+        }
+      }
+    };
+    a.addEventListener('timeupdate', onProgress);
+    return () => a.removeEventListener('timeupdate', onProgress);
+  }, [track]);
 
   React.useEffect(() => {
     const a = audioRef.current;

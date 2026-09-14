@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { supabase } from '@/lib/supabase';
+import { track } from '@/lib/analytics';
 
 /**
  * Social-first sign in.
@@ -93,6 +94,7 @@ export default function LoginCard({
         options: { emailRedirectTo: redirectTo },
       });
       if (err) throw err;
+      track('signin_link_sent');
       setSent(true);
     } catch (err: any) {
       setError(err?.message ?? 'Could not send the link.');

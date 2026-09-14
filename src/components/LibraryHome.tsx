@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { usePlayer } from '@/lib/player';
 import { fmtTime } from '@/components/onboarding/ui';
 import { anonId } from '@/lib/identity';
+import SourceGrid, { type Source, subjectOf } from '@/components/SourceGrid';
+import { track } from '@/lib/analytics';
 
 /**
  * Signed-in home: the person's lessons.
@@ -79,6 +81,9 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
     };
   }, []);
 
+  const [selected, setSelected] = React.useState<string | null>(null);
+  const [deleting, setDeleting] = React.useState<Source | null>(null);
+
   const filtered = React.useMemo(() => {
     const needle = q.trim().toLowerCase();
     if (!needle) return rows;
@@ -88,8 +93,46 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
     );
   }, [rows, q]);
 
-  const playable = filtered.filter((r) => r.audioUrl);
   const continueRow = rows.find((r) => r.audioUrl) ?? null;
+
+  // One card per document, with its chapters underneath when opened.
+  const sources: Source[] = React.useMemo(() => {
+    const byDoc = new Map<string, Source>();
+    for (const r of filtered) {
+      if (!r.documentId) continue;
+      const existing = byDoc.get(r.documentId);
+      if (existing) {
+        existing.chapterCount += 1;
+        if (r.audioUrl) existing.playableCount += 1;
+      } else {
+        byDoc.set(r.documentId, {
+          id: r.documentId,
+          title: r.sourceTitle,
+          type: null,
+          chapterCount: 1,
+          playableCount: r.audioUrl ? 1 : 0,
+          createdAt: r.createdAt,
+        });
+      }
+    }
+    return [...byDoc.values()];
+  }, [filtered]);
+
+  const chapters = React.useMemo(
+    () => (selected ? filtered.filter((r) => r.documentId === selected) : []),
+    [filtered, selected],
+  );
+
+  const removeSource = async (s: Source) => {
+    track('source_deleted', { chapters: s.chapterCount });
+    // Chapters first, then the source, so nothing is left orphaned if the
+    // second call fails.
+    await supabase.from('beads').delete().eq('document_id', s.id);
+    await supabase.from('documents').delete().eq('id', s.id);
+    setRows((prev) => prev.filter((r) => r.documentId !== s.id));
+    if (selected === s.id) setSelected(null);
+    setDeleting(null);
+  };
 
   return (
     <div style={styles.page}>
@@ -105,18 +148,60 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
           </section>
         )}
 
-        <section style={styles.section}>
-          <h2 style={styles.sectionTitle}>
-            Your lessons{!loading && filtered.length ? ` (${filtered.length})` : ''}
-          </h2>
+        {loading && (
+          <section style={styles.section}>
+            <SkeletonList />
+          </section>
+        )}
 
-          {loading && <SkeletonList />}
+        {!loading && filtered.length === 0 && (
+          <section style={styles.section}>
+            <EmptyState searching={!!q.trim()} />
+          </section>
+        )}
 
-          {!loading && filtered.length === 0 && <EmptyState searching={!!q.trim()} />}
+        {!loading && sources.length > 0 && (
+          <SourceGrid
+            sources={sources}
+            selectedId={selected}
+            onSelect={(s) => setSelected((cur) => (cur === s.id ? null : s.id))}
+            onDelete={(s) => setDeleting(s)}
+            heading="What you turned into audio"
+          />
+        )}
 
-          {!loading && filtered.length > 0 && <VirtualList rows={filtered} />}
-        </section>
+        {!loading && selected && (
+          <section style={styles.section}>
+            <h2 style={styles.sectionTitle}>
+              {subjectOf(sources.find((s) => s.id === selected)?.title ?? '')} ·{' '}
+              {chapters.length} {chapters.length === 1 ? 'chapter' : 'chapters'}
+            </h2>
+            <VirtualList rows={chapters} />
+          </section>
+        )}
       </div>
+
+      {deleting && (
+        <>
+          <div style={styles.scrim} onClick={() => setDeleting(null)} aria-hidden="true" />
+          <div style={styles.confirm} role="dialog" aria-modal="true" aria-label="Delete source">
+            <h3 style={styles.confirmTitle}>Delete {subjectOf(deleting.title)}?</h3>
+            <p style={styles.confirmBody}>
+              This removes the source and all {deleting.chapterCount}{' '}
+              {deleting.chapterCount === 1 ? 'chapter' : 'chapters'} made from it, including their
+              audio. It cannot be undone.
+            </p>
+            <div style={styles.confirmRow}>
+              <button type="button" onClick={() => setDeleting(null)} style={styles.confirmCancel}>
+                Keep it
+              </button>
+              <button type="button" onClick={() => removeSource(deleting)} style={styles.confirmDelete}>
+                Delete everything
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 
@@ -572,6 +657,43 @@ const styles: Record<string, React.CSSProperties> = {
     textDecoration: 'none',
   },
   chipMuted: { fontSize: 11.5, padding: '3px 9px', borderRadius: 999, background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)' },
+  scrim: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.62)', zIndex: 960 },
+  confirm: {
+    position: 'fixed',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 'min(420px, 92vw)',
+    zIndex: 970,
+    background: '#121212',
+    border: '1px solid rgba(255,255,255,0.14)',
+    borderRadius: 16,
+    padding: 24,
+  },
+  confirmTitle: { fontSize: 19, fontWeight: 600, margin: '0 0 10px' },
+  confirmBody: { fontSize: 14.5, lineHeight: 1.55, color: 'rgba(255,255,255,0.6)', margin: '0 0 22px' },
+  confirmRow: { display: 'flex', gap: 10 },
+  confirmCancel: {
+    flex: 1,
+    minHeight: 46,
+    borderRadius: 999,
+    border: '1px solid rgba(255,255,255,0.22)',
+    background: 'transparent',
+    color: '#fff',
+    fontSize: 15,
+    cursor: 'pointer',
+  },
+  confirmDelete: {
+    flex: 1,
+    minHeight: 46,
+    borderRadius: 999,
+    border: 0,
+    background: '#ff6b6b',
+    color: '#1a0000',
+    fontSize: 15,
+    fontWeight: 600,
+    cursor: 'pointer',
+  },
   empty: { textAlign: 'center', padding: '54px 20px' },
   emptyMark: {
     width: 58,

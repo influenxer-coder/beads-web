@@ -253,6 +253,14 @@ export default function Home() {
   // Signed in people get their library; everyone else gets the pitch.
   const [session, setSession] = React.useState<{ email?: string | null } | null>(null);
   const [checked, setChecked] = React.useState(false);
+  // ?preview=library renders the signed-in home without a session, so the UI
+  // can be reviewed while email sign-in is rate limited. It fakes no auth: the
+  // list it shows is readable with the anon key either way.
+  const [preview, setPreview] = React.useState(false);
+
+  React.useEffect(() => {
+    setPreview(new URLSearchParams(window.location.search).get('preview') === 'library');
+  }, []);
 
   React.useEffect(() => {
     let alive = true;
@@ -274,6 +282,7 @@ export default function Home() {
   // Render the landing markup by default so it still server-renders for
   // search engines and first-time visitors; swap to the library only once we
   // know there is a session.
+  if (preview) return <LibraryHome email={session?.email ?? 'preview@beads'} />;
   if (checked && session) return <LibraryHome email={session.email} />;
 
   return (

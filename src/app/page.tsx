@@ -3,6 +3,8 @@
 import * as React from 'react';
 import Link from 'next/link';
 import HeroFan from '@/components/HeroFan';
+import LibraryHome from '@/components/LibraryHome';
+import { supabase } from '@/lib/supabase';
 import SocialProof from '@/components/SocialProof';
 
 const MONO = "'SF Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
@@ -247,7 +249,33 @@ const VOICE_STEPS = [
   'Your lessons are read in that voice',
 ];
 
-export default function Landing() {
+export default function Home() {
+  // Signed in people get their library; everyone else gets the pitch.
+  const [session, setSession] = React.useState<{ email?: string | null } | null>(null);
+  const [checked, setChecked] = React.useState(false);
+
+  React.useEffect(() => {
+    let alive = true;
+    supabase.auth.getSession().then(({ data }: any) => {
+      if (!alive) return;
+      setSession(data?.session?.user ? { email: data.session.user.email } : null);
+      setChecked(true);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e: any, s: any) => {
+      setSession(s?.user ? { email: s.user.email } : null);
+      setChecked(true);
+    });
+    return () => {
+      alive = false;
+      sub?.subscription?.unsubscribe?.();
+    };
+  }, []);
+
+  // Render the landing markup by default so it still server-renders for
+  // search engines and first-time visitors; swap to the library only once we
+  // know there is a session.
+  if (checked && session) return <LibraryHome email={session.email} />;
+
   return (
     <main style={styles.page}>
       <div style={styles.wrap}>

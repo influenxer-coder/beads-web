@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { theme } from '@/theme';
 import { ThemeProvider } from '@mui/material/styles';
 import { Home, LibraryBooks, AddCircle, AutoAwesome } from '@mui/icons-material';
+import { PlayerProvider } from '@/lib/player';
 import './globals.css';
 
 function Navigation() {
@@ -173,8 +174,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ margin: 0, padding: 0, backgroundColor: '#0A0A0A' }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          <Navigation />
-          <Shell>{children}</Shell>
+          <PlayerProvider>
+            <Navigation />
+            <Shell>{children}</Shell>
+          </PlayerProvider>
         </ThemeProvider>
       </body>
     </html>

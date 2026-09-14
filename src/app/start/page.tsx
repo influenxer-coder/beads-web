@@ -107,6 +107,9 @@ export default function StartPage() {
 
       const documentId = ins.data.id as string;
 
+      // Render the cover in the background; the lesson does not wait on it.
+      fetch(`/api/cover/${documentId}`, { method: 'POST' }).catch(() => undefined);
+
       // Parse. If it fails we keep going on whatever text we have rather than
       // dead-ending, which is the ElevenReader failure mode we are avoiding.
       enter('parse', 'Reading the document');

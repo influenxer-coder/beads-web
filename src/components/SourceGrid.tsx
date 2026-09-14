@@ -49,27 +49,28 @@ function coverTone(id: string) {
   return h;
 }
 
+/** Covers live at a path derived from the document id. */
+export function coverUrlFor(documentId: string) {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!base) return null;
+  return `${base}/storage/v1/object/public/beads-assets/covers/${documentId}.png`;
+}
+
 export default function SourceGrid({
   sources,
   selectedId,
   onSelect,
   onDelete,
   heading = 'Your sources',
-  eyebrow = 'Your documents, not a library',
 }: {
   sources: Source[];
   selectedId?: string | null;
   onSelect: (s: Source) => void;
   onDelete: (s: Source) => void;
   heading?: string;
-  eyebrow?: string;
 }) {
   return (
     <section style={styles.section} aria-label={heading}>
-      <div style={styles.eyebrow}>
-        <BookMark />
-        <span>{eyebrow}</span>
-      </div>
       <h2 style={styles.h2}>{heading}</h2>
 
       <ul className="sg-grid" style={styles.grid}>
@@ -99,18 +100,7 @@ export default function SourceGrid({
                   background: `linear-gradient(155deg, hsl(${tone} 38% 26%), hsl(${(tone + 42) % 360} 34% 13%))`,
                 }}
               >
-                {s.coverUrl ? (
-                  // Real page thumbnails load lazily when a source has one.
-                  <img src={s.coverUrl} alt="" loading="lazy" decoding="async" style={styles.coverImg} />
-                ) : (
-                  <>
-                    <span style={styles.kind}>{kind}</span>
-                    <span style={styles.coverTitle}>{subject}</span>
-                    <span style={styles.coverCount}>
-                      {s.chapterCount} {s.chapterCount === 1 ? 'chapter' : 'chapters'}
-                    </span>
-                  </>
-                )}
+                <CoverArt source={s} kind={kind} subject={subject} />
 
                 <span style={styles.playBadge} aria-hidden="true">
                   ▶
@@ -150,32 +140,49 @@ export default function SourceGrid({
   );
 }
 
-function BookMark() {
+function CoverArt({
+  source,
+  kind,
+  subject,
+}: {
+  source: Source;
+  kind: string;
+  subject: string;
+}) {
+  // Page one of the document, when it has been rendered. Anything without a
+  // cover yet keeps the generated one rather than showing a broken image.
+  const [failed, setFailed] = React.useState(false);
+  const url = source.coverUrl ?? coverUrlFor(source.id);
+
+  if (url && !failed) {
+    return (
+      <>
+        <img
+          src={url}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailed(true)}
+          style={styles.coverImg}
+        />
+        <span style={{ ...styles.kind, position: 'relative', zIndex: 1 }}>{kind}</span>
+      </>
+    );
+  }
+
   return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5v-13z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinejoin="round"
-      />
-    </svg>
+    <>
+      <span style={styles.kind}>{kind}</span>
+      <span style={styles.coverTitle}>{subject}</span>
+      <span style={styles.coverCount}>
+        {source.chapterCount} {source.chapterCount === 1 ? 'chapter' : 'chapters'}
+      </span>
+    </>
   );
 }
 
 const styles: Record<string, React.CSSProperties> = {
   section: { marginTop: 34 },
-  eyebrow: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: 9,
-    padding: '6px 13px',
-    borderRadius: 999,
-    border: '1px solid rgba(255,255,255,0.16)',
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 13,
-    marginBottom: 16,
-  },
   h2: {
     fontSize: 'clamp(24px, 3.4vw, 36px)',
     lineHeight: 1.12,

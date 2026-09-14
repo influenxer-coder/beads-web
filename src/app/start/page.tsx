@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabase';
 import { track } from '@/lib/analytics';
+import { ownerStamp } from '@/lib/identity';
 import UploadStep from '@/components/onboarding/UploadStep';
 import ParsingStep from '@/components/onboarding/ParsingStep';
 import LessonCard, { type Lesson } from '@/components/onboarding/LessonCard';
@@ -96,9 +97,10 @@ export default function StartPage() {
         .from(process.env.NEXT_PUBLIC_SUPABASE_BUCKET!)
         .getPublicUrl(objectName).data.publicUrl;
 
+      const owner = await ownerStamp();
       const ins = await supabase
         .from('documents')
-        .insert({ title: file.name, url, type: 'PDF' })
+        .insert({ title: file.name, url, type: 'PDF', ...owner })
         .select('id, title')
         .single();
       if (ins.error) throw ins.error;

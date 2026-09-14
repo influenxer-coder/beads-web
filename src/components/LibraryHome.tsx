@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { usePlayer } from '@/lib/player';
 import { fmtTime } from '@/components/onboarding/ui';
+import { anonId } from '@/lib/identity';
 
 /**
  * Signed-in home: the person's lessons.
@@ -31,7 +32,7 @@ type Row = {
 const ROW_H = 92;
 const OVERSCAN = 6;
 
-export default function LibraryHome({ email }: { email?: string | null }) {
+export default function LibraryHome({ email, userId }: { email?: string | null; userId?: string | null }) {
   const player = usePlayer();
   const [rows, setRows] = React.useState<Row[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -42,11 +43,19 @@ export default function LibraryHome({ email }: { email?: string | null }) {
     let alive = true;
     (async () => {
       try {
-        const { data } = await supabase
+        // Only this person's sources: their account when signed in, otherwise
+        // whatever this browser uploaded.
+        let q = supabase
           .from('beads')
-          .select('id, title, audio_url, order_index, created_at, document_id, documents(title)')
+          .select('id, title, audio_url, order_index, created_at, document_id, documents!inner(title, user_id, anon_id)')
           .order('created_at', { ascending: false })
           .limit(500);
+
+        q = userId
+          ? q.eq('documents.user_id', userId)
+          : q.eq('documents.anon_id', anonId());
+
+        const { data } = await q;
 
         const mapped: Row[] = (data ?? []).map((b: any) => ({
           id: b.id,

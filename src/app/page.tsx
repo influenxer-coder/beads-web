@@ -6,6 +6,7 @@ import HeroFan from '@/components/HeroFan';
 import LibraryHome from '@/components/LibraryHome';
 import { supabase } from '@/lib/supabase';
 import { identify } from '@/lib/analytics';
+import { claimAnonymousDocuments } from '@/lib/identity';
 import SocialProof from '@/components/SocialProof';
 
 const MONO = "'SF Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
@@ -252,7 +253,7 @@ const VOICE_STEPS = [
 
 export default function Home() {
   // Signed in people get their library; everyone else gets the pitch.
-  const [session, setSession] = React.useState<{ email?: string | null } | null>(null);
+  const [session, setSession] = React.useState<{ email?: string | null; id?: string } | null>(null);
   const [checked, setChecked] = React.useState(false);
   // ?preview=library renders the signed-in home without a session, so the UI
   // can be reviewed while email sign-in is rate limited. It fakes no auth: the
@@ -268,13 +269,20 @@ export default function Home() {
     supabase.auth.getSession().then(({ data }: any) => {
       if (!alive) return;
       const u = data?.session?.user;
-      if (u) identify(u.id, { email: u.email });
-      setSession(u ? { email: u.email } : null);
+      if (u) {
+        identify(u.id, { email: u.email });
+        // Hand over anything this browser made before signing in.
+        claimAnonymousDocuments(u.id);
+      }
+      setSession(u ? { email: u.email, id: u.id } : null);
       setChecked(true);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e: any, s: any) => {
-      if (s?.user) identify(s.user.id, { email: s.user.email });
-      setSession(s?.user ? { email: s.user.email } : null);
+      if (s?.user) {
+        identify(s.user.id, { email: s.user.email });
+        claimAnonymousDocuments(s.user.id);
+      }
+      setSession(s?.user ? { email: s.user.email, id: s.user.id } : null);
       setChecked(true);
     });
     return () => {
@@ -286,8 +294,8 @@ export default function Home() {
   // Render the landing markup by default so it still server-renders for
   // search engines and first-time visitors; swap to the library only once we
   // know there is a session.
-  if (preview) return <LibraryHome email={session?.email ?? 'preview@beads'} />;
-  if (checked && session) return <LibraryHome email={session.email} />;
+  if (preview) return <LibraryHome email={session?.email ?? 'preview@beads'} userId={session?.id} />;
+  if (checked && session) return <LibraryHome email={session.email} userId={session.id} />;
 
   return (
     <main style={styles.page}>

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { theme } from '@/theme';
 import { ThemeProvider } from '@mui/material/styles';
 import { Home, LibraryBooks, AddCircle, AutoAwesome } from '@mui/icons-material';
+import Wordmark from '@/components/Wordmark';
 import { PlayerProvider } from '@/lib/player';
 import { AnalyticsProvider } from '@/lib/analytics';
 import { Analytics } from '@vercel/analytics/react';
@@ -98,7 +99,7 @@ function Navigation() {
             '&:hover': { opacity: 0.75 },
           }}
         >
-          Beads
+          <Wordmark />
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button 
@@ -169,6 +170,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <head>
+        <title>Beads</title>
+        <link rel="icon" href="/beads-b-sitar.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/beads-b-sitar.svg" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />

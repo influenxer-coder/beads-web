@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { supabase } from '@/lib/supabase';
 import { track } from '@/lib/analytics';
+import Wordmark from '@/components/Wordmark';
 
 /**
  * Social-first sign in.
@@ -106,7 +107,7 @@ export default function LoginCard({
   if (sent) {
     return (
       <div style={styles.card}>
-        <div style={styles.logo}>Beads</div>
+        <div style={styles.logo}><Wordmark /></div>
         <h2 style={styles.h2}>Check your email</h2>
         <p style={styles.sub}>
           We sent a sign-in link to <strong style={{ color: '#fff' }}>{email}</strong>. Open it on
@@ -124,7 +125,7 @@ export default function LoginCard({
 
   return (
     <div style={styles.card}>
-      <div style={styles.logo}>Beads</div>
+      <div style={styles.logo}><Wordmark /></div>
       <h2 style={styles.h2}>{heading}</h2>
       <p style={styles.sub}>{sub ?? VALUE_LINE}</p>
 

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import HeroFan from '@/components/HeroFan';
+import Wordmark from '@/components/Wordmark';
 import LibraryHome from '@/components/LibraryHome';
 import { supabase } from '@/lib/supabase';
 import { identify } from '@/lib/analytics';
@@ -314,7 +315,7 @@ export default function Home() {
     <main style={styles.page}>
       <div style={styles.wrap}>
         <nav style={styles.navRow}>
-          <span style={styles.wordmark}>Beads</span>
+          <Wordmark style={styles.wordmark} />
           <div>
             <Link href="/feed" style={styles.navLink}>Feed</Link>
             <Link href="/library" style={styles.navLink}>Library</Link>
@@ -460,7 +461,7 @@ export default function Home() {
 
       <div style={styles.wrap}>
         <footer style={styles.footer}>
-          <span>Beads</span>
+          <Wordmark />
           <span>Influenxers</span>
         </footer>
       </div>

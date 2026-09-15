@@ -7,6 +7,7 @@ import { usePlayer } from '@/lib/player';
 import { fmtTime } from '@/components/onboarding/ui';
 import { anonId } from '@/lib/identity';
 import SourceGrid, { type Source, subjectOf } from '@/components/SourceGrid';
+import Wordmark from '@/components/Wordmark';
 import { track } from '@/lib/analytics';
 
 /**
@@ -333,7 +334,7 @@ function TopBar({
     <header style={styles.topbar}>
       <div style={styles.topbarInner}>
         <Link href="/" style={styles.logo}>
-          Beads
+          <Wordmark />
         </Link>
 
         <div style={styles.searchWrap}>

@@ -485,6 +485,10 @@ function TopBar({
         </div>
 
         <div style={styles.topbarRight}>
+          <Link href="/audios" style={styles.chipLink}>
+            All audios
+          </Link>
+
           <Link href="/start" style={styles.newBtn}>
             <Plus />
             <span style={styles.newBtnLabel}>New lesson</span>

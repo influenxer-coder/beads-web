@@ -317,9 +317,7 @@ export default function Home() {
         <nav style={styles.navRow}>
           <Wordmark style={styles.wordmark} />
           <div>
-            <Link href="/feed" style={styles.navLink}>Feed</Link>
-            <Link href="/library" style={styles.navLink}>Library</Link>
-            <Link href="/inspiration" style={styles.navLink}>Inspiration</Link>
+            <Link href="/audios" style={styles.navLink}>All audios</Link>
             <Link href="/login" style={styles.navSignIn}>Sign in</Link>
           </div>
         </nav>

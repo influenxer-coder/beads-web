@@ -130,6 +130,12 @@ export default function StartPage() {
       enter('audio', 'Recording the narration');
       await runStage(documentId, 'audio');
 
+      // Episode art for each lesson. Runs in the background: the lesson is
+      // listenable without it, and it is only needed to publish.
+      fetch(`/api/artifacts/${documentId}/lesson-covers`, { method: 'POST' }).catch(
+        () => undefined,
+      );
+
       // Read back whatever the pipeline produced.
       const { data: beads } = await supabase
         .from('beads')

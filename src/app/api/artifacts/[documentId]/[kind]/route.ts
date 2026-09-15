@@ -2,7 +2,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
 
-const KINDS = ['audio_overview', 'mind_map', 'flashcards', 'quiz'];
+const KINDS = ['audio_overview', 'mind_map', 'flashcards', 'quiz', 'lesson-covers'];
 
 /** Generate one artifact, replacing any earlier one of the same kind. */
 export async function POST(
@@ -14,10 +14,16 @@ export async function POST(
     return Response.json({ success: false, error: `Unknown artifact ${params.kind}` }, { status: 400 });
   }
   try {
-    const r = await fetch(
-      `${API.replace(/\/$/, '')}/documents/${params.documentId}/artifacts/${params.kind}`,
-      { method: 'POST', cache: 'no-store' },
-    );
+    // Lesson covers are not an artifact row; they are images per lesson.
+    const path =
+      params.kind === 'lesson-covers'
+        ? `/documents/${params.documentId}/lesson-covers`
+        : `/documents/${params.documentId}/artifacts/${params.kind}`;
+
+    const r = await fetch(`${API.replace(/\/$/, '')}${path}`, {
+      method: 'POST',
+      cache: 'no-store',
+    });
     return Response.json(await r.json(), { status: r.ok ? 200 : r.status });
   } catch (e: any) {
     return Response.json({ success: false, error: e?.message ?? 'upstream unreachable' }, { status: 502 });

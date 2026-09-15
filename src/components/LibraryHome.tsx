@@ -8,6 +8,14 @@ import { fmtTime } from '@/components/onboarding/ui';
 import { anonId } from '@/lib/identity';
 import SourceGrid, { type Source, subjectOf } from '@/components/SourceGrid';
 import Wordmark from '@/components/Wordmark';
+
+/** Per-lesson episode art, at a path derived from the bead id. */
+function lessonArt(beadId: string) {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return base
+    ? `${base}/storage/v1/object/public/beads-assets/covers-lesson/${beadId}.png`
+    : null;
+}
 import { track } from '@/lib/analytics';
 
 /**
@@ -278,10 +286,13 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
           type="button"
           disabled={!row.audioUrl}
           onClick={() => (isCurrent ? player.toggle() : startRow(row))}
-          style={{ ...styles.rowPlay, opacity: row.audioUrl ? 1 : 0.35 }}
+          style={{ ...styles.rowArt, opacity: row.audioUrl ? 1 : 0.4 }}
           aria-label={isCurrent && player.playing ? `Pause ${row.title}` : `Play ${row.title}`}
         >
-          {isCurrent && player.playing ? <Pause small /> : <Play small />}
+          <LessonArt beadId={row.id} />
+          <span style={styles.rowArtPlay}>
+            {isCurrent && player.playing ? <Pause small /> : <Play small />}
+          </span>
         </button>
 
         <div style={{ minWidth: 0, flex: 1 }}>
@@ -346,6 +357,22 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
         <DownloadIcon />
         {state === 'working' ? 'Saving…' : state === 'failed' ? 'Failed' : 'Download'}
       </button>
+    );
+  }
+
+  function LessonArt({ beadId }: { beadId: string }) {
+    const [failed, setFailed] = React.useState(false);
+    const url = lessonArt(beadId);
+    if (!url || failed) return null;
+    return (
+      <img
+        src={url}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        onError={() => setFailed(true)}
+        style={styles.rowArtImg}
+      />
     );
   }
 
@@ -662,6 +689,28 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 14,
     border: '1px solid rgba(255,255,255,0.09)',
     background: 'rgba(255,255,255,0.03)',
+  },
+  rowArt: {
+    position: 'relative',
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    overflow: 'hidden',
+    border: '1px solid rgba(255,255,255,0.14)',
+    background: 'rgba(255,255,255,0.06)',
+    padding: 0,
+    cursor: 'pointer',
+    flexShrink: 0,
+  },
+  rowArtImg: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' },
+  rowArtPlay: {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'rgba(0,0,0,0.42)',
+    color: '#fff',
   },
   rowPlay: {
     width: 44,

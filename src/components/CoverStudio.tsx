@@ -235,7 +235,7 @@ export default function CoverStudio({
         {/* Controls */}
         <div className="space-y-5">
           {!documentUrl && (
-            <label className="flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-full border border-white/25 px-5 text-[15px] font-semibold transition hover:border-white/50">
+            <label className="flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-full border border-white/25 bg-transparent px-5 text-[15px] font-semibold text-white transition hover:border-white/55 hover:bg-white/5">
               <Upload size={16} />
               Choose a file
               <input
@@ -285,7 +285,7 @@ export default function CoverStudio({
                   className={`min-h-[38px] flex-1 rounded-full border px-3 text-[13px] transition ${
                     fill === key
                       ? 'border-white bg-white font-semibold text-black'
-                      : 'border-white/18 text-white/75 hover:border-white/40'
+                      : 'border-white/20 bg-transparent text-white/80 hover:border-white/45 hover:text-white'
                   }`}
                 >
                   {label}
@@ -330,7 +330,7 @@ export default function CoverStudio({
                 type="button"
                 onClick={saveToLibrary}
                 disabled={!ready || saving === 'working'}
-                className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full border border-white/25 text-[14.5px] font-semibold transition hover:border-white/50 disabled:opacity-40"
+                className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full border border-white/25 bg-transparent text-[14.5px] font-semibold text-white transition hover:border-white/55 hover:bg-white/5 disabled:opacity-40"
               >
                 {saving === 'working' ? (
                   <Loader2 size={15} className="animate-spin" />

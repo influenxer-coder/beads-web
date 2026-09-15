@@ -137,7 +137,7 @@ export default function VoicePicker({
             type="button"
             onClick={() => setQ('')}
             aria-label="Clear search"
-            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-white/45 hover:text-white"
+            className="absolute right-3 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-transparent text-white/45 hover:text-white"
           >
             <X size={15} />
           </button>
@@ -155,7 +155,7 @@ export default function VoicePicker({
             className={`min-h-[36px] rounded-full border px-4 text-[13.5px] transition ${
               filter === f.key
                 ? 'border-white bg-white text-black font-semibold'
-                : 'border-white/18 text-white/75 hover:border-white/40'
+                : 'border-white/20 bg-transparent text-white/80 hover:border-white/45 hover:text-white'
             }`}
           >
             {f.label}
@@ -218,7 +218,7 @@ export default function VoicePicker({
                     {v.tags.slice(0, 3).map((t) => (
                       <span
                         key={t}
-                        className="rounded-full border border-white/14 px-2 py-0.5 text-[11px] text-white/55"
+                        className="rounded-full border border-white/20 bg-white/[0.06] px-2 py-0.5 text-[11.5px] text-white/80"
                       >
                         {t}
                       </span>
@@ -235,14 +235,14 @@ export default function VoicePicker({
                   disabled={!v.preview_url}
                   aria-label={playing === v.id ? `Stop ${v.name}` : `Play a sample of ${v.name}`}
                   title={v.preview_url ? 'Hear a sample' : 'No sample available'}
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition hover:border-white/50 disabled:opacity-30"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition hover:border-white/60 hover:bg-white/20 disabled:opacity-25"
                 >
                   {playing === v.id ? <Pause size={15} /> : <Play size={15} />}
                 </button>
               </div>
 
               {/* Policy */}
-              <div className="mt-3.5 flex items-center gap-2 border-t border-white/8 pt-3">
+              <div className="mt-3.5 flex items-center gap-2 border-t border-white/12 pt-3">
                 {v.policy_safe ? (
                   <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/35 bg-emerald-400/10 px-2.5 py-1 text-[11.5px] text-emerald-300">
                     <ShieldCheck size={12} />
@@ -257,7 +257,7 @@ export default function VoicePicker({
                     Not for publishing
                   </span>
                 )}
-                <span className="ml-auto text-[11px] uppercase tracking-wider text-white/30">
+                <span className="ml-auto text-[11px] uppercase tracking-wider text-white/45">
                   {v.provider === 'elevenlabs' ? 'ElevenLabs' : 'Beads'}
                 </span>
               </div>

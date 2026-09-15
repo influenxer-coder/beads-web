@@ -9,6 +9,42 @@ import { anonId } from '@/lib/identity';
 import SourceGrid, { type Source, subjectOf } from '@/components/SourceGrid';
 import Wordmark from '@/components/Wordmark';
 
+/**
+ * Episode title and description, ready to paste into Spotify.
+ *
+ * Spotify truncates consumer-facing fields at about 20 characters, so a short
+ * title is offered alongside the full one rather than letting the good one be
+ * cut off on device.
+ */
+function episodeNotes(row: {
+  title: string;
+  description: string | null;
+  script: string | null;
+  sourceTitle: string;
+  citedTo: string | null;
+}) {
+  const shortTitle = row.title.length > 20 ? `${row.title.slice(0, 19).trimEnd()}…` : row.title;
+  const body =
+    row.description?.trim() ||
+    row.script?.trim().slice(0, 600) ||
+    'A one minute lesson from your reading.';
+
+  return [
+    'TITLE',
+    row.title,
+    '',
+    'SHORT TITLE (Spotify truncates around 20 characters)',
+    shortTitle,
+    '',
+    'DESCRIPTION',
+    body,
+    '',
+    `Source: ${row.sourceTitle}${row.citedTo ? ` · ${row.citedTo}` : ''}`,
+    '',
+    'Made with Beads',
+  ].join('\n');
+}
+
 /** Per-lesson episode art, at a path derived from the bead id. */
 function lessonArt(beadId: string) {
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -33,6 +69,8 @@ type Row = {
   id: string;
   documentId: string | null;
   title: string;
+  description: string | null;
+  script: string | null;
   sourceTitle: string;
   audioUrl: string | null;
   citedTo: string | null;
@@ -58,7 +96,7 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
         // whatever this browser uploaded.
         let q = supabase
           .from('beads')
-          .select('id, title, audio_url, order_index, created_at, document_id, documents!inner(title, user_id, anon_id)')
+          .select('id, title, description, script_text, audio_url, order_index, created_at, document_id, documents!inner(title, user_id, anon_id)')
           .order('created_at', { ascending: false })
           .limit(500);
 
@@ -72,6 +110,8 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
           id: b.id,
           documentId: b.document_id ?? null,
           title: b.title,
+          description: b.description ?? null,
+          script: b.script_text ?? null,
           sourceTitle: b.documents?.title ?? 'Your upload',
           audioUrl: b.audio_url,
           citedTo: b.order_index != null ? `section ${b.order_index}` : null,
@@ -320,21 +360,45 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
     const [state, setState] = React.useState<'idle' | 'working' | 'failed'>('idle');
     if (!row.audioUrl) return null;
 
+    /**
+     * Everything needed to publish one episode, in one zip: the audio, the
+     * square cover, and the title and description as text to paste in.
+     * Downloading the audio alone still left two things to hunt for.
+     */
     const save = async (e: React.MouseEvent) => {
       e.stopPropagation();
       if (state === 'working') return;
       setState('working');
-      track('audio_downloaded');
+      track('episode_downloaded');
       try {
-        // Cross-origin: the download attribute alone is ignored, so pull the
-        // bytes first and hand the browser a local blob.
-        const res = await fetch(row.audioUrl!);
-        if (!res.ok) throw new Error(String(res.status));
-        const blob = await res.blob();
+        const slug =
+          row.title.replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').slice(0, 60).toLowerCase() ||
+          'lesson';
+
+        const JSZip = (await import('jszip')).default;
+        const zip = new JSZip();
+        const folder = zip.folder(slug)!;
+
+        // Audio. Cross-origin, so it has to be fetched rather than linked.
+        const audio = await fetch(row.audioUrl!);
+        if (!audio.ok) throw new Error('audio');
+        const ext = (row.audioUrl!.split('?')[0].match(/\.(\w{3,4})$/)?.[1] ?? 'wav').toLowerCase();
+        folder.file(`audio.${ext}`, await audio.blob());
+
+        // Square cover, if one has been made.
+        const art = lessonArt(row.id);
+        if (art) {
+          const cover = await fetch(art);
+          if (cover.ok) folder.file('cover-1400.png', await cover.blob());
+        }
+
+        folder.file('episode.txt', episodeNotes(row));
+
+        const blob = await zip.generateAsync({ type: 'blob' });
         const href = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = href;
-        a.download = `${row.title.replace(/[^\w\s-]/g, '').trim().slice(0, 70) || 'lesson'}.wav`;
+        a.download = `${slug}.zip`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -351,11 +415,11 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
         type="button"
         onClick={save}
         style={styles.chipBtn}
-        aria-label={`Download the audio for ${row.title}`}
-        title="Download the audio"
+        aria-label={`Download the episode bundle for ${row.title}`}
+        title="Audio, cover and episode text, ready for Spotify"
       >
         <DownloadIcon />
-        {state === 'working' ? 'Saving…' : state === 'failed' ? 'Failed' : 'Download'}
+        {state === 'working' ? 'Packing…' : state === 'failed' ? 'Failed' : 'Download'}
       </button>
     );
   }

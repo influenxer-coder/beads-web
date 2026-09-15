@@ -49,11 +49,18 @@ function coverTone(id: string) {
   return h;
 }
 
-/** Covers live at a path derived from the document id. */
-export function coverUrlFor(documentId: string) {
+/**
+ * Covers live at paths derived from the document id.
+ *
+ * The square one is composed server side for Spotify, which needs 1:1
+ * artwork, and is what the shelf shows so the card and the published episode
+ * are the same image.
+ */
+export function coverUrlFor(documentId: string, shape: 'square' | 'page' = 'square') {
   const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!base) return null;
-  return `${base}/storage/v1/object/public/beads-assets/covers/${documentId}.png`;
+  const dir = shape === 'square' ? 'covers-square' : 'covers';
+  return `${base}/storage/v1/object/public/beads-assets/${dir}/${documentId}.png`;
 }
 
 export default function SourceGrid({
@@ -151,10 +158,14 @@ function CoverArt({
 }) {
   // Page one of the document, when it has been rendered. Anything without a
   // cover yet keeps the generated one rather than showing a broken image.
-  const [failed, setFailed] = React.useState(false);
-  const url = source.coverUrl ?? coverUrlFor(source.id);
+  // square -> page render -> generated art
+  const [step, setStep] = React.useState(0);
+  const url =
+    step === 0 ? (source.coverUrl ?? coverUrlFor(source.id, 'square')) :
+    step === 1 ? coverUrlFor(source.id, 'page') :
+    null;
 
-  if (url && !failed) {
+  if (url) {
     return (
       <>
         <img
@@ -162,7 +173,8 @@ function CoverArt({
           alt=""
           loading="lazy"
           decoding="async"
-          onError={() => setFailed(true)}
+          onError={() => setStep((n) => n + 1)}
+          key={url}
           style={styles.coverImg}
         />
         <span style={{ ...styles.kind, position: 'relative', zIndex: 1 }}>{kind}</span>
@@ -194,7 +206,7 @@ const styles: Record<string, React.CSSProperties> = {
   cell: { minWidth: 0 },
   cover: {
     position: 'relative',
-    aspectRatio: '3 / 4.1',
+    aspectRatio: '1 / 1',
     borderRadius: 10,
     padding: '16px 14px',
     display: 'flex',

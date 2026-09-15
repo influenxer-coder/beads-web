@@ -298,9 +298,54 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
                 Studio
               </Link>
             )}
+            <DownloadChip row={row} />
           </div>
         </div>
       </article>
+    );
+  }
+
+  function DownloadChip({ row }: { row: Row }) {
+    const [state, setState] = React.useState<'idle' | 'working' | 'failed'>('idle');
+    if (!row.audioUrl) return null;
+
+    const save = async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (state === 'working') return;
+      setState('working');
+      track('audio_downloaded');
+      try {
+        // Cross-origin: the download attribute alone is ignored, so pull the
+        // bytes first and hand the browser a local blob.
+        const res = await fetch(row.audioUrl!);
+        if (!res.ok) throw new Error(String(res.status));
+        const blob = await res.blob();
+        const href = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = href;
+        a.download = `${row.title.replace(/[^\w\s-]/g, '').trim().slice(0, 70) || 'lesson'}.wav`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(href);
+        setState('idle');
+      } catch {
+        setState('failed');
+        setTimeout(() => setState('idle'), 2500);
+      }
+    };
+
+    return (
+      <button
+        type="button"
+        onClick={save}
+        style={styles.chipBtn}
+        aria-label={`Download the audio for ${row.title}`}
+        title="Download the audio"
+      >
+        <DownloadIcon />
+        {state === 'working' ? 'Saving…' : state === 'failed' ? 'Failed' : 'Download'}
+      </button>
     );
   }
 
@@ -460,6 +505,11 @@ const Plus = () => (
 const Upload = () => (
   <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
     <path d="M12 16V4m0 0L7.5 8.5M12 4l4.5 4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+const DownloadIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 const SearchIcon = () => (
@@ -648,6 +698,19 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.16)',
     color: 'rgba(255,255,255,0.6)',
+  },
+  chipBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+    minHeight: 28,
+    fontSize: 11.5,
+    padding: '3px 9px',
+    borderRadius: 999,
+    border: '1px solid rgba(255,255,255,0.22)',
+    background: 'transparent',
+    color: 'rgba(255,255,255,0.8)',
+    cursor: 'pointer',
   },
   chipLink: {
     fontSize: 11.5,

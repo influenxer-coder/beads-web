@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Burmese Ruby & Yellow Sapphire Theme - Apple-inspired */
 * {
   box-sizing: border-box;

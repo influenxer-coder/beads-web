@@ -26,6 +26,15 @@ type Ctx = {
   play: (t: Track) => void;
   toggle: () => void;
   stop: () => void;
+  /** Up Next, in order. */
+  queue: Track[];
+  enqueue: (t: Track) => void;
+  dequeue: (id: string) => void;
+  reorder: (from: number, to: number) => void;
+  next: () => void;
+  prev: () => void;
+  /** Lessons played to the end, so the feed can mark them completed. */
+  completed: Set<string>;
 };
 
 const PlayerContext = React.createContext<Ctx | null>(null);
@@ -38,6 +47,32 @@ export function usePlayer() {
 
 export function PlayerProvider({ children }: { children: React.ReactNode }) {
   const [track, setTrack] = React.useState<Track | null>(null);
+  const [queue, setQueue] = React.useState<Track[]>([]);
+  const [history, setHistory] = React.useState<Track[]>([]);
+  const [completed, setCompleted] = React.useState<Set<string>>(new Set());
+
+  // Completion survives reloads so the Completed filter still means something.
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem('beads.completed');
+      if (raw) setCompleted(new Set(JSON.parse(raw)));
+    } catch {
+      /* private mode */
+    }
+  }, []);
+
+  const markCompleted = React.useCallback((id: string) => {
+    setCompleted((prev) => {
+      if (prev.has(id)) return prev;
+      const nextSet = new Set(prev).add(id);
+      try {
+        localStorage.setItem('beads.completed', JSON.stringify([...nextSet]));
+      } catch {
+        /* ignore */
+      }
+      return nextSet;
+    });
+  }, []);
   const trackRef = React.useRef<Track | null>(null);
   React.useEffect(() => {
     trackRef.current = track;
@@ -67,6 +102,60 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
       a.pause();
       setPlaying(false);
     }
+  }, []);
+
+  const enqueue = React.useCallback((t: Track) => {
+    setQueue((q) => (q.some((x) => x.id === t.id) ? q : [...q, t]));
+  }, []);
+
+  const dequeue = React.useCallback((id: string) => {
+    setQueue((q) => q.filter((t) => t.id !== id));
+  }, []);
+
+  const reorder = React.useCallback((from: number, to: number) => {
+    setQueue((q) => {
+      if (from === to || from < 0 || to < 0 || from >= q.length || to >= q.length) return q;
+      const copy = [...q];
+      const [moved] = copy.splice(from, 1);
+      copy.splice(to, 0, moved);
+      return copy;
+    });
+  }, []);
+
+  const next = React.useCallback(() => {
+    setQueue((q) => {
+      if (!q.length) return q;
+      const [head, ...rest] = q;
+      setTrack((cur) => {
+        if (cur) setHistory((h) => [cur, ...h].slice(0, 20));
+        return head;
+      });
+      requestAnimationFrame(() => {
+        audioRef.current?.load();
+        audioRef.current?.play().catch(() => undefined);
+      });
+      return rest;
+    });
+  }, []);
+
+  const prev = React.useCallback(() => {
+    setHistory((h) => {
+      if (!h.length) {
+        // Nothing behind us: restart the current lesson, as players do.
+        if (audioRef.current) audioRef.current.currentTime = 0;
+        return h;
+      }
+      const [last, ...rest] = h;
+      setTrack((cur) => {
+        if (cur) setQueue((q) => [cur, ...q]);
+        return last;
+      });
+      requestAnimationFrame(() => {
+        audioRef.current?.load();
+        audioRef.current?.play().catch(() => undefined);
+      });
+      return rest;
+    });
   }, []);
 
   const stop = React.useCallback(() => {
@@ -104,7 +193,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     if (!a) return;
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
-    const onEnd = () => setPlaying(false);
+    const onEnd = () => {
+      setPlaying(false);
+      if (trackRef.current) markCompleted(trackRef.current.id);
+      next();
+    };
     a.addEventListener('play', onPlay);
     a.addEventListener('pause', onPause);
     a.addEventListener('ended', onEnd);
@@ -116,8 +209,8 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
   }, [track]);
 
   const value = React.useMemo(
-    () => ({ track, playing, play, toggle, stop }),
-    [track, playing, play, toggle, stop],
+    () => ({ track, playing, play, toggle, stop, queue, enqueue, dequeue, reorder, next, prev, completed }),
+    [track, playing, play, toggle, stop, queue, enqueue, dequeue, reorder, next, prev, completed],
   );
 
   return (
@@ -133,6 +226,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
             voiceName={track.voiceName}
             playing={playing}
             onTogglePlay={toggle}
+            queue={queue}
+            onNext={next}
+            onPrev={prev}
+            onReorder={reorder}
+            onRemove={dequeue}
           />
         </>
       )}

@@ -11,6 +11,8 @@ const SPEEDS = [1, 1.25, 1.5, 2, 2.5, 3];
  * Owns the single <audio> element for the whole flow and registers Media
  * Session handlers so the lock screen, AirPods and headset buttons control it.
  */
+export type QueueItem = { id: string; title: string; sourceTitle: string };
+
 export default function MiniPlayer({
   audioRef,
   title,
@@ -18,6 +20,11 @@ export default function MiniPlayer({
   voiceName,
   playing,
   onTogglePlay,
+  queue = [],
+  onNext,
+  onPrev,
+  onReorder,
+  onRemove,
 }: {
   audioRef: React.RefObject<HTMLAudioElement>;
   title: string;
@@ -25,7 +32,14 @@ export default function MiniPlayer({
   voiceName?: string | null;
   playing: boolean;
   onTogglePlay: () => void;
+  queue?: QueueItem[];
+  onNext?: () => void;
+  onPrev?: () => void;
+  onReorder?: (from: number, to: number) => void;
+  onRemove?: (id: string) => void;
 }) {
+  const [queueOpen, setQueueOpen] = React.useState(false);
+  const dragFrom = React.useRef<number | null>(null);
   const [time, setTime] = React.useState(0);
   const [dur, setDur] = React.useState(0);
   const [speed, setSpeed] = React.useState(1);
@@ -67,12 +81,14 @@ export default function MiniPlayer({
     ms.setActionHandler('pause', onTogglePlay);
     ms.setActionHandler('seekbackward', () => seekBy(-15));
     ms.setActionHandler('seekforward', () => seekBy(15));
+    ms.setActionHandler('previoustrack', () => onPrev?.());
+    ms.setActionHandler('nexttrack', () => onNext?.());
     ms.setActionHandler('seekto', (d: any) => {
       const a = audioRef.current;
       if (a && d.seekTime != null) a.currentTime = d.seekTime;
     });
     return () => {
-      ['play', 'pause', 'seekbackward', 'seekforward', 'seekto'].forEach((k) => {
+      ['play', 'pause', 'seekbackward', 'seekforward', 'seekto', 'previoustrack', 'nexttrack'].forEach((k) => {
         try {
           ms.setActionHandler(k as MediaSessionAction, null);
         } catch {
@@ -80,7 +96,7 @@ export default function MiniPlayer({
         }
       });
     };
-  }, [title, sourceTitle, voiceName, onTogglePlay, seekBy, audioRef]);
+  }, [title, sourceTitle, voiceName, onTogglePlay, seekBy, audioRef, onNext, onPrev]);
 
   React.useEffect(() => {
     if (typeof navigator !== 'undefined' && 'mediaSession' in navigator) {
@@ -114,6 +130,42 @@ export default function MiniPlayer({
 
   return (
     <div style={styles.bar} role="region" aria-label="Player">
+      {queueOpen && queue.length > 0 && (
+        <ol style={styles.queueList} aria-label="Up next">
+          {queue.map((item, i) => (
+            <li
+              key={item.id}
+              draggable
+              onDragStart={() => {
+                dragFrom.current = i;
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (dragFrom.current != null) onReorder?.(dragFrom.current, i);
+                dragFrom.current = null;
+              }}
+              style={styles.queueItem}
+            >
+              <span style={styles.grip} aria-hidden="true">
+                ⠿
+              </span>
+              <span style={{ flex: 1, minWidth: 0 }}>
+                <span style={styles.queueTitle}>{item.title}</span>
+                <span style={styles.queueSub}>{item.sourceTitle}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => onRemove?.(item.id)}
+                style={styles.queueRemove}
+                aria-label={`Remove ${item.title} from up next`}
+              >
+                ✕
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
       <input
         type="range"
         min={0}
@@ -139,6 +191,11 @@ export default function MiniPlayer({
         </div>
 
         <div style={styles.center}>
+          {onPrev && (
+            <button type="button" onClick={onPrev} style={styles.iconBtn} aria-label="Previous lesson">
+              ⏮
+            </button>
+          )}
           <button type="button" onClick={() => seekBy(-15)} style={styles.iconBtn} aria-label="Back 15 seconds">
             <Skip back />
           </button>
@@ -157,9 +214,25 @@ export default function MiniPlayer({
           <button type="button" onClick={() => seekBy(15)} style={styles.iconBtn} aria-label="Forward 15 seconds">
             <Skip />
           </button>
+          {onNext && (
+            <button type="button" onClick={onNext} style={styles.iconBtn} aria-label="Next lesson">
+              ⏭
+            </button>
+          )}
         </div>
 
         <div style={styles.right}>
+          {queue.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setQueueOpen((o) => !o)}
+              style={{ ...styles.speed, marginRight: 8 }}
+              aria-expanded={queueOpen}
+              aria-label={`Up next, ${queue.length} lesson${queue.length === 1 ? '' : 's'}`}
+            >
+              Up Next · {queue.length}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setSpeed(SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length])}
@@ -247,6 +320,45 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     cursor: 'pointer',
+  },
+  queueList: {
+    listStyle: 'none',
+    margin: 0,
+    padding: '8px 16px',
+    maxHeight: 220,
+    overflowY: 'auto',
+    borderBottom: '1px solid rgba(255,255,255,0.1)',
+    maxWidth: 980,
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  queueItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 11,
+    padding: '9px 6px',
+    borderRadius: 9,
+    cursor: 'grab',
+  },
+  grip: { color: 'rgba(255,255,255,0.35)', fontSize: 15, flexShrink: 0 },
+  queueTitle: {
+    display: 'block',
+    fontSize: 14,
+    fontWeight: 550,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  queueSub: { display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 1 },
+  queueRemove: {
+    width: 32,
+    height: 32,
+    borderRadius: 999,
+    border: 0,
+    background: 'transparent',
+    color: 'rgba(255,255,255,0.45)',
+    cursor: 'pointer',
+    flexShrink: 0,
   },
   speed: {
     minWidth: 48,

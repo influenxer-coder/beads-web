@@ -8,6 +8,7 @@ import { fmtTime } from '@/components/onboarding/ui';
 import { anonId } from '@/lib/identity';
 import SourceGrid, { type Source, subjectOf } from '@/components/SourceGrid';
 import Wordmark from '@/components/Wordmark';
+import MicroLessonFeed from '@/components/MicroLessonFeed';
 
 /**
  * Episode title and description, ready to paste into Spotify.
@@ -189,6 +190,10 @@ export default function LibraryHome({ email, userId }: { email?: string | null; 
 
       <div style={styles.inner}>
         <NewLessonCard />
+
+        <div style={{ marginTop: 34 }}>
+          <MicroLessonFeed userId={userId} />
+        </div>
 
         {!loading && continueRow && (
           <section style={styles.section}>

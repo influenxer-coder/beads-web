@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { identify } from '@/lib/analytics';
 import { claimAnonymousDocuments } from '@/lib/identity';
 import SocialProof from '@/components/SocialProof';
+import MicroBriefPreview from '@/components/MicroBriefPreview';
 
 const MONO = "'SF Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
 
@@ -435,6 +436,12 @@ export default function Home() {
             </ul>
           </div>
         </section>
+      </div>
+
+      <hr style={styles.rule} />
+
+      <div style={styles.wrap}>
+        <MicroBriefPreview />
       </div>
 
       <hr style={styles.rule} />

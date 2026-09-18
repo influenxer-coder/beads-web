@@ -200,10 +200,10 @@ export default function MicroBriefPreview() {
 
   return (
     <section style={s.section}>
-      <h2 style={s.h2}>Sample a 1-Minute Micro-Brief</h2>
+      <p style={s.label}>Popular lessons</p>
+      <h2 style={s.h2}>What people love listening to.</h2>
       <p style={s.sub}>
-        Listen to how Beads condenses a dense document into a short audio brief
-        for your commute. No account needed.
+        Real papers, turned into one minute lessons. Press play. No account.
       </p>
 
       <div style={s.tabs} role="tablist" aria-label="Sample briefs">
@@ -335,6 +335,10 @@ function sm_title(s: Sample) {
 
 const s: Record<string, React.CSSProperties> = {
   section: { padding: '64px 0' },
+  label: {
+    fontSize: 12.5, letterSpacing: '0.14em', textTransform: 'uppercase',
+    color: '#8a8a8a', margin: '0 0 14px',
+  },
   h2: { fontSize: 34, lineHeight: 1.15, margin: '0 0 10px', fontWeight: 600 },
   sub: { fontSize: 17, lineHeight: 1.6, color: '#3c3c3c', margin: '0 0 26px', maxWidth: 620 },
 

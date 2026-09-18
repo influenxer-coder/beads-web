@@ -359,6 +359,12 @@ export default function Home() {
       <hr style={styles.rule} />
 
       <div style={styles.wrap}>
+        <MicroBriefPreview />
+      </div>
+
+      <hr style={styles.rule} />
+
+      <div style={styles.wrap}>
         <section style={styles.section}>
           <p style={styles.sectionLabel}>When to use it</p>
           <h2 style={{ ...styles.h2, marginBottom: 44 }}>
@@ -436,12 +442,6 @@ export default function Home() {
             </ul>
           </div>
         </section>
-      </div>
-
-      <hr style={styles.rule} />
-
-      <div style={styles.wrap}>
-        <MicroBriefPreview />
       </div>
 
       <hr style={styles.rule} />

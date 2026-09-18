@@ -216,8 +216,8 @@ export default function MicroBriefPreview() {
         ))}
       </div>
 
-      <div style={s.panel}>
-        <div style={s.left}>
+      <div className="mbp-panel" style={s.panel}>
+        <div className="mbp-left" style={s.left}>
           <h3 style={s.panelTitle}>Audio Preview: {sm_title(sample)}</h3>
 
           <div style={s.controls}>
@@ -254,7 +254,7 @@ export default function MicroBriefPreview() {
               )}
             </div>
 
-            <span style={s.wave} aria-hidden="true">
+            <span className="mbp-wave" style={s.wave} aria-hidden="true">
               {Array.from({ length: 14 }).map((_, i) => (
                 <span
                   key={i}
@@ -283,9 +283,9 @@ export default function MicroBriefPreview() {
           </div>
         </div>
 
-        <div style={s.right}>
+        <div className="mbp-right" style={s.right}>
           <h3 style={s.panelTitle}>Synchronized Transcript</h3>
-          <div style={s.transcript}>
+          <div className="mbp-transcript" style={s.transcript}>
             {sample.sentences.map((line, i) => {
               const state =
                 i === currentIdx ? 'on' : i < currentIdx ? 'done' : 'ahead';
@@ -311,11 +311,25 @@ export default function MicroBriefPreview() {
         )}
         <Link href="/start" style={s.ctaBtn}
               onClick={() => track('preview_cta_clicked', { lesson: sample.title })}>
-          Turn Your Documents into Audio — Get Started Free
+          Turn your documents into audio. Free.
         </Link>
       </div>
 
-      <style>{`@keyframes mbpWave{0%,100%{height:6px}50%{height:22px}}`}</style>
+      <style>{`
+        @keyframes mbpWave{0%,100%{height:6px}50%{height:22px}}
+        /* Below roughly a tablet the two columns each get about 165px on a
+           phone, which makes the transcript unreadable. Stack them instead and
+           move the divider to the seam. */
+        @media (max-width: 760px){
+          .mbp-panel{grid-template-columns:1fr !important}
+          .mbp-left{border-right:0 !important;border-bottom:1px solid #e6e2da}
+          .mbp-transcript{max-height:170px}
+        }
+        @media (max-width: 460px){
+          .mbp-wave{display:none}          /* the controls row wraps badly with it */
+          .mbp-left,.mbp-right{padding:18px 16px}
+        }
+      `}</style>
     </section>
   );
 }

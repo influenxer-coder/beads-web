@@ -74,12 +74,12 @@ export default function MicroBriefPreview() {
   const [active, setActive] = React.useState(0);
   const [playing, setPlaying] = React.useState(false);
   const [speed, setSpeed] = React.useState<number>(1);
-  const [speedOpen, setSpeedOpen] = React.useState(false);
   const [t, setT] = React.useState(0);
   const [dur, setDur] = React.useState(0);
   const [finished, setFinished] = React.useState(false);
 
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const liveRef = React.useRef<HTMLSpanElement | null>(null);
   const sample = samples[active];
 
   React.useEffect(() => {
@@ -139,7 +139,14 @@ export default function MicroBriefPreview() {
     };
     audioRef.current = a;
     return () => {
+      // Pausing emits one last timeupdate, which would land after the new
+      // sample has already reset the playhead and put the old position back
+      // on screen. Detach the handlers first, then stop.
+      a.onloadedmetadata = null;
+      a.ontimeupdate = null;
+      a.onended = null;
       a.pause();
+      a.src = '';
     };
     // speed is applied separately so changing it never reloads the audio
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,7 +188,6 @@ export default function MicroBriefPreview() {
 
   const setRate = (r: number) => {
     setSpeed(r);
-    setSpeedOpen(false);
     track('preview_speed_changed', { speed: r });
   };
 
@@ -196,11 +202,24 @@ export default function MicroBriefPreview() {
     return t > 0 ? idx : -1;
   }, [sample, progress, t]);
 
+  // Follow the highlight so the live sentence never scrolls out of the pane.
+  React.useEffect(() => {
+    liveRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [currentIdx]);
+
   if (!sample) return null;
 
+  const nextRate = () => {
+    const i = SPEEDS.indexOf(speed as typeof SPEEDS[number]);
+    setRate(SPEEDS[(i + 1) % SPEEDS.length]);
+  };
+
   return (
-    <section style={s.section}>
-      <h2 style={s.h2}>Popular papers people are reading</h2>
+    <section style={s.section} aria-labelledby="mbp-heading">
+      <h2 id="mbp-heading" style={s.h2}>Popular papers people are reading</h2>
+      <p style={s.sub}>
+        Instant interactive preview. Click play to sample a 1-minute brief.
+      </p>
 
       <div style={s.tabs} role="tablist" aria-label="Sample briefs">
         {samples.map((sm, i) => (
@@ -210,6 +229,7 @@ export default function MicroBriefPreview() {
             aria-selected={i === active}
             onClick={() => pick(i)}
             style={{ ...s.tab, ...(i === active ? s.tabOn : null) }}
+            title={sm.paper}
           >
             {sm.paper}
           </button>
@@ -217,56 +237,35 @@ export default function MicroBriefPreview() {
       </div>
 
       <div className="mbp-panel" style={s.panel}>
+        {/* ------------------------- player, on ink ------------------------ */}
         <div className="mbp-left" style={s.left}>
-          <h3 style={s.panelTitle}>Audio Preview: {sm_title(sample)}</h3>
+          <span style={s.badge}>
+            <span style={s.badgeDot} aria-hidden="true" />
+            1-MIN BRIEF
+          </span>
+
+          <h3 style={s.title}>{sample.title}</h3>
+          <p style={s.meta}>{sample.paper}</p>
 
           <div style={s.controls}>
             <button type="button" onClick={toggle} style={s.playBtn}
                     aria-label={playing ? 'Pause preview' : 'Play preview'}>
-              <span aria-hidden="true" style={{ fontSize: 13 }}>{playing ? '❚❚' : '▶'}</span>
+              <span aria-hidden="true" style={{ fontSize: 12 }}>{playing ? '❚❚' : '▶'}</span>
               {playing ? 'Pause' : 'Play Preview'}
             </button>
 
-            <button type="button" onClick={() => skip(-15)} style={s.round} aria-label="Back 15 seconds">
-              ↺
-            </button>
-            <button type="button" onClick={() => skip(15)} style={s.round} aria-label="Forward 15 seconds">
-              ↻
-            </button>
+            <button type="button" onClick={() => skip(-5)} style={s.round}
+                    aria-label="Back 5 seconds">↺ 5</button>
+            <button type="button" onClick={() => skip(5)} style={s.round}
+                    aria-label="Forward 5 seconds">5 ↻</button>
 
-            <div style={{ position: 'relative' }}>
-              <button type="button" onClick={() => setSpeedOpen((o) => !o)}
-                      style={s.speed} aria-haspopup="listbox" aria-expanded={speedOpen}>
-                {rateLabel(speed)} ⌄
-              </button>
-              {speedOpen && (
-                <ul style={s.speedMenu} role="listbox">
-                  {SPEEDS.map((r) => (
-                    <li key={r}>
-                      <button type="button" onClick={() => setRate(r)}
-                              style={{ ...s.speedItem, ...(r === speed ? s.speedItemOn : null) }}
-                              role="option" aria-selected={r === speed}>
-                        {r}x
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-
-            <span className="mbp-wave" style={s.wave} aria-hidden="true">
-              {Array.from({ length: 14 }).map((_, i) => (
-                <span
-                  key={i}
-                  style={{
-                    ...s.waveBar,
-                    height: playing ? undefined : 6,
-                    animation: playing ? `mbpWave 900ms ${i * 60}ms infinite ease-in-out` : 'none',
-                  }}
-                />
-              ))}
-            </span>
+            <button type="button" onClick={nextRate} style={s.speedBtn}
+                    aria-label={`Playback speed ${rateLabel(speed)}, tap to change`}>
+              {rateLabel(speed)}
+            </button>
           </div>
+
+          <Dashes progress={progress} playing={playing} />
 
           <input
             type="range" min={0} max={dur || 0} step={0.1} value={t}
@@ -275,22 +274,30 @@ export default function MicroBriefPreview() {
               if (a) { a.currentTime = Number(e.target.value); setT(a.currentTime); }
             }}
             aria-label="Seek"
-            style={s.range}
+            className="mbp-scrub"
+            style={{ ...s.range, backgroundSize: `${progress * 100}% 100%` }}
           />
           <div style={s.times}>
             <span>{clock(t)}</span>
-            <span>{clock(t)} / {clock(dur)}</span>
+            <span>{clock(dur)}</span>
           </div>
         </div>
 
+        {/* ------------------------ transcript, on paper ------------------- */}
         <div className="mbp-right" style={s.right}>
-          <h3 style={s.panelTitle}>Synchronized Transcript</h3>
+          <div style={s.rightHead}>
+            <h4 style={s.rightTitle}>Synchronized Transcript</h4>
+            <span style={s.sync}>
+              <span style={s.syncDot} aria-hidden="true" />
+              Beads Speech Sync
+            </span>
+          </div>
+
           <div className="mbp-transcript" style={s.transcript}>
             {sample.sentences.map((line, i) => {
-              const state =
-                i === currentIdx ? 'on' : i < currentIdx ? 'done' : 'ahead';
+              const state = i === currentIdx ? 'on' : i < currentIdx ? 'done' : 'ahead';
               return (
-                <span key={i} style={{
+                <span key={i} ref={state === 'on' ? liveRef : undefined} style={{
                   ...s.sentence,
                   ...(state === 'on' ? s.sentenceOn : null),
                   ...(state === 'ahead' ? s.sentenceAhead : null),
@@ -311,26 +318,51 @@ export default function MicroBriefPreview() {
         )}
         <Link href="/start" style={s.ctaBtn}
               onClick={() => track('preview_cta_clicked', { lesson: sample.title })}>
-          Turn your documents into audio. Free.
+          Turn Your Documents into Audio. Get Started Free
         </Link>
       </div>
 
       <style>{`
-        @keyframes mbpWave{0%,100%{height:6px}50%{height:22px}}
-        /* Below roughly a tablet the two columns each get about 165px on a
-           phone, which makes the transcript unreadable. Stack them instead and
-           move the divider to the seam. */
-        @media (max-width: 760px){
+        @keyframes mbpPulse{0%,100%{opacity:.45}50%{opacity:1}}
+        .mbp-scrub{-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;
+          background:rgba(255,255,255,.18);background-image:linear-gradient(#fff,#fff);
+          background-repeat:no-repeat;cursor:pointer;width:100%}
+        .mbp-scrub::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;
+          border-radius:50%;background:#fff;cursor:pointer}
+        .mbp-scrub::-moz-range-thumb{width:14px;height:14px;border:0;border-radius:50%;
+          background:#fff;cursor:pointer}
+        /* Below a tablet each column gets about 165px, which makes the
+           transcript unreadable. Stack them, player first. */
+        @media (max-width: 860px){
           .mbp-panel{grid-template-columns:1fr !important}
-          .mbp-left{border-right:0 !important;border-bottom:1px solid #e6e2da}
-          .mbp-transcript{max-height:170px}
+          .mbp-transcript{max-height:200px}
         }
         @media (max-width: 460px){
-          .mbp-wave{display:none}          /* the controls row wraps badly with it */
-          .mbp-left,.mbp-right{padding:18px 16px}
+          .mbp-left,.mbp-right{padding:22px 18px !important}
         }
       `}</style>
     </section>
+  );
+}
+
+/** The dashed seek track behind the scrubber, lit up to the playhead. */
+function Dashes({ progress, playing }: { progress: number; playing: boolean }) {
+  const n = 44;
+  return (
+    <div style={s.dashes} aria-hidden="true">
+      {Array.from({ length: n }, (_, i) => (
+        <span
+          key={i}
+          style={{
+            ...s.dash,
+            background: i / n <= progress ? '#fff' : 'rgba(255,255,255,0.22)',
+            animation: playing && i / n <= progress
+              ? `mbpPulse 1.4s ${(i % 6) * 110}ms infinite ease-in-out`
+              : 'none',
+          }}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -339,84 +371,107 @@ function rateLabel(r: number) {
   return Number.isInteger(r) ? `${r.toFixed(1)}x` : `${r}x`;
 }
 
-function sm_title(s: Sample) {
-  return s.title.length > 58 ? `${s.title.slice(0, 57)}…` : s.title;
-}
+const LINE = 'rgba(255,255,255,0.13)';
 
 const s: Record<string, React.CSSProperties> = {
   section: { padding: '64px 0' },
-  label: {
-    fontSize: 12.5, letterSpacing: '0.14em', textTransform: 'uppercase',
-    color: '#8a8a8a', margin: '0 0 14px',
+  h2: {
+    fontSize: 'clamp(28px, 3.6vw, 38px)', lineHeight: 1.12, margin: '0 0 10px',
+    fontWeight: 700, letterSpacing: '-0.025em', color: '#fff',
   },
-  h2: { fontSize: 34, lineHeight: 1.15, margin: '0 0 26px', fontWeight: 600 },
-  sub: { fontSize: 17, lineHeight: 1.6, color: '#3c3c3c', margin: '0 0 26px', maxWidth: 620 },
+  sub: { fontSize: 16.5, color: 'rgba(255,255,255,0.5)', margin: '0 0 26px' },
 
-  tabs: { display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 18 },
+  tabs: { display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 },
   tab: {
-    minHeight: 44, padding: '0 18px', borderRadius: 10, cursor: 'pointer',
-    background: '#fff', border: '1px solid #ddd7cd', color: '#2a2a2a',
-    fontSize: 14.5, maxWidth: 260, overflow: 'hidden', whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
+    minHeight: 48, padding: '0 22px', borderRadius: 999, cursor: 'pointer',
+    background: 'rgba(255,255,255,0.05)', border: `1px solid ${LINE}`,
+    color: 'rgba(255,255,255,0.82)', fontSize: 15, maxWidth: 270,
+    overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
   },
-  tabOn: { border: '1.5px solid #141414', background: '#f6f4ef', fontWeight: 600 },
+  tabOn: { background: '#fff', color: '#0a0a0a', fontWeight: 600, borderColor: '#fff' },
 
   panel: {
-    display: 'grid', gridTemplateColumns: 'minmax(0,1.1fr) minmax(0,1fr)',
-    border: '1px solid #e6e2da', borderRadius: 14, overflow: 'hidden', background: '#fff',
+    display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)',
+    borderRadius: 22, overflow: 'hidden', border: `1px solid ${LINE}`,
   },
-  left: { padding: 22, borderRight: '1px solid #e6e2da', minWidth: 0 },
-  right: { padding: 22, minWidth: 0, background: '#fcfbf8' },
-  panelTitle: { fontSize: 16.5, fontWeight: 600, margin: '0 0 16px', color: '#141414' },
+  left: { background: '#0b0b0b', padding: '30px 28px 34px', minWidth: 0 },
 
-  controls: { display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 18 },
+  badge: {
+    display: 'inline-flex', alignItems: 'center', gap: 8,
+    padding: '7px 14px', borderRadius: 999, background: 'rgba(52,211,153,0.12)',
+    color: '#34d399', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em',
+    marginBottom: 20,
+  },
+  badgeDot: { width: 7, height: 7, borderRadius: 999, background: '#34d399' },
+
+  title: {
+    fontSize: 'clamp(21px, 2.5vw, 27px)', lineHeight: 1.22, fontWeight: 700,
+    letterSpacing: '-0.02em', color: '#fff', margin: '0 0 12px',
+  },
+  meta: { fontSize: 15, color: 'rgba(255,255,255,0.42)', margin: '0 0 30px' },
+
+  controls: { display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
   playBtn: {
-    display: 'inline-flex', alignItems: 'center', gap: 10, minHeight: 46,
-    padding: '0 20px', borderRadius: 999, background: '#141414', color: '#fff',
-    border: 0, fontSize: 15, fontWeight: 600, cursor: 'pointer',
+    display: 'inline-flex', alignItems: 'center', gap: 10, minHeight: 52,
+    padding: '0 22px', borderRadius: 999, background: '#fff', color: '#0a0a0a',
+    border: 0, fontSize: 15.5, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
   },
   round: {
-    width: 40, height: 40, borderRadius: 999, background: '#fff',
-    border: '1px solid #ddd7cd', color: '#3a3a3a', fontSize: 16, cursor: 'pointer',
+    minWidth: 48, height: 48, borderRadius: 999, background: 'transparent',
+    border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.8)',
+    fontSize: 13, cursor: 'pointer', padding: '0 10px', whiteSpace: 'nowrap',
   },
-  speed: {
-    minHeight: 40, padding: '0 14px', borderRadius: 10, background: '#fff',
-    border: '1px solid #ddd7cd', fontSize: 14.5, cursor: 'pointer', color: '#2a2a2a',
+  speedBtn: {
+    minHeight: 44, padding: '0 16px', borderRadius: 999, background: 'transparent',
+    border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.8)',
+    fontSize: 14, cursor: 'pointer', marginLeft: 'auto', whiteSpace: 'nowrap',
   },
-  speedMenu: {
-    position: 'absolute', top: 46, left: 0, zIndex: 20, listStyle: 'none',
-    margin: 0, padding: 6, background: '#fff', border: '1px solid #ddd7cd',
-    borderRadius: 10, minWidth: 104, boxShadow: '0 12px 28px rgba(0,0,0,0.10)',
-  },
-  speedItem: {
-    width: '100%', textAlign: 'left', minHeight: 38, padding: '0 12px',
-    background: 'transparent', border: 0, borderRadius: 8, fontSize: 14.5,
-    cursor: 'pointer', color: '#2a2a2a',
-  },
-  speedItemOn: { background: '#f0ede6', fontWeight: 600 },
 
-  wave: { display: 'inline-flex', alignItems: 'center', gap: 3, height: 24, marginLeft: 2 },
-  waveBar: { width: 3, borderRadius: 2, background: '#141414', display: 'block' },
+  dashes: {
+    display: 'flex', alignItems: 'center', gap: 4, height: 18,
+    margin: '34px 0 10px',
+  },
+  dash: { flex: 1, height: 3, borderRadius: 2, display: 'block' },
 
-  range: { display: 'block', width: '100%', accentColor: '#141414' },
+  range: { display: 'block', width: '100%', margin: 0 },
   times: {
     display: 'flex', justifyContent: 'space-between',
-    fontSize: 13, color: '#7b756c', marginTop: 8,
+    fontSize: 13.5, color: 'rgba(255,255,255,0.45)', marginTop: 10,
   },
 
-  transcript: { fontSize: 16, lineHeight: 1.72, color: '#2a2a2a', maxHeight: 220, overflowY: 'auto' },
+  right: { background: '#fff', padding: '30px 32px', minWidth: 0 },
+  rightHead: {
+    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+    gap: 14, flexWrap: 'wrap',
+    paddingBottom: 16, borderBottom: '1px solid #e8e8e8', marginBottom: 20,
+  },
+  rightTitle: { fontSize: 17, fontWeight: 700, color: '#141414', margin: 0 },
+  sync: {
+    display: 'inline-flex', alignItems: 'center', gap: 7,
+    fontSize: 13.5, fontWeight: 600, color: '#ef4444',
+  },
+  syncDot: { width: 7, height: 7, borderRadius: 999, background: '#ef4444' },
+
+  transcript: {
+    fontSize: 16.5, lineHeight: 1.78, color: '#8b8b8b',
+    maxHeight: 280, overflowY: 'auto',
+  },
   sentence: { transition: 'background 140ms ease, color 140ms ease' },
-  sentenceOn: { background: '#e7e2d5', boxShadow: '0 0 0 3px #e7e2d5', borderRadius: 3, color: '#141414' },
-  sentenceAhead: { color: '#a9a399' },
+  sentenceOn: {
+    background: '#fde4b0', boxShadow: '0 0 0 3px #fde4b0', borderRadius: 3,
+    color: '#141414', fontWeight: 600,
+  },
+  sentenceAhead: { color: '#a9a9a9' },
 
   ctaBar: {
-    marginTop: 18, padding: '18px 20px', borderRadius: 14, background: '#f4f2ec',
+    marginTop: 18, padding: '20px', borderRadius: 18,
+    background: 'rgba(255,255,255,0.045)', border: `1px solid ${LINE}`,
     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
   },
-  ctaNote: { margin: 0, fontSize: 15, color: '#3c3c3c', textAlign: 'center' },
+  ctaNote: { margin: 0, fontSize: 15, color: 'rgba(255,255,255,0.6)', textAlign: 'center' },
   ctaBtn: {
-    display: 'inline-flex', alignItems: 'center', minHeight: 48, padding: '0 26px',
-    borderRadius: 999, background: '#141414', color: '#fff', fontSize: 15.5,
+    display: 'inline-flex', alignItems: 'center', minHeight: 52, padding: '0 28px',
+    borderRadius: 999, background: '#fff', color: '#0a0a0a', fontSize: 16,
     fontWeight: 600, textDecoration: 'none', textAlign: 'center',
   },
 };

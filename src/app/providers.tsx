@@ -20,7 +20,8 @@ import { Analytics } from '@vercel/analytics/react';
 
 /** Pages that render full-bleed, with no app chrome around them. */
 function isFullBleed(pathname: string | null) {
-  return pathname === '/' || (pathname ?? '').startsWith('/learn');
+  const p = pathname ?? '';
+  return pathname === '/' || p.startsWith('/learn') || p.startsWith('/papers');
 }
 
 function Shell({ children }: { children: React.ReactNode }) {

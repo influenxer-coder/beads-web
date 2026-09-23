@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import SiteHeader from '@/components/SiteHeader';
 import TrackedLink from '@/components/TrackedLink';
 import { notFound } from 'next/navigation';
 import PaperPlayer from '@/components/PaperPlayer';
@@ -69,6 +70,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           }),
         }}
       />
+
+      <SiteHeader />
 
       <div style={s.wrap}>
         <nav style={s.crumbs}>
@@ -142,7 +145,7 @@ const s: Record<string, React.CSSProperties> = {
     fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     WebkitFontSmoothing: 'antialiased',
   },
-  wrap: { maxWidth: 940, margin: '0 auto', padding: '48px 24px 96px' },
+  wrap: { maxWidth: 940, margin: '0 auto', padding: '36px 24px 96px' },
 
   crumbs: {
     display: 'flex', gap: 10, alignItems: 'center', fontSize: 13.5,

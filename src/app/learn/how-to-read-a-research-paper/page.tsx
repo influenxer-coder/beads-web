@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import SiteHeader from '@/components/SiteHeader';
 
 /**
  * How to Read a Research Paper Efficiently (Audio-First Method).
@@ -89,6 +90,8 @@ export default function Page() {
           }),
         }}
       />
+
+      <SiteHeader />
 
       <article style={s.wrap}>
         <p style={s.eyebrow}>Guide</p>
@@ -219,7 +222,7 @@ const s: Record<string, React.CSSProperties> = {
     fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     WebkitFontSmoothing: 'antialiased',
   },
-  wrap: { maxWidth: 720, margin: '0 auto', padding: '64px 24px 96px' },
+  wrap: { maxWidth: 720, margin: '0 auto', padding: '44px 24px 96px' },
 
   eyebrow: {
     fontFamily: "'SF Mono', ui-monospace, Menlo, monospace",

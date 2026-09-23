@@ -13,16 +13,27 @@ import Wordmark from '@/components/Wordmark';
 export default function SiteHeader() {
   return (
     <header style={s.bar}>
-      <div style={s.inner}>
+      <div className="sh-inner" style={s.inner}>
         <Link href="/" style={s.brand} aria-label="Beads home">
           <Wordmark style={s.wordmark} />
         </Link>
-        <nav style={s.nav}>
+        <nav className="sh-nav" style={s.nav}>
           <Link href="/papers" style={s.link}>Papers</Link>
-          <Link href="/audios" style={s.link}>All audios</Link>
-          <Link href="/start" style={s.cta}>Upload a PDF</Link>
+          <Link href="/audios" className="sh-wide" style={s.link}>All audios</Link>
+          <Link href="/start" style={s.cta}>Upload</Link>
         </nav>
       </div>
+
+      {/* The three links plus the wordmark need about 400px. Below that the
+          bar pushed the page wider than the screen and everything clipped on
+          the right. Drop the least useful link and tighten the rest. */}
+      <style>{`
+        @media (max-width: 400px) {
+          .sh-wide { display: none; }
+          .sh-nav { gap: 2px; }
+          .sh-inner { padding: 0 14px; }
+        }
+      `}</style>
     </header>
   );
 }

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import posthog from 'posthog-js';
+import { initTikTokPixel, tiktokPage, captureClickId, clickId } from '@/lib/tiktok';
 import { usePathname } from 'next/navigation';
 
 /**
@@ -76,11 +77,21 @@ export function AnalyticsProvider({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     initAnalytics();
+    // The click id is only on the URL of the landing hit, so read it before
+    // any navigation throws it away.
+    captureClickId();
+    initTikTokPixel();
   }, []);
 
   React.useEffect(() => {
     if (!pathname) return;
-    track('$pageview', { $current_url: window.location.href, path: pathname });
+    const ttclid = clickId();
+    track('$pageview', {
+      $current_url: window.location.href,
+      path: pathname,
+      ...(ttclid ? { ttclid } : null),
+    });
+    tiktokPage();
   }, [pathname]);
 
   return <>{children}</>;

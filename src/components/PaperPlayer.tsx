@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { track } from '@/lib/analytics';
+import { tiktokTrack } from '@/lib/tiktok';
 import type { Lesson } from '@/lib/papers';
 
 /**
@@ -103,6 +104,7 @@ export default function PaperPlayer({
     a.onended = () => {
       setPlaying(false);
       track('paper_lesson_completed', { paper: paperSlug, lesson: lesson.title });
+      tiktokTrack('CompletePayment', { content_id: paperSlug, content_type: 'product' });
     };
     audioRef.current = a;
     return () => {
@@ -144,6 +146,10 @@ export default function PaperPlayer({
       a.play().catch(() => setPlaying(false));
       setPlaying(true);
       track('paper_play', { paper: paperSlug, lesson: lesson.title, speed });
+      // TikTok's own vocabulary: the ad platform can only optimise towards
+      // events it recognises.
+      tiktokTrack('ViewContent', { content_id: paperSlug, content_type: 'product',
+                                   content_name: lesson.title });
     } else {
       a.pause();
       setPlaying(false);
@@ -271,7 +277,10 @@ export default function PaperPlayer({
 
       <div style={s.ctaBar}>
         <Link href="/start" style={s.ctaBtn}
-              onClick={() => track('paper_cta_clicked', { paper: paperSlug })}>
+              onClick={() => {
+                track('paper_cta_clicked', { paper: paperSlug });
+                tiktokTrack('ClickButton', { content_id: paperSlug });
+              }}>
           Do this with your own PDF. Free.
         </Link>
       </div>

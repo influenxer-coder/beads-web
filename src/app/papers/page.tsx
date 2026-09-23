@@ -70,6 +70,7 @@ export default async function Page() {
               <TrackedLink
                 href={`/papers/${p.slug}`}
                 event="papers_shelf_paper_clicked"
+                tiktokEvent="ViewContent"
                 props={{ paper: p.slug, lessons: p.lessons }}
                 style={s.row}
               >
@@ -104,7 +105,8 @@ export default async function Page() {
 
         <div style={s.ctaBar}>
           <p style={s.ctaNote}>Got a paper of your own you have not got through?</p>
-          <TrackedLink href="/start" event="papers_shelf_cta_clicked" style={s.ctaBtn}>
+          <TrackedLink href="/start" event="papers_shelf_cta_clicked"
+                       tiktokEvent="ClickButton" style={s.ctaBtn}>
             Upload a PDF. Free.
           </TrackedLink>
         </div>

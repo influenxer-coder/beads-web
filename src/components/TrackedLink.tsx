@@ -3,6 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { track } from '@/lib/analytics';
+import { tiktokTrack } from '@/lib/tiktok';
 
 /**
  * A link that reports being clicked.
@@ -15,6 +16,7 @@ import { track } from '@/lib/analytics';
 export default function TrackedLink({
   href,
   event,
+  tiktokEvent,
   props,
   external = false,
   children,
@@ -22,12 +24,17 @@ export default function TrackedLink({
 }: {
   href: string;
   event: string;
+  /** the matching event in TikTok's vocabulary, where one fits */
+  tiktokEvent?: string;
   props?: Record<string, unknown>;
   external?: boolean;
   children: React.ReactNode;
   style?: React.CSSProperties;
 }) {
-  const onClick = () => track(event, props);
+  const onClick = () => {
+    track(event, props);
+    if (tiktokEvent) tiktokTrack(tiktokEvent, props);
+  };
 
   if (external) {
     return (

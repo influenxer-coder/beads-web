@@ -64,7 +64,7 @@ export default async function Page() {
           Press play, keep the paper open, no account needed.
         </p>
 
-        <ul style={s.list}>
+        <ul className="pl-list" style={s.list}>
           {papers.map((p) => (
             <li key={p.slug}>
               <TrackedLink
@@ -109,6 +109,23 @@ export default async function Page() {
           </TrackedLink>
         </div>
       </div>
+
+      <style>{`
+        /* On a phone the blurb wraps to six lines, which made the row taller
+           than the art and left the cover floating in the middle of a gap --
+           and one paper filled the screen. Pin the art to the top and clamp
+           the blurb so three rows fit above the fold. */
+        @media (max-width: 560px) {
+          .pl-list a { align-items: flex-start !important; gap: 12px !important; }
+          .pl-list a > span:first-child { width: 56px !important; height: 56px !important; }
+          .pl-list a > span:nth-child(2) > span:last-child {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+        }
+      `}</style>
     </main>
   );
 }

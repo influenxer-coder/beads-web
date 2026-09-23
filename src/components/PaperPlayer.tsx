@@ -152,6 +152,7 @@ export default function PaperPlayer({
     if (!a) return;
     a.currentTime = Math.max(0, Math.min(a.duration || 0, a.currentTime + by));
     setT(a.currentTime);
+    track('paper_skip', { paper: paperSlug, by });
   };
 
   const pick = (i: number) => {

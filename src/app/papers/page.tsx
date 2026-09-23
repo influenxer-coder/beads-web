@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import TrackedLink from '@/components/TrackedLink';
 import { PAPERS, paperSummaries } from '@/lib/papers';
 
 /**
@@ -62,7 +63,12 @@ export default async function Page() {
         <ul style={s.list}>
           {papers.map((p) => (
             <li key={p.slug}>
-              <Link href={`/papers/${p.slug}`} style={s.row}>
+              <TrackedLink
+                href={`/papers/${p.slug}`}
+                event="papers_shelf_paper_clicked"
+                props={{ paper: p.slug, lessons: p.lessons }}
+                style={s.row}
+              >
                 <span style={s.art}>
                   {p.coverId ? (
                     <img
@@ -87,14 +93,16 @@ export default async function Page() {
                 </span>
 
                 <span style={s.rowGo} aria-hidden="true">&rarr;</span>
-              </Link>
+              </TrackedLink>
             </li>
           ))}
         </ul>
 
         <div style={s.ctaBar}>
           <p style={s.ctaNote}>Got a paper of your own you have not got through?</p>
-          <Link href="/start" style={s.ctaBtn}>Upload a PDF. Free.</Link>
+          <TrackedLink href="/start" event="papers_shelf_cta_clicked" style={s.ctaBtn}>
+            Upload a PDF. Free.
+          </TrackedLink>
         </div>
       </div>
     </main>

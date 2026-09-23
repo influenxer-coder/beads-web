@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import TrackedLink from '@/components/TrackedLink';
 import { notFound } from 'next/navigation';
 import PaperPlayer from '@/components/PaperPlayer';
 import { PAPERS, paperBySlug, lessonsFor } from '@/lib/papers';
@@ -109,8 +110,10 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             We do not host the paper. It is free at the source, and it is worth
             having open while you listen.
           </p>
-          <a href={paper.source} style={s.sourceLink} rel="noopener"
-             target="_blank">{paper.title} &rarr;</a>
+          <TrackedLink href={paper.source} external style={s.sourceLink}
+                       event="paper_source_clicked" props={{ paper: paper.slug }}>
+            {paper.title} &rarr;
+          </TrackedLink>
         </section>
 
         <section style={s.more}>
@@ -118,7 +121,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <ul style={s.moreList}>
             {PAPERS.filter((p) => p.slug !== paper.slug).map((p) => (
               <li key={p.slug} style={s.moreItem}>
-                <Link href={`/papers/${p.slug}`} style={s.moreLink}>{p.title}</Link>
+                <TrackedLink href={`/papers/${p.slug}`} style={s.moreLink}
+                             event="paper_cross_link_clicked"
+                             props={{ from: paper.slug, to: p.slug }}>
+                  {p.title}
+                </TrackedLink>
                 <span style={s.moreMeta}>{p.authors}, {p.year}</span>
               </li>
             ))}

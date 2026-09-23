@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { track } from '@/lib/analytics';
 import type { Lesson } from '@/lib/papers';
 
@@ -34,8 +35,11 @@ function Cover({ id, size }: { id: string; size: number }) {
     return <span style={{ ...s.coverFallback, width: size, height: size }} aria-hidden="true" />;
   }
   return (
-    <img src={src} alt="" loading="lazy" onError={() => setGone(true)}
-         style={{ ...s.coverImg, width: size, height: size }} />
+    <Image
+      src={src} alt="" width={size * 2} height={size * 2}
+      onError={() => setGone(true)}
+      style={{ ...s.coverImg, width: size, height: size }}
+    />
   );
 }
 

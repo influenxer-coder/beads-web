@@ -1,6 +1,7 @@
 import * as React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import SiteHeader from '@/components/SiteHeader';
 import TrackedLink from '@/components/TrackedLink';
 import { PAPERS, paperSummaries } from '@/lib/papers';
@@ -74,9 +75,9 @@ export default async function Page() {
               >
                 <span style={s.art}>
                   {p.coverId ? (
-                    <img
+                    <Image
                       src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/beads-assets/covers-lesson/${p.coverId}.png`}
-                      alt="" loading="lazy" style={s.artImg}
+                      alt="" width={144} height={144} style={s.artImg}
                     />
                   ) : (
                     <span style={s.artFallback} aria-hidden="true" />

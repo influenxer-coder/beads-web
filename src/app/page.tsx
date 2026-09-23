@@ -181,6 +181,12 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '13px 0',
     borderTop: '1px solid rgba(255,255,255,0.1)',
   },
+  seeAll: { margin: '4px 0 0', textAlign: 'center' },
+  seeAllLink: {
+    display: 'inline-flex', alignItems: 'center', minHeight: 44,
+    color: '#fff', fontSize: 16, fontWeight: 600, textDecoration: 'none',
+    borderBottom: '1px solid rgba(255,255,255,0.3)',
+  },
   footer: {
     padding: '44px 0 60px',
     display: 'flex',
@@ -318,6 +324,7 @@ export default function Home() {
         <nav style={styles.navRow}>
           <Wordmark style={styles.wordmark} />
           <div>
+            <Link href="/papers" style={styles.navLink}>Papers</Link>
             <Link href="/audios" style={styles.navLink}>All audios</Link>
             <Link href="/login" style={styles.navSignIn}>Sign in</Link>
           </div>
@@ -360,6 +367,13 @@ export default function Home() {
 
       <div style={styles.wrap}>
         <MicroBriefPreview />
+        {/* The preview shows three. Without this the section is a dead end
+            and the shelf is unreachable from the page most people land on. */}
+        <p style={styles.seeAll}>
+          <Link href="/papers" style={styles.seeAllLink}>
+            See all papers &rarr;
+          </Link>
+        </p>
       </div>
 
       <hr style={styles.rule} />

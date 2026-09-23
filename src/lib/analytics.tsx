@@ -32,6 +32,11 @@ export function initAnalytics() {
     capture_pageview: false,
     capture_pageleave: true,
     session_recording: { maskAllInputs: true },
+    // How long the page took to become usable. Without this there was no way
+    // to tell a visitor who looked and left from one who left because nothing
+    // had rendered yet -- which is the difference between a copy problem and
+    // a speed problem.
+    capture_performance: { web_vitals: true },
     persistence: 'localStorage+cookie',
   });
   ready = true;

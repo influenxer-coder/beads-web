@@ -15,10 +15,10 @@ import PaperPlayer from '@/components/PaperPlayer';
  * page, which is where the audio is.
  */
 
-const TITLE = 'Papers worth an hour, in one minute each';
+const TITLE = 'Must-read papers, as one-minute audio';
 const DESCRIPTION =
-  'Landmark research papers turned into short audio lessons you can listen to '
-  + 'with the paper open. Free, no account needed.';
+  'The papers everyone cites and nobody finishes, as one-minute audio lessons. '
+  + 'Press play, no account needed.';
 const URL = 'https://app.influenxers.com/papers';
 
 export const metadata: Metadata = {
@@ -63,7 +63,7 @@ export default async function Page() {
       <SiteHeader />
 
       <div style={s.wrap}>
-        <h1 style={s.h1}>Become dangerously well read</h1>
+        <h1 style={s.h1}>Must-read papers. Just listen.</h1>
 
         {lead && leadLessons.length > 0 && (
           <section style={s.lead}>

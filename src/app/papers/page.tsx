@@ -4,7 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import SiteHeader from '@/components/SiteHeader';
 import TrackedLink from '@/components/TrackedLink';
-import { PAPERS, paperSummaries } from '@/lib/papers';
+import { PAPERS, paperSummaries, paperBySlug, lessonsFor } from '@/lib/papers';
+import PaperPlayer from '@/components/PaperPlayer';
 
 /**
  * The shelf.
@@ -31,8 +32,13 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600;
 
+/** The paper the shelf opens on, and starts playing. */
+const FEATURED = 'computing-machinery-and-intelligence';
+
 export default async function Page() {
   const papers = await paperSummaries();
+  const lead = paperBySlug(FEATURED);
+  const leadLessons = lead ? await lessonsFor(lead) : [];
 
   return (
     <main style={s.page}>
@@ -63,6 +69,15 @@ export default async function Page() {
           The papers everyone cites and nobody finishes, as short audio lessons.
           Press play, keep the paper open, no account needed.
         </p>
+
+        {lead && leadLessons.length > 0 && (
+          <section style={s.lead}>
+            <p style={s.leadLabel}>Playing now &middot; {lead.title}</p>
+            <PaperPlayer lessons={leadLessons} paperSlug={lead.slug} autoplay />
+          </section>
+        )}
+
+        <h2 style={s.more}>More papers</h2>
 
         <ul className="pl-list" style={s.list}>
           {papers.map((p) => (
@@ -152,6 +167,17 @@ const s: Record<string, React.CSSProperties> = {
   lede: {
     fontSize: 18.5, lineHeight: 1.62, color: 'rgba(255,255,255,0.68)',
     maxWidth: 560, margin: '0 0 44px',
+  },
+
+  lead: { margin: '0 0 44px' },
+  leadLabel: {
+    fontFamily: "'SF Mono', ui-monospace, Menlo, monospace", fontSize: 12,
+    letterSpacing: '0.1em', textTransform: 'uppercase',
+    color: 'rgba(255,255,255,0.45)', margin: '0 0 12px',
+  },
+  more: {
+    fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em',
+    margin: '0 0 16px', color: 'rgba(255,255,255,0.9)',
   },
 
   list: { listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 12 },

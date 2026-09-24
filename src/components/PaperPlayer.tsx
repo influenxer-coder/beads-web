@@ -70,9 +70,12 @@ function marks(sentences: string[]): number[] {
 export default function PaperPlayer({
   lessons,
   paperSlug,
+  autoplay = false,
 }: {
   lessons: Lesson[];
   paperSlug: string;
+  /** start on load; on phones the browser refuses, so the first tap is armed */
+  autoplay?: boolean;
 }) {
   const [active, setActive] = React.useState(0);
   const [playing, setPlaying] = React.useState(false);
@@ -82,6 +85,8 @@ export default function PaperPlayer({
 
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const liveRef = React.useRef<HTMLSpanElement | null>(null);
+  const [armed, setArmed] = React.useState(false);
+  const autoTried = React.useRef(false);
   const lesson = lessons[active];
 
   const sentences = React.useMemo(
@@ -107,6 +112,28 @@ export default function PaperPlayer({
       tiktokTrack('CompletePayment', { content_id: paperSlug, content_type: 'product' });
     };
     audioRef.current = a;
+
+    // Ads land here, so the page should be talking rather than waiting. A
+    // phone will refuse audio without a gesture, which is a browser rule, so
+    // the refusal arms the first tap anywhere instead of sitting silent.
+    if (autoplay && !autoTried.current) {
+      autoTried.current = true;
+      a.play().then(() => {
+        setPlaying(true);
+        track('paper_autoplay', { paper: paperSlug, blocked: false });
+      }).catch(() => {
+        setArmed(true);
+        track('paper_autoplay', { paper: paperSlug, blocked: true });
+        const start = () => {
+          a.play().then(() => { setPlaying(true); setArmed(false); }).catch(() => {});
+          window.removeEventListener('pointerdown', start);
+          window.removeEventListener('keydown', start);
+        };
+        window.addEventListener('pointerdown', start, { once: true });
+        window.addEventListener('keydown', start, { once: true });
+      });
+    }
+
     return () => {
       // detach before pausing: the final timeupdate would otherwise land after
       // the next lesson has reset the playhead and put the old position back
@@ -219,6 +246,8 @@ export default function PaperPlayer({
             className="pp-scrub"
             style={{ ...s.range, backgroundSize: `${progress * 100}% 100%` }}
           />
+          {armed && <p style={s.armed}>Tap anywhere to start listening</p>}
+
           <div style={s.times}>
             <span>{clock(t)}</span>
             <span>{clock(dur)}</span>
@@ -344,6 +373,7 @@ const s: Record<string, React.CSSProperties> = {
   },
 
   range: { display: 'block', width: '100%', margin: '26px 0 0' },
+  armed: { margin: '10px 0 0', fontSize: 13.5, color: '#ffd9a0', fontWeight: 600 },
   times: {
     display: 'flex', justifyContent: 'space-between', fontSize: 13.5,
     color: 'rgba(255,255,255,0.45)', marginTop: 10,

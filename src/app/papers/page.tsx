@@ -63,16 +63,10 @@ export default async function Page() {
       <SiteHeader />
 
       <div style={s.wrap}>
-        <p style={s.eyebrow}>Free to listen</p>
         <h1 style={s.h1}>Become dangerously well read</h1>
-        <p style={s.lede}>
-          The papers everyone cites and nobody finishes, as short audio lessons.
-          Press play, keep the paper open, no account needed.
-        </p>
 
         {lead && leadLessons.length > 0 && (
           <section style={s.lead}>
-            <p style={s.leadLabel}>Playing now &middot; {lead.title}</p>
             <PaperPlayer lessons={leadLessons} paperSlug={lead.slug} autoplay />
           </section>
         )}
@@ -155,26 +149,12 @@ const s: Record<string, React.CSSProperties> = {
   },
   wrap: { maxWidth: 860, margin: '0 auto', padding: '44px 24px 96px' },
 
-  eyebrow: {
-    fontFamily: "'SF Mono', ui-monospace, Menlo, monospace", fontSize: 12,
-    letterSpacing: '0.14em', textTransform: 'uppercase',
-    color: 'rgba(255,255,255,0.45)', margin: '0 0 18px',
-  },
   h1: {
-    fontSize: 'clamp(34px, 5.2vw, 52px)', lineHeight: 1.1, fontWeight: 700,
-    letterSpacing: '-0.035em', margin: '0 0 20px',
-  },
-  lede: {
-    fontSize: 18.5, lineHeight: 1.62, color: 'rgba(255,255,255,0.68)',
-    maxWidth: 560, margin: '0 0 44px',
+    fontSize: 'clamp(30px, 4.6vw, 46px)', lineHeight: 1.08, fontWeight: 700,
+    letterSpacing: '-0.035em', margin: '0 0 24px', maxWidth: '16ch',
   },
 
-  lead: { margin: '0 0 44px' },
-  leadLabel: {
-    fontFamily: "'SF Mono', ui-monospace, Menlo, monospace", fontSize: 12,
-    letterSpacing: '0.1em', textTransform: 'uppercase',
-    color: 'rgba(255,255,255,0.45)', margin: '0 0 12px',
-  },
+  lead: { margin: '0 0 40px' },
   more: {
     fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em',
     margin: '0 0 16px', color: 'rgba(255,255,255,0.9)',

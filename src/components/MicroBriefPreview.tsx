@@ -84,6 +84,7 @@ export default function MicroBriefPreview() {
 
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const liveRef = React.useRef<HTMLSpanElement | null>(null);
+  const paneRef = React.useRef<HTMLDivElement | null>(null);
   const sample = samples[active];
 
   React.useEffect(() => {
@@ -230,7 +231,13 @@ export default function MicroBriefPreview() {
 
   // Follow the highlight so the live sentence never scrolls out of the pane.
   React.useEffect(() => {
-    liveRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    // Scroll the transcript pane itself. scrollIntoView walks up to the
+    // nearest scrollable ancestor, which is the page, so on load it dragged
+    // the whole layout down and pushed the player off screen.
+    const pane = paneRef.current, live = liveRef.current;
+    if (!pane || !live) return;
+    const top = live.offsetTop - pane.offsetTop - pane.clientHeight / 2;
+    pane.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }, [currentIdx]);
 
   if (!sample) return null;
@@ -323,7 +330,7 @@ export default function MicroBriefPreview() {
             </span>
           </div>
 
-          <div className="mbp-transcript" style={s.transcript}>
+          <div ref={paneRef} className="mbp-transcript" style={s.transcript}>
             {sample.sentences.map((line, i) => {
               const state = i === currentIdx ? 'on' : i < currentIdx ? 'done' : 'ahead';
               return (

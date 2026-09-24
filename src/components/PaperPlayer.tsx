@@ -85,6 +85,7 @@ export default function PaperPlayer({
 
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const liveRef = React.useRef<HTMLSpanElement | null>(null);
+  const paneRef = React.useRef<HTMLDivElement | null>(null);
   const [armed, setArmed] = React.useState(false);
   const autoTried = React.useRef(false);
   const lesson = lessons[active];
@@ -161,7 +162,13 @@ export default function PaperPlayer({
   }, [at, progress, t]);
 
   React.useEffect(() => {
-    liveRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    // Scroll the transcript pane itself. scrollIntoView walks up to the
+    // nearest scrollable ancestor, which is the page, so on load it dragged
+    // the whole layout down and pushed the player off screen.
+    const pane = paneRef.current, live = liveRef.current;
+    if (!pane || !live) return;
+    const top = live.offsetTop - pane.offsetTop - pane.clientHeight / 2;
+    pane.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
   }, [currentIdx]);
 
   if (!lesson) return null;
@@ -287,7 +294,7 @@ export default function PaperPlayer({
               follows the audio
             </span>
           </div>
-          <div className="pp-transcript" style={s.transcript}>
+          <div ref={paneRef} className="pp-transcript" style={s.transcript}>
             {sentences.map((line, i) => {
               const state = i === currentIdx ? 'on' : i < currentIdx ? 'done' : 'ahead';
               return (

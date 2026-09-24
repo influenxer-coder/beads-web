@@ -77,6 +77,10 @@ export default function MicroBriefPreview() {
   const [t, setT] = React.useState(0);
   const [dur, setDur] = React.useState(0);
   const [finished, setFinished] = React.useState(false);
+  // Browsers refuse to start audio without a gesture. When that happens we
+  // arm the first tap instead, and say so rather than looking broken.
+  const [armed, setArmed] = React.useState(false);
+  const autoTried = React.useRef(false);
 
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const liveRef = React.useRef<HTMLSpanElement | null>(null);
@@ -138,6 +142,28 @@ export default function MicroBriefPreview() {
       track('preview_completed', { lesson: sample.title, paper: sample.paper });
     };
     audioRef.current = a;
+
+    // Autoplay on landing. It will be refused on most phones, which is the
+    // whole point of the fallback: rather than showing a silent player we
+    // start on the visitor's first touch anywhere on the page.
+    if (!autoTried.current) {
+      autoTried.current = true;
+      a.play().then(() => {
+        setPlaying(true);
+        track('preview_autoplay', { lesson: sample.title, blocked: false });
+      }).catch(() => {
+        setArmed(true);
+        track('preview_autoplay', { lesson: sample.title, blocked: true });
+        const start = () => {
+          a.play().then(() => { setPlaying(true); setArmed(false); }).catch(() => {});
+          window.removeEventListener('pointerdown', start);
+          window.removeEventListener('keydown', start);
+        };
+        window.addEventListener('pointerdown', start, { once: true });
+        window.addEventListener('keydown', start, { once: true });
+      });
+    }
+
     return () => {
       // Pausing emits one last timeupdate, which would land after the new
       // sample has already reset the playhead and put the old position back
@@ -277,6 +303,10 @@ export default function MicroBriefPreview() {
             className="mbp-scrub"
             style={{ ...s.range, backgroundSize: `${progress * 100}% 100%` }}
           />
+          {armed && (
+            <p style={s.armed}>Tap anywhere to start listening</p>
+          )}
+
           <div style={s.times}>
             <span>{clock(t)}</span>
             <span>{clock(dur)}</span>
@@ -434,6 +464,9 @@ const s: Record<string, React.CSSProperties> = {
   dash: { flex: 1, height: 3, borderRadius: 2, display: 'block' },
 
   range: { display: 'block', width: '100%', margin: 0 },
+  armed: {
+    margin: '10px 0 0', fontSize: 13.5, color: '#C8553D', fontWeight: 600,
+  },
   times: {
     display: 'flex', justifyContent: 'space-between',
     fontSize: 13.5, color: 'rgba(255,255,255,0.45)', marginTop: 10,

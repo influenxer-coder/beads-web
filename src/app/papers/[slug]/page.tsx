@@ -89,8 +89,8 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           <PaperPlayer lessons={lessons} paperSlug={paper.slug} />
         ) : (
           <p style={s.empty}>
-            The audio for this one is still being made. In the meantime the
-            paper itself is free to read below.
+            The audio for this one is still being made. The original is linked
+            below.
           </p>
         )}
 
@@ -111,8 +111,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         <section style={s.sourceSection}>
           <h2 style={s.h2}>Read the original</h2>
           <p style={s.body}>
-            We do not host the paper. It is free at the source, and it is worth
-            having open while you listen.
+            Keep the original open while you listen.
           </p>
           <TrackedLink href={paper.source} external style={s.sourceLink}
                        event="paper_source_clicked" props={{ paper: paper.slug }}>

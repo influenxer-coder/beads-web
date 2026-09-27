@@ -55,8 +55,8 @@ export default function UploadStep({
 
   return (
     <div style={styles.wrap}>
-      <h1 style={styles.h1}>Turn your reading into a 1-minute lesson.</h1>
-      <p style={styles.sub}>No account needed to try.</p>
+      <h1 style={styles.h1}>Turn a paper into 1‑minute lessons.</h1>
+      <p style={styles.sub}>No account needed.</p>
 
       <div
         role="button"

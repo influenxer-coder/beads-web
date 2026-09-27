@@ -250,9 +250,9 @@ export default function MicroBriefPreview() {
 
   return (
     <section style={s.section} aria-labelledby="mbp-heading">
-      <h2 id="mbp-heading" style={s.h2}>Popular papers people are reading</h2>
+      <h2 id="mbp-heading" style={s.h2}>Start with a classic.</h2>
       <p style={s.sub}>
-        Instant interactive preview. Click play to sample a 1-minute brief.
+        Press play. The words light up as you listen.
       </p>
 
       <div style={s.tabs} role="tablist" aria-label="Sample briefs">
@@ -275,7 +275,7 @@ export default function MicroBriefPreview() {
         <div className="mbp-left" style={s.left}>
           <span style={s.badge}>
             <span style={s.badgeDot} aria-hidden="true" />
-            1-MIN BRIEF
+            1-min lesson
           </span>
 
           <h3 style={s.title}>{sample.title}</h3>
@@ -285,7 +285,7 @@ export default function MicroBriefPreview() {
             <button type="button" onClick={toggle} style={s.playBtn}
                     aria-label={playing ? 'Pause preview' : 'Play preview'}>
               <span aria-hidden="true" style={{ fontSize: 12 }}>{playing ? '❚❚' : '▶'}</span>
-              {playing ? 'Pause' : 'Play Preview'}
+              {playing ? 'Pause' : 'Play'}
             </button>
 
             <button type="button" onClick={() => skip(-5)} style={s.round}
@@ -324,10 +324,10 @@ export default function MicroBriefPreview() {
         {/* ------------------------ transcript, on paper ------------------- */}
         <div className="mbp-right" style={s.right}>
           <div style={s.rightHead}>
-            <h4 style={s.rightTitle}>Synchronized Transcript</h4>
+            <h4 style={s.rightTitle}>Transcript</h4>
             <span style={s.sync}>
               <span style={s.syncDot} aria-hidden="true" />
-              Beads Speech Sync
+              Follows the audio
             </span>
           </div>
 
@@ -351,12 +351,12 @@ export default function MicroBriefPreview() {
       <div style={s.ctaBar}>
         {finished && (
           <p style={s.ctaNote}>
-            That was one brief from one document. Make them from yours.
+            That was one lesson from one paper. Make them from yours.
           </p>
         )}
         <Link href="/start" style={s.ctaBtn}
               onClick={() => track('preview_cta_clicked', { lesson: sample.title })}>
-          Turn Your Documents into Audio. Get Started Free
+          Upload a paper. Free.
         </Link>
       </div>
 

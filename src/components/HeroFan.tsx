@@ -16,13 +16,13 @@ type CardKind = 'pdf' | 'slides' | 'textbook' | 'notes' | 'paper';
 type Card = { kind: CardKind; title: string; sub?: string };
 
 const CARDS: Card[] = [
-  { kind: 'notes', title: 'Lecture 4', sub: 'handwritten' },
-  { kind: 'slides', title: 'Week 7', sub: 'Thermodynamics' },
+  { kind: 'notes', title: 'Margin notes', sub: 'handwritten' },
+  { kind: 'slides', title: 'Journal club', sub: 'Week 7' },
   { kind: 'paper', title: 'Attention Is All You Need', sub: 'arXiv' },
-  { kind: 'textbook', title: 'Organic Chemistry', sub: 'Ch. 12' },
-  { kind: 'pdf', title: 'Course reader', sub: '48 pages' },
-  { kind: 'slides', title: 'Seminar', sub: 'Macroeconomics' },
-  { kind: 'paper', title: 'A Survey of Graph Networks', sub: 'PDF' },
+  { kind: 'textbook', title: 'Can Machines Think?', sub: 'Turing, 1950' },
+  { kind: 'pdf', title: 'Bell Nonlocality', sub: 'Review article' },
+  { kind: 'slides', title: 'Seminar', sub: 'Quantum foundations' },
+  { kind: 'paper', title: 'Superhuman AI for Multiplayer Poker', sub: 'Science' },
 ];
 
 /** Geometry of the fan. */
@@ -68,7 +68,7 @@ function CardFace({ card }: { card: Card }) {
   if (card.kind === 'textbook') {
     return (
       <div style={{ ...pad, background: '#111', color: '#fff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <div style={{ fontSize: 8, letterSpacing: '0.18em', opacity: 0.6, textTransform: 'uppercase' }}>Textbook</div>
+        <div style={{ fontSize: 8, letterSpacing: '0.18em', opacity: 0.6, textTransform: 'uppercase' }}>Paper</div>
         <div>
           <div style={{ ...type.bodyStrong }}>{card.title}</div>
           <div style={{ fontSize: 9, opacity: 0.55, marginTop: 6 }}>{card.sub}</div>

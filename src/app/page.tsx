@@ -185,7 +185,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const BADGES = ['Free to start', 'Your own PDFs', '1-minute lessons'];
+const BADGES = ['No account needed', 'Any paper PDF', '1-minute lessons'];
 
 function Laurel({ flip = false }: { flip?: boolean }) {
   return (
@@ -223,40 +223,40 @@ function Laurel({ flip = false }: { flip?: boolean }) {
 const STEPS = [
   {
     n: '01',
-    title: 'Add your file',
-    body: 'Upload a book, a PDF, or your notes. You can also take a photo of one page.',
+    title: 'Add a paper.',
+    body: 'Upload the PDF. Or start with one of ours.',
   },
   {
     n: '02',
-    title: 'Pick a voice',
-    body: 'Choose a voice you like. Beads will read to you in that voice.',
+    title: 'Pick a voice.',
+    body: 'Warm, deep, bright or energetic. Your call.',
   },
   {
     n: '03',
-    title: 'Press play',
-    body: 'You get short audio lessons. About one minute each. Listen anywhere.',
+    title: 'Press play.',
+    body: 'A few short lessons. About a minute each.',
   },
 ];
 
 const SOURCES = [
-  'Books',
-  'Research papers',
-  'A photo of one page',
-  'Slide decks',
-  'Meeting notes',
+  'arXiv preprints',
+  'Journal articles',
+  'Classic papers',
+  'Assigned readings',
+  'Your own drafts',
 ];
 
 const MOMENTS = [
-  { when: 'Driving', what: 'Learn on the way to work.' },
-  { when: 'Walking', what: 'No screen needed. Just listen.' },
-  { when: 'At the gym', what: 'Use the time you already spend.' },
-  { when: 'Waiting in line', what: 'One idea instead of scrolling.' },
+  { when: 'One idea per lesson.', what: 'Each lesson takes one part of the paper.' },
+  { when: 'Read along.', what: 'The words light up as you listen.' },
+  { when: 'The source, one tap away.', what: 'Every paper on our shelf links to the original.' },
 ];
 
 const VOICE_STEPS = [
-  'Share a link to someone you like listening to',
-  'Beads learns how they sound',
-  'Your lessons are read in that voice',
+  'Warm',
+  'Deep',
+  'Bright',
+  'Energetic',
 ];
 
 export default function Home() {
@@ -324,15 +324,15 @@ export default function Home() {
         <section style={styles.hero}>
           <HeroFan />
 
-          <h1 style={styles.h1}>Turn your PDFs and notes into audio you can trust.</h1>
+          <h1 style={styles.h1}>The real paper. One minute at a time.</h1>
 
           <p style={styles.sub}>
-            Upload a reading, hear a 1-minute lesson to review on the commute.
-            Cited and offline.
+            Beads turns a research paper into short audio lessons. Listen
+            first. Then read it with the paper open.
           </p>
 
           <div style={styles.ctaRow}>
-            <Link href="/start" style={styles.ctaSolid}>Start free</Link>
+            <Link href="/papers" style={styles.ctaSolid}>Play a paper</Link>
             <Link href="/start" style={styles.ctaGhost}>Upload a PDF</Link>
           </div>
 
@@ -367,9 +367,9 @@ export default function Home() {
 
       <div style={styles.wrap}>
         <section style={styles.section}>
-          <p style={styles.sectionLabel}>When to use it</p>
+          <p style={styles.sectionLabel}>How it helps</p>
           <h2 style={{ ...styles.h2, marginBottom: 44 }}>
-            Listen when you cannot read.
+            Get the idea. Then the details.
           </h2>
           <div style={styles.grid2}>
             {MOMENTS.map((m) => (
@@ -405,12 +405,11 @@ export default function Home() {
         <section style={styles.section}>
           <div style={styles.twoCol}>
             <div>
-              <p style={styles.sectionLabel}>What you can add</p>
-              <h2 style={styles.h2}>Long reading, made short.</h2>
+              <p style={styles.sectionLabel}>What to add</p>
+              <h2 style={styles.h2}>The paper you meant to finish.</h2>
               <p style={styles.body}>
-                Beads reads the whole file. It keeps the important ideas. Then
-                it turns each one into a short lesson you can listen to. A long
-                book becomes a list of short audio clips.
+                Beads reads the whole PDF, not just the abstract. It pulls out
+                the main ideas. Each one becomes a short lesson.
               </p>
             </div>
             <ul style={styles.list}>
@@ -429,11 +428,10 @@ export default function Home() {
           <div style={styles.twoCol}>
             <div>
               <p style={styles.sectionLabel}>The voice</p>
-              <h2 style={styles.h2}>Pick a voice you like.</h2>
+              <h2 style={styles.h2}>A voice worth hearing.</h2>
               <p style={styles.body}>
-                Most people stop listening when the voice sounds like a robot.
-                So you choose. Share a link to someone you like listening to,
-                and Beads reads your lessons in a voice like theirs.
+                A flat robot voice makes a hard paper harder. So you pick the
+                voice before you press play.
               </p>
             </div>
             <ul style={styles.list}>
@@ -453,12 +451,12 @@ export default function Home() {
 
       <div style={styles.wrap}>
         <section style={styles.section}>
-          <h2 style={styles.h2}>Try it with one book.</h2>
+          <h2 style={styles.h2}>Try it with one paper.</h2>
           <p style={{ ...styles.body, marginBottom: 36 }}>
-            Add it today. Listen to it tomorrow.
+            The one open in your other tab.
           </p>
           <div style={styles.ctaRow}>
-            <Link href="/start" style={styles.ctaSolid}>Upload a file</Link>
+            <Link href="/start" style={styles.ctaSolid}>Upload a PDF</Link>
           </div>
         </section>
       </div>

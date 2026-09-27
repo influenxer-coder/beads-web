@@ -18,12 +18,12 @@ import './globals.css';
 export const metadata: Metadata = {
   metadataBase: new URL('https://app.influenxers.com'),
   title: {
-    default: 'Beads: turn your PDFs and notes into audio',
+    default: 'Beads: research papers as 1-minute audio lessons',
     template: '%s · Beads',
   },
   description:
-    'Upload a book, paper or your notes and get short audio lessons you can '
-    + 'listen to on the commute. Free to start.',
+    'Turn a research paper into short audio lessons you can read along '
+    + 'with. No account needed.',
   icons: { icon: '/beads-b-sitar.svg', apple: '/beads-b-sitar.svg' },
   openGraph: { siteName: 'Beads', type: 'website' },
 };

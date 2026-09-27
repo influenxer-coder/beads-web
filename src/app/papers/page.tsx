@@ -18,8 +18,8 @@ import { type, SANS, MONO } from '@/lib/type';
 
 const TITLE = 'Papers to become dangerously educated';
 const DESCRIPTION =
-  'The papers everyone cites and nobody finishes, as one-minute audio lessons. '
-  + 'Press play, no account needed.';
+  'Famous papers most people never finish, as one-minute audio lessons. '
+  + 'Press play. No account needed.';
 const URL = 'https://app.influenxers.com/papers';
 
 export const metadata: Metadata = {
@@ -114,10 +114,10 @@ export default async function Page() {
         </ul>
 
         <div style={s.ctaBar}>
-          <p style={s.ctaNote}>Got a paper of your own you have not got through?</p>
+          <p style={s.ctaNote}>Have a paper you never finished?</p>
           <TrackedLink href="/start" event="papers_shelf_cta_clicked"
                        tiktokEvent="ClickButton" style={s.ctaBtn}>
-            Upload a PDF. Free.
+            Upload it. Free.
           </TrackedLink>
         </div>
       </div>

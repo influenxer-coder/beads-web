@@ -86,8 +86,15 @@ export default function PaperPlayer({
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const liveRef = React.useRef<HTMLSpanElement | null>(null);
   const paneRef = React.useRef<HTMLDivElement | null>(null);
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
   const [armed, setArmed] = React.useState(false);
+  // Playing with the sound off, because the browser allowed muted autoplay
+  // but not audible autoplay. The page is moving; the tap only adds sound.
+  const [muted, setMuted] = React.useState(false);
   const autoTried = React.useRef(false);
+  // Detaches the waiting-for-a-gesture listeners, so switching lessons or
+  // leaving the page cannot leave them behind.
+  const cleanupWake = React.useRef<(() => void) | null>(null);
   const lesson = lessons[active];
 
   const sentences = React.useMemo(
@@ -99,6 +106,8 @@ export default function PaperPlayer({
     audioRef.current?.pause();
     audioRef.current = null;
     setPlaying(false);
+    setArmed(false);
+    setMuted(false);
     setT(0);
     setDur(0);
     if (!lesson) return;
@@ -114,25 +123,66 @@ export default function PaperPlayer({
     };
     audioRef.current = a;
 
-    // Ads land here, so the page should be talking rather than waiting. A
-    // phone will refuse audio without a gesture, which is a browser rule, so
-    // the refusal arms the first tap anywhere instead of sitting silent.
+    // Ads land here, so the page should be moving rather than waiting. Audible
+    // autoplay is refused without a gesture, which is a browser rule, but
+    // MUTED autoplay is allowed: fall back to that so the scrubber runs and
+    // the transcript scrolls on arrival, and the first tap only has to add
+    // sound. If even muted playback is refused, arm the tap to start it.
+    //
+    // Every one of these paths ends in real listening, so every one of them
+    // reports paper_play with how it started. The old code tracked only the
+    // button, which made the recovered listens invisible.
     if (autoplay && !autoTried.current) {
       autoTried.current = true;
+
+      const reportPlay = (via: string) => {
+        track('paper_play', { paper: paperSlug, lesson: lesson.title, speed, via });
+        tiktokTrack('ViewContent', { content_id: paperSlug, content_type: 'product',
+                                     content_name: lesson.title });
+      };
+
+      const wake = (e: Event) => {
+        // A tap on our own controls is the button's job; handling it here too
+        // would fire twice and then immediately pause.
+        const target = e.target;
+        if (e.type === 'pointerdown' && target instanceof Node
+            && rootRef.current?.contains(target)) return;
+        a.muted = false;
+        a.play().then(() => {
+          setPlaying(true);
+          setMuted(false);
+          setArmed(false);
+          reportPlay('gesture');
+          detach();
+        }).catch(() => {});
+      };
+      const detach = () => {
+        window.removeEventListener('pointerdown', wake);
+        window.removeEventListener('keydown', wake);
+      };
+
       a.play().then(() => {
         setPlaying(true);
-        track('paper_autoplay', { paper: paperSlug, blocked: false });
+        track('paper_autoplay', { paper: paperSlug, blocked: false, muted: false });
+        reportPlay('autoplay');
       }).catch(() => {
-        setArmed(true);
-        track('paper_autoplay', { paper: paperSlug, blocked: true });
-        const start = () => {
-          a.play().then(() => { setPlaying(true); setArmed(false); }).catch(() => {});
-          window.removeEventListener('pointerdown', start);
-          window.removeEventListener('keydown', start);
-        };
-        window.addEventListener('pointerdown', start, { once: true });
-        window.addEventListener('keydown', start, { once: true });
+        a.muted = true;
+        a.play().then(() => {
+          setPlaying(true);
+          setMuted(true);
+          track('paper_autoplay', { paper: paperSlug, blocked: true, muted: true });
+          window.addEventListener('pointerdown', wake);
+          window.addEventListener('keydown', wake);
+        }).catch(() => {
+          a.muted = false;
+          setArmed(true);
+          track('paper_autoplay', { paper: paperSlug, blocked: true, muted: false });
+          window.addEventListener('pointerdown', wake);
+          window.addEventListener('keydown', wake);
+        });
       });
+
+      cleanupWake.current = detach;
     }
 
     return () => {
@@ -143,6 +193,8 @@ export default function PaperPlayer({
       a.onended = null;
       a.pause();
       a.src = '';
+      cleanupWake.current?.();
+      cleanupWake.current = null;
     };
     // speed is applied separately so changing it never reloads the audio
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -173,17 +225,38 @@ export default function PaperPlayer({
 
   if (!lesson) return null;
 
+  const reportPlay = (via: string) => {
+    track('paper_play', { paper: paperSlug, lesson: lesson.title, speed, via });
+    // TikTok's own vocabulary: the ad platform can only optimise towards
+    // events it recognises.
+    tiktokTrack('ViewContent', { content_id: paperSlug, content_type: 'product',
+                                 content_name: lesson.title });
+  };
+
   const toggle = () => {
     const a = audioRef.current;
     if (!a) return;
+
+    // Running silently after a muted autoplay. The first press means "sound
+    // on", not "pause" -- pausing something the visitor has not heard yet
+    // would read as the button being broken.
+    if (muted) {
+      a.muted = false;
+      setMuted(false);
+      setArmed(false);
+      if (a.paused) a.play().catch(() => setPlaying(false));
+      setPlaying(true);
+      cleanupWake.current?.();
+      reportPlay('unmute');
+      return;
+    }
+
     if (a.paused) {
       a.play().catch(() => setPlaying(false));
       setPlaying(true);
-      track('paper_play', { paper: paperSlug, lesson: lesson.title, speed });
-      // TikTok's own vocabulary: the ad platform can only optimise towards
-      // events it recognises.
-      tiktokTrack('ViewContent', { content_id: paperSlug, content_type: 'product',
-                                   content_name: lesson.title });
+      setArmed(false);
+      cleanupWake.current?.();
+      reportPlay('button');
     } else {
       a.pause();
       setPlaying(false);
@@ -213,26 +286,49 @@ export default function PaperPlayer({
   };
 
   return (
-    <div style={s.wrap}>
+    <div ref={rootRef} style={s.wrap}>
       <div className="pp-grid" style={s.grid}>
         {/* ------------------------------ player ------------------------------ */}
         <div className="pp-left" style={s.left}>
-          <span style={s.badge}>
-            <span style={s.badgeDot} aria-hidden="true" />
-            {lessons.length} lesson{lessons.length === 1 ? '' : 's'}
-          </span>
+          <div style={s.badgeRow}>
+            <span style={s.badge}>
+              <span style={s.badgeDot} aria-hidden="true" />
+              {lessons.length} lesson{lessons.length === 1 ? '' : 's'}
+            </span>
+            {/* True today: nothing on this page checks for a session. Three of
+                the four rivals put a signup in front of playback, so it is
+                worth saying out loud. */}
+            <span style={s.badgeQuiet}>No account needed</span>
+          </div>
 
           <div style={s.nowRow}>
             <Cover id={lesson.id} size={104} />
-            <h2 style={s.nowTitle}>{lesson.title}</h2>
+            <div style={{ minWidth: 0 }}>
+              <h2 style={s.nowTitle}>{lesson.title}</h2>
+              {dur > 0 && <p style={s.nowMeta}>{clock(dur)} listen</p>}
+            </div>
           </div>
 
+          {/* The play control is the object of the page, not one button in a
+              row of four. Mobile refuses audible autoplay, so for most ad
+              traffic this is the thing that actually starts the audio. */}
+          <button type="button" onClick={toggle} style={s.playBtn}
+                  aria-label={muted ? 'Turn sound on' : playing ? 'Pause' : 'Play'}>
+            <span aria-hidden="true" style={s.playGlyph}>
+              {muted ? '🔊' : playing ? '❚❚' : '▶'}
+            </span>
+            {muted ? 'Tap for sound' : playing ? 'Pause' : 'Play this lesson'}
+          </button>
+
+          {(armed || muted) && (
+            <p style={s.hint}>
+              {muted
+                ? 'Playing silently because your browser blocks sound until you tap.'
+                : 'Your browser needs a tap before it will play audio.'}
+            </p>
+          )}
+
           <div style={s.controls}>
-            <button type="button" onClick={toggle} style={s.playBtn}
-                    aria-label={playing ? 'Pause' : 'Play'}>
-              <span aria-hidden="true" style={{ fontSize: 12 }}>{playing ? '❚❚' : '▶'}</span>
-              {playing ? 'Pause' : 'Play'}
-            </button>
             <button type="button" onClick={() => skip(-5)} style={s.round}
                     aria-label="Back 5 seconds">↺ 5</button>
             <button type="button" onClick={() => skip(5)} style={s.round}
@@ -253,8 +349,6 @@ export default function PaperPlayer({
             className="pp-scrub"
             style={{ ...s.range, backgroundSize: `${progress * 100}% 100%` }}
           />
-          {armed && <p style={s.armed}>Tap anywhere to start listening</p>}
-
           <div style={s.times}>
             <span>{clock(t)}</span>
             <span>{clock(dur)}</span>
@@ -350,23 +444,45 @@ const s: Record<string, React.CSSProperties> = {
           borderRight: `1px solid ${LINE}` },
   right: { background: '#fff', padding: '30px 28px', minWidth: 0 },
 
+  badgeRow: {
+    display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+    marginBottom: 18,
+  },
   badge: {
     display: 'inline-flex', alignItems: 'center', gap: 8, padding: '7px 14px',
     borderRadius: 999, background: 'rgba(52,211,153,0.12)', color: '#34d399',
-    fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 18,
+    fontSize: 12, fontWeight: 700, letterSpacing: '0.08em',
   },
   badgeDot: { width: 7, height: 7, borderRadius: 999, background: '#34d399' },
+  badgeQuiet: {
+    display: 'inline-flex', alignItems: 'center', padding: '7px 14px',
+    borderRadius: 999, border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.62)',
+    fontSize: 12, fontWeight: 600, letterSpacing: '0.04em',
+  },
 
   nowTitle: {
     fontSize: 'clamp(20px, 2.4vw, 25px)', lineHeight: 1.24, fontWeight: 700,
-    letterSpacing: '-0.02em', color: '#fff', margin: '0 0 26px',
+    letterSpacing: '-0.02em', color: '#fff', margin: 0,
+  },
+  nowMeta: {
+    margin: '8px 0 0', fontFamily: "'SF Mono', ui-monospace, Menlo, monospace",
+    fontSize: 12.5, color: 'rgba(255,255,255,0.45)',
   },
 
-  controls: { display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
+  controls: {
+    display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+    marginTop: 14,
+  },
   playBtn: {
-    display: 'inline-flex', alignItems: 'center', gap: 10, minHeight: 52,
-    padding: '0 24px', borderRadius: 999, background: '#fff', color: '#0a0a0a',
-    border: 0, fontSize: 15.5, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
+    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
+    width: '100%', minHeight: 62, padding: '0 24px', borderRadius: 16,
+    background: '#fff', color: '#0a0a0a', border: 0, fontSize: 17.5,
+    fontWeight: 650, cursor: 'pointer', whiteSpace: 'nowrap',
+  },
+  playGlyph: { fontSize: 15 },
+  hint: {
+    margin: '12px 0 0', fontSize: 13.5, lineHeight: 1.5,
+    color: 'rgba(255,255,255,0.58)',
   },
   round: {
     minWidth: 48, height: 48, borderRadius: 999, background: 'transparent',
@@ -380,7 +496,6 @@ const s: Record<string, React.CSSProperties> = {
   },
 
   range: { display: 'block', width: '100%', margin: '26px 0 0' },
-  armed: { margin: '10px 0 0', fontSize: 13.5, color: '#ffd9a0', fontWeight: 600 },
   times: {
     display: 'flex', justifyContent: 'space-between', fontSize: 13.5,
     color: 'rgba(255,255,255,0.45)', marginTop: 10,

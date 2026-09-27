@@ -197,3 +197,8 @@ audio::-webkit-media-controls-play-button {
   .cl-grid { grid-template-columns: 1fr !important; padding: 32px 16px !important; gap: 32px !important; }
   .cl-grid > div { order: -1; }
 }
+
+/* Home nav: drop the secondary link on narrow phones so the bar fits */
+@media (max-width: 480px) {
+  .nav-wide { display: none; }
+}

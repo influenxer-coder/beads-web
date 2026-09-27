@@ -30,23 +30,23 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'space-between',
     padding: '28px 0',
   },
-  wordmark: { fontSize: 17, fontWeight: 600, letterSpacing: '-0.02em' },
+  wordmark: { fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em' },
   navSignIn: {
     display: 'inline-flex',
     alignItems: 'center',
-    minHeight: 38,
+    minHeight: 44,
     marginLeft: 22,
-    padding: '0 16px',
+    padding: '0 20px',
     borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.28)',
     color: '#fff',
     textDecoration: 'none',
-    ...type.calloutStrong,
+    ...type.bodyStrong,
   },
   navLink: {
-    color: 'rgba(255,255,255,0.55)',
+    color: 'rgba(255,255,255,0.62)',
     textDecoration: 'none',
-    ...type.callout,
+    ...type.body,
     marginLeft: 26,
   },
   hero: {
@@ -179,6 +179,7 @@ const styles: Record<string, React.CSSProperties> = {
   footer: {
     padding: '44px 0 60px',
     display: 'flex',
+    alignItems: 'center',
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     gap: 16,
@@ -292,7 +293,7 @@ export default function Home() {
           <Wordmark style={styles.wordmark} />
           <div>
             <Link href="/papers" style={styles.navLink}>Papers</Link>
-            <Link href="/audios" style={styles.navLink}>All audios</Link>
+            <Link href="/audios" className="nav-wide" style={styles.navLink}>All audios</Link>
             <Link href="/login" style={styles.navSignIn}>Sign in</Link>
           </div>
         </nav>
@@ -419,7 +420,7 @@ export default function Home() {
 
       <div style={styles.wrap}>
         <footer style={styles.footer}>
-          <Wordmark />
+          <Wordmark size={24} style={{ color: '#fff' }} />
           <span>Influenxers</span>
         </footer>
       </div>

@@ -48,22 +48,22 @@ const s: Record<string, React.CSSProperties> = {
     borderBottom: '1px solid rgba(255,255,255,0.1)',
   },
   inner: {
-    maxWidth: 1020, margin: '0 auto', padding: '0 24px', minHeight: 62,
+    maxWidth: 1020, margin: '0 auto', padding: '0 24px', minHeight: 72,
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
     gap: 16,
   },
   brand: { color: '#fff', textDecoration: 'none', display: 'inline-flex' },
-  wordmark: { fontSize: 17, fontWeight: 600, letterSpacing: '-0.02em' },
+  wordmark: { fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em' },
 
   nav: { display: 'flex', alignItems: 'center', gap: 8 },
   link: {
-    color: 'rgba(255,255,255,0.62)', textDecoration: 'none', ...type.callout,
+    color: 'rgba(255,255,255,0.62)', textDecoration: 'none', ...type.body,
     padding: '8px 10px', borderRadius: 8, whiteSpace: 'nowrap',
   },
   cta: {
-    display: 'inline-flex', alignItems: 'center', minHeight: 38,
-    padding: '0 16px', marginLeft: 6, borderRadius: 999,
+    display: 'inline-flex', alignItems: 'center', minHeight: 44,
+    padding: '0 20px', marginLeft: 6, borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.28)', color: '#fff',
-    textDecoration: 'none', ...type.calloutStrong, whiteSpace: 'nowrap',
+    textDecoration: 'none', ...type.bodyStrong, whiteSpace: 'nowrap',
   },
 };

@@ -3,6 +3,8 @@
 import * as React from 'react';
 import Link from 'next/link';
 import HeroFan from '@/components/HeroFan';
+import Highlights from '@/components/Highlights';
+import CloserLook from '@/components/CloserLook';
 import Wordmark from '@/components/Wordmark';
 import LibraryHome from '@/components/LibraryHome';
 import { supabase } from '@/lib/supabase';
@@ -220,23 +222,6 @@ function Laurel({ flip = false }: { flip?: boolean }) {
   );
 }
 
-const STEPS = [
-  {
-    n: '01',
-    title: 'Add a paper.',
-    body: 'Upload the PDF. Or start with one of ours.',
-  },
-  {
-    n: '02',
-    title: 'Pick a voice.',
-    body: 'Warm, deep, bright or energetic. Your call.',
-  },
-  {
-    n: '03',
-    title: 'Press play.',
-    body: 'A few short lessons. About a minute each.',
-  },
-];
 
 const SOURCES = [
   'arXiv preprints',
@@ -246,11 +231,6 @@ const SOURCES = [
   'Your own drafts',
 ];
 
-const MOMENTS = [
-  { when: 'One idea per lesson.', what: 'Each lesson takes one part of the paper.' },
-  { when: 'Read along.', what: 'The words light up as you listen.' },
-  { when: 'The source, one tap away.', what: 'Every paper on our shelf links to the original.' },
-];
 
 const VOICE_STEPS = [
   'Warm',
@@ -365,38 +345,12 @@ export default function Home() {
 
       <hr style={styles.rule} />
 
-      <div style={styles.wrap}>
-        <section style={styles.section}>
-          <p style={styles.sectionLabel}>How it helps</p>
-          <h2 style={{ ...styles.h2, marginBottom: 44 }}>
-            Get the idea. Then the details.
-          </h2>
-          <div style={styles.grid2}>
-            {MOMENTS.map((m) => (
-              <div key={m.when} style={styles.cell}>
-                <h3 style={styles.momentWhen}>{m.when}</h3>
-                <p style={styles.cellBody}>{m.what}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
+      <Highlights />
 
       <hr style={styles.rule} />
 
       <div style={styles.wrap}>
-        <section style={styles.section}>
-          <p style={styles.sectionLabel}>Three steps</p>
-          <div style={styles.grid3}>
-            {STEPS.map((s) => (
-              <div key={s.n} style={styles.cell}>
-                <p style={styles.stepNum}>{s.n}</p>
-                <h3 style={styles.cellTitle}>{s.title}</h3>
-                <p style={styles.cellBody}>{s.body}</p>
-              </div>
-            ))}
-          </div>
-        </section>
+        <CloserLook />
       </div>
 
       <hr style={styles.rule} />

@@ -187,3 +187,13 @@ audio::-webkit-media-controls-play-button {
 @media (prefers-reduced-motion: reduce) {
   .mlf-wave { animation: none; height: 12px; }
 }
+
+/* Highlights: sideways card row with the scrollbar hidden */
+.hl-row { scrollbar-width: none; }
+.hl-row::-webkit-scrollbar { display: none; }
+
+/* Closer look: phone above the steps on narrow screens */
+@media (max-width: 760px) {
+  .cl-grid { grid-template-columns: 1fr !important; padding: 32px 16px !important; gap: 32px !important; }
+  .cl-grid > div { order: -1; }
+}

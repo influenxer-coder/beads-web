@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Cite from './Cite';
+import { type } from '@/lib/type';
 
 type Node = { label: string; cite?: string; children?: Node[] };
 
@@ -92,8 +93,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     background: '#fff',
     color: '#000',
-    fontSize: 15,
-    fontWeight: 700,
+    ...type.bodyStrong,
     marginBottom: 16,
   },
   branches: { display: 'flex', flexDirection: 'column', gap: 4 },
@@ -105,7 +105,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.22)',
     background: 'transparent',
     color: '#fff',
-    fontSize: 14,
+    ...type.callout,
     lineHeight: 1,
     cursor: 'pointer',
     flexShrink: 0,
@@ -123,7 +123,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 9,
     border: '1px solid rgba(255,255,255,0.14)',
     background: 'rgba(255,255,255,0.05)',
-    fontSize: 14.5,
+    ...type.callout,
   },
   nodeTop: { fontWeight: 600, background: 'rgba(255,255,255,0.09)' },
   kids: {
@@ -132,5 +132,5 @@ const styles: Record<string, React.CSSProperties> = {
     paddingLeft: 8,
     marginTop: 2,
   },
-  empty: { padding: 26, color: 'rgba(255,255,255,0.5)', fontSize: 14.5 },
+  empty: { padding: 26, color: 'rgba(255,255,255,0.5)', ...type.callout },
 };

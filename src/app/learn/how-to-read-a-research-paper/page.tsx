@@ -2,6 +2,7 @@ import * as React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteHeader from '@/components/SiteHeader';
+import { type, SANS, MONO } from '@/lib/type';
 
 /**
  * How to Read a Research Paper Efficiently (Audio-First Method).
@@ -219,47 +220,44 @@ const s: Record<string, React.CSSProperties> = {
     background: '#000',
     color: '#fff',
     minHeight: '100vh',
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif",
+    fontFamily: SANS,
     WebkitFontSmoothing: 'antialiased',
   },
   wrap: { maxWidth: 720, margin: '0 auto', padding: '44px 24px 96px' },
 
   eyebrow: {
-    fontFamily: "'SF Mono', ui-monospace, Menlo, monospace",
-    fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase',
+    ...type.caption, fontFamily: MONO,
+    letterSpacing: '0.06em', textTransform: 'uppercase',
     color: 'rgba(255,255,255,0.45)', margin: '0 0 18px',
   },
   h1: {
-    fontSize: 'clamp(32px, 5vw, 46px)', lineHeight: 1.12, fontWeight: 700,
-    letterSpacing: '-0.03em', margin: '0 0 26px',
+    ...type.headline, margin: '0 0 26px',
   },
   h2: {
-    fontSize: 'clamp(23px, 3vw, 29px)', lineHeight: 1.2, fontWeight: 600,
-    letterSpacing: '-0.02em', margin: '52px 0 16px',
+    ...type.title, margin: '52px 0 16px',
   },
   h3: {
-    fontSize: 19, lineHeight: 1.3, fontWeight: 600,
-    letterSpacing: '-0.01em', margin: '32px 0 12px',
+    ...type.subhead, margin: '32px 0 12px',
   },
   lede: {
-    fontSize: 19, lineHeight: 1.62, color: 'rgba(255,255,255,0.82)',
+    ...type.intro, color: 'rgba(255,255,255,0.82)',
     margin: '0 0 22px',
   },
   em: { color: '#fff', fontStyle: 'italic' },
   body: {
-    fontSize: 17, lineHeight: 1.72, color: 'rgba(255,255,255,0.68)',
+    ...type.body, lineHeight: 1.6, color: 'rgba(255,255,255,0.68)',
     margin: '0 0 18px',
   },
   strong: { color: '#fff', fontWeight: 600 },
   note: {
-    fontSize: 14.5, lineHeight: 1.6, color: 'rgba(255,255,255,0.45)',
+    ...type.callout, color: 'rgba(255,255,255,0.45)',
     margin: '0 0 16px', fontStyle: 'italic',
   },
   link: { color: '#fff', textDecoration: 'underline', textUnderlineOffset: 3 },
 
   ol: { margin: '0 0 18px', paddingLeft: 22 },
   li: {
-    fontSize: 17, lineHeight: 1.72, color: 'rgba(255,255,255,0.68)',
+    ...type.body, lineHeight: 1.6, color: 'rgba(255,255,255,0.68)',
     margin: '0 0 8px',
   },
 
@@ -270,18 +268,18 @@ const s: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.12)',
   },
   th: {
-    textAlign: 'left', fontSize: 12.5, letterSpacing: '0.08em',
+    textAlign: 'left', ...type.captionStrong, letterSpacing: '0.06em',
     textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)',
     padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.12)',
-    fontWeight: 600, whiteSpace: 'nowrap',
+    whiteSpace: 'nowrap',
   },
   td: {
-    fontSize: 15.5, lineHeight: 1.6, color: 'rgba(255,255,255,0.68)',
+    ...type.body, color: 'rgba(255,255,255,0.68)',
     padding: '14px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)',
     verticalAlign: 'top',
   },
   tdAt: {
-    fontFamily: "'SF Mono', ui-monospace, Menlo, monospace",
+    fontFamily: MONO,
     color: '#fff', whiteSpace: 'nowrap',
   },
   tdPart: { color: '#fff', fontWeight: 600, whiteSpace: 'nowrap' },
@@ -290,12 +288,12 @@ const s: Record<string, React.CSSProperties> = {
   ctaSolid: {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
     minHeight: 50, background: '#fff', color: '#000', padding: '0 28px',
-    borderRadius: 999, textDecoration: 'none', fontSize: 16, fontWeight: 600,
+    borderRadius: 999, textDecoration: 'none', ...type.bodyStrong,
   },
   ctaGhost: {
     display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
     minHeight: 50, border: '1px solid rgba(255,255,255,0.25)', color: '#fff',
     padding: '0 28px', borderRadius: 999, textDecoration: 'none',
-    fontSize: 16, fontWeight: 600,
+    ...type.bodyStrong,
   },
 };

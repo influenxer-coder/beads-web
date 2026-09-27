@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { track } from '@/lib/analytics';
 import { tiktokTrack } from '@/lib/tiktok';
 import type { Lesson } from '@/lib/papers';
+import { type, MONO } from '@/lib/type';
 
 /**
  * The player on a paper page.
@@ -451,22 +452,21 @@ const s: Record<string, React.CSSProperties> = {
   badge: {
     display: 'inline-flex', alignItems: 'center', gap: 8, padding: '7px 14px',
     borderRadius: 999, background: 'rgba(52,211,153,0.12)', color: '#34d399',
-    fontSize: 12, fontWeight: 700, letterSpacing: '0.08em',
+    ...type.captionStrong,
   },
   badgeDot: { width: 7, height: 7, borderRadius: 999, background: '#34d399' },
   badgeQuiet: {
     display: 'inline-flex', alignItems: 'center', padding: '7px 14px',
     borderRadius: 999, border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.62)',
-    fontSize: 12, fontWeight: 600, letterSpacing: '0.04em',
+    ...type.captionStrong,
   },
 
   nowTitle: {
-    fontSize: 'clamp(20px, 2.4vw, 25px)', lineHeight: 1.24, fontWeight: 700,
-    letterSpacing: '-0.02em', color: '#fff', margin: 0,
+    ...type.title, color: '#fff', margin: 0,
   },
   nowMeta: {
-    margin: '8px 0 0', fontFamily: "'SF Mono', ui-monospace, Menlo, monospace",
-    fontSize: 12.5, color: 'rgba(255,255,255,0.45)',
+    margin: '8px 0 0', ...type.caption, fontFamily: MONO,
+    color: 'rgba(255,255,255,0.45)',
   },
 
   controls: {
@@ -476,28 +476,28 @@ const s: Record<string, React.CSSProperties> = {
   playBtn: {
     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12,
     width: '100%', minHeight: 62, padding: '0 24px', borderRadius: 16,
-    background: '#fff', color: '#0a0a0a', border: 0, fontSize: 17.5,
-    fontWeight: 650, cursor: 'pointer', whiteSpace: 'nowrap',
+    background: '#fff', color: '#0a0a0a', border: 0, ...type.bodyStrong,
+    cursor: 'pointer', whiteSpace: 'nowrap',
   },
   playGlyph: { fontSize: 15 },
   hint: {
-    margin: '12px 0 0', fontSize: 13.5, lineHeight: 1.5,
+    margin: '12px 0 0', ...type.callout,
     color: 'rgba(255,255,255,0.58)',
   },
   round: {
     minWidth: 48, height: 48, borderRadius: 999, background: 'transparent',
-    border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.8)', fontSize: 13,
+    border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.8)', ...type.callout,
     cursor: 'pointer', padding: '0 10px', whiteSpace: 'nowrap',
   },
   speedBtn: {
     minHeight: 44, padding: '0 16px', borderRadius: 999, background: 'transparent',
-    border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.8)', fontSize: 14,
+    border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.8)', ...type.callout,
     cursor: 'pointer', marginLeft: 'auto', whiteSpace: 'nowrap',
   },
 
   range: { display: 'block', width: '100%', margin: '26px 0 0' },
   times: {
-    display: 'flex', justifyContent: 'space-between', fontSize: 13.5,
+    display: 'flex', justifyContent: 'space-between', ...type.callout,
     color: 'rgba(255,255,255,0.45)', marginTop: 10,
   },
 
@@ -522,12 +522,12 @@ const s: Record<string, React.CSSProperties> = {
     fontSize: 12,
   },
   rowTitle: {
-    display: 'block', fontSize: 15, lineHeight: 1.35, color: 'inherit',
+    display: 'block', ...type.body, color: 'inherit',
     overflow: 'hidden', textOverflow: 'ellipsis',
   },
   rowMeta: {
-    display: 'block', fontFamily: "'SF Mono', ui-monospace, Menlo, monospace",
-    fontSize: 11.5, color: 'rgba(255,255,255,0.35)', marginTop: 4,
+    display: 'block', ...type.caption, fontFamily: MONO,
+    color: 'rgba(255,255,255,0.35)', marginTop: 4,
   },
 
   list: { listStyle: 'none', padding: 0, margin: '26px 0 0' },
@@ -548,15 +548,15 @@ const s: Record<string, React.CSSProperties> = {
     gap: 14, flexWrap: 'wrap', paddingBottom: 16,
     borderBottom: '1px solid #e8e8e8', marginBottom: 20,
   },
-  rightTitle: { fontSize: 17, fontWeight: 700, color: '#141414', margin: 0 },
+  rightTitle: { ...type.bodyStrong, color: '#141414', margin: 0 },
   sync: {
-    display: 'inline-flex', alignItems: 'center', gap: 7, fontSize: 13.5,
-    fontWeight: 600, color: '#ef4444',
+    display: 'inline-flex', alignItems: 'center', gap: 7, ...type.calloutStrong,
+    color: '#ef4444',
   },
   syncDot: { width: 7, height: 7, borderRadius: 999, background: '#ef4444' },
 
   transcript: {
-    fontSize: 16.5, lineHeight: 1.78, color: '#8b8b8b',
+    ...type.body, lineHeight: 1.6, color: '#8b8b8b',
     maxHeight: 330, overflowY: 'auto',
   },
   sentence: { transition: 'background 140ms ease, color 140ms ease' },
@@ -573,7 +573,7 @@ const s: Record<string, React.CSSProperties> = {
   },
   ctaBtn: {
     display: 'inline-flex', alignItems: 'center', minHeight: 52, padding: '0 28px',
-    borderRadius: 999, background: '#fff', color: '#0a0a0a', fontSize: 16,
-    fontWeight: 600, textDecoration: 'none', textAlign: 'center',
+    borderRadius: 999, background: '#fff', color: '#0a0a0a', ...type.bodyStrong,
+    textDecoration: 'none', textAlign: 'center',
   },
 };

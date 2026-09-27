@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { type } from '@/lib/type';
 
 /**
  * Grid of sources, modelled on ElevenReader's cover shelf.
@@ -196,10 +197,7 @@ function CoverArt({
 const styles: Record<string, React.CSSProperties> = {
   section: { marginTop: 34 },
   h2: {
-    fontSize: 'clamp(24px, 3.4vw, 36px)',
-    lineHeight: 1.12,
-    letterSpacing: '-0.03em',
-    fontWeight: 600,
+    ...type.headline,
     margin: '0 0 24px',
   },
   grid: { listStyle: 'none', margin: 0, padding: 0, display: 'grid', gap: 20 },
@@ -219,8 +217,8 @@ const styles: Record<string, React.CSSProperties> = {
   coverImg: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' },
   kind: {
     alignSelf: 'flex-start',
-    fontSize: 10.5,
-    letterSpacing: '0.12em',
+    ...type.caption,
+    letterSpacing: '0.06em',
     textTransform: 'uppercase',
     padding: '4px 8px',
     borderRadius: 4,
@@ -228,17 +226,14 @@ const styles: Record<string, React.CSSProperties> = {
     color: 'rgba(255,255,255,0.85)',
   },
   coverTitle: {
-    fontSize: 16,
-    fontWeight: 700,
-    lineHeight: 1.25,
-    letterSpacing: '-0.015em',
+    ...type.bodyStrong,
     marginTop: 'auto',
     display: '-webkit-box',
     WebkitLineClamp: 4,
     WebkitBoxOrient: 'vertical',
     overflow: 'hidden',
   },
-  coverCount: { fontSize: 12, color: 'rgba(255,255,255,0.6)' },
+  coverCount: { ...type.caption, color: 'rgba(255,255,255,0.6)' },
   playBadge: {
     position: 'absolute',
     right: 10,
@@ -256,13 +251,12 @@ const styles: Record<string, React.CSSProperties> = {
   meta: { marginTop: 11, minWidth: 0 },
   title: {
     display: 'block',
-    fontSize: 14.5,
-    fontWeight: 600,
+    ...type.calloutStrong,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
-  sub: { display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 3 },
+  sub: { display: 'block', ...type.callout, color: 'rgba(255,255,255,0.5)', marginTop: 3 },
   actions: { display: 'flex', gap: 7, marginTop: 10 },
   action: {
     minHeight: 32,
@@ -271,7 +265,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.18)',
     background: 'transparent',
     color: 'rgba(255,255,255,0.8)',
-    fontSize: 12.5,
+    ...type.caption,
     textDecoration: 'none',
     display: 'inline-flex',
     alignItems: 'center',

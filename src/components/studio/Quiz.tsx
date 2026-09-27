@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { track } from '@/lib/analytics';
 import Cite from './Cite';
+import { type } from '@/lib/type';
 
 export type Question = {
   question: string;
@@ -111,8 +112,8 @@ export default function Quiz({
 
 const styles: Record<string, React.CSSProperties> = {
   pad: { padding: '18px 16px 20px' },
-  counter: { fontSize: 12.5, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' },
-  question: { fontSize: 18, lineHeight: 1.4, fontWeight: 500, margin: '12px 0 18px' },
+  counter: { ...type.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' },
+  question: { ...type.subhead, margin: '12px 0 18px' },
   options: { display: 'flex', flexDirection: 'column', gap: 9 },
   option: {
     display: 'flex',
@@ -124,7 +125,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 12,
     border: '1px solid rgba(255,255,255,0.16)',
     color: '#fff',
-    fontSize: 15,
+    ...type.body,
     textAlign: 'left',
     cursor: 'pointer',
   },
@@ -136,10 +137,10 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: 12,
+    ...type.caption,
     flexShrink: 0,
   },
-  why: { fontSize: 14.5, lineHeight: 1.55, color: 'rgba(255,255,255,0.7)', margin: '16px 0 0' },
+  why: { ...type.callout, color: 'rgba(255,255,255,0.7)', margin: '16px 0 0' },
   next: {
     width: '100%',
     minHeight: 48,
@@ -148,12 +149,11 @@ const styles: Record<string, React.CSSProperties> = {
     border: 0,
     background: '#fff',
     color: '#000',
-    fontSize: 15.5,
-    fontWeight: 600,
+    ...type.bodyStrong,
     cursor: 'pointer',
   },
   done: { padding: '38px 20px', textAlign: 'center' },
-  doneTitle: { fontSize: 22, fontWeight: 600, margin: '0 0 16px' },
+  doneTitle: { ...type.title, margin: '0 0 16px' },
   secondary: {
     minHeight: 44,
     padding: '0 20px',
@@ -161,8 +161,8 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.22)',
     background: 'transparent',
     color: '#fff',
-    fontSize: 14.5,
+    ...type.callout,
     cursor: 'pointer',
   },
-  empty: { padding: 26, color: 'rgba(255,255,255,0.5)', fontSize: 14.5 },
+  empty: { padding: 26, color: 'rgba(255,255,255,0.5)', ...type.callout },
 };

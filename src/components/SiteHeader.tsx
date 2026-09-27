@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Wordmark from '@/components/Wordmark';
+import { type } from '@/lib/type';
 
 /**
  * The bar on the marketing pages.
@@ -56,13 +57,13 @@ const s: Record<string, React.CSSProperties> = {
 
   nav: { display: 'flex', alignItems: 'center', gap: 8 },
   link: {
-    color: 'rgba(255,255,255,0.62)', textDecoration: 'none', fontSize: 14.5,
+    color: 'rgba(255,255,255,0.62)', textDecoration: 'none', ...type.callout,
     padding: '8px 10px', borderRadius: 8, whiteSpace: 'nowrap',
   },
   cta: {
     display: 'inline-flex', alignItems: 'center', minHeight: 38,
     padding: '0 16px', marginLeft: 6, borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.28)', color: '#fff',
-    textDecoration: 'none', fontSize: 14, fontWeight: 600, whiteSpace: 'nowrap',
+    textDecoration: 'none', ...type.calloutStrong, whiteSpace: 'nowrap',
   },
 };

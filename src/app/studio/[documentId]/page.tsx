@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import Studio from '@/components/studio/Studio';
+import { type } from '@/lib/type';
 
 /**
  * Studio for one source, openable directly.
@@ -59,9 +60,9 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'inline-block',
     marginBottom: 20,
     color: 'rgba(255,255,255,0.5)',
-    fontSize: 14.5,
+    ...type.callout,
     textDecoration: 'none',
   },
-  h1: { fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em', margin: '0 0 26px', lineHeight: 1.25 },
+  h1: { ...type.title, margin: '0 0 26px' },
   missing: { color: 'rgba(255,255,255,0.55)' },
 };

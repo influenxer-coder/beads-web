@@ -1,6 +1,7 @@
 'use client';
 import * as React from 'react';
 import { supabase } from '@/lib/supabase';
+import { type } from '@/lib/type';
 import { 
   Typography, Card, CardContent, Stack, Box, CircularProgress, 
   IconButton, Collapse, Avatar, useMediaQuery, useTheme
@@ -168,7 +169,7 @@ export default function LibraryPage(){
   if(docs.length === 0) {
     return (
       <Stack spacing={3} sx={{ pb: { xs: 4, md: 0 } }}>
-        <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', md: '1.75rem' } }}>
+        <Typography variant="h3" component="h1">
           Library
         </Typography>
         <Box sx={{ textAlign: 'center', py: 8 }}>
@@ -185,7 +186,7 @@ export default function LibraryPage(){
 
   return (
     <Stack spacing={3} sx={{ pb: { xs: 4, md: 0 } }}>
-      <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', md: '1.75rem' } }}>
+      <Typography variant="h3" component="h1">
         Library
       </Typography>
 
@@ -223,18 +224,15 @@ export default function LibraryPage(){
                       color: docIndex % 2 === 0 ? '#ffffff' : '#000000',
                       width: { xs: 56, md: 64 },
                       height: { xs: 56, md: 64 },
-                      fontSize: { xs: '1.25rem', md: '1.5rem' },
-                      fontWeight: 700,
+                      ...type.subhead,
                     }}
                   >
                     {doc.title?.[0]?.toUpperCase() || 'D'}
                   </Avatar>
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Typography
-                      variant="h6"
+                      variant="h5"
                       sx={{
-                        fontWeight: 700,
-                        fontSize: { xs: '1.1rem', md: '1.25rem' },
                         mb: 0.5,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -246,7 +244,6 @@ export default function LibraryPage(){
                     <Typography
                       variant="body2"
                       color="text.secondary"
-                      sx={{ fontSize: { xs: '0.875rem', md: '0.9rem' } }}
                     >
                       {doc.beadCount} {doc.beadCount === 1 ? 'bead' : 'beads'} • {doc.type || 'PDF'}
                     </Typography>
@@ -316,7 +313,7 @@ export default function LibraryPage(){
                                     color: beadIndex % 2 === 0 ? '#ffffff' : '#000000',
                                     width: { xs: 40, md: 48 },
                                     height: { xs: 40, md: 48 },
-                                    fontSize: { xs: '1rem', md: '1.25rem' },
+                                    ...type.intro,
                                   }}
                                 >
                                   {bead.author?.[0]?.toUpperCase() || 'B'}
@@ -324,17 +321,13 @@ export default function LibraryPage(){
                                 <Box sx={{ flex: 1, minWidth: 0 }}>
                                   <Typography
                                     variant="subtitle1"
-                                    sx={{
-                                      fontWeight: 600,
-                                      fontSize: { xs: '0.95rem', md: '1rem' }
-                                    }}
                                   >
                                     {bead.author || 'Anonymous'}
                                   </Typography>
                                   <Typography
-                                    variant="caption"
+                                    variant="body2"
+                                    component="span"
                                     color="text.secondary"
-                                    sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
                                   >
                                     {new Date(bead.created_at).toLocaleDateString('en-US', {
                                       month: 'short',
@@ -347,12 +340,7 @@ export default function LibraryPage(){
 
                               {/* Title */}
                               <Typography
-                                variant="h6"
-                                sx={{
-                                  fontWeight: 700,
-                                  fontSize: { xs: '1.1rem', md: '1.25rem' },
-                                  lineHeight: 1.3
-                                }}
+                                variant="h5"
                               >
                                 {bead.title}
                               </Typography>
@@ -361,8 +349,6 @@ export default function LibraryPage(){
                               <Typography
                                 sx={{
                                   whiteSpace: 'pre-wrap',
-                                  lineHeight: 1.6,
-                                  fontSize: { xs: '0.9rem', md: '1rem' },
                                   color: 'rgba(255, 255, 255, 0.9)'
                                 }}
                               >

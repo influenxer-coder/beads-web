@@ -4,6 +4,7 @@ import {
   Box, LinearProgress, Typography, Chip, Stack, Alert, Button
 } from '@mui/material';
 import { Error as ErrorIcon, CheckCircle, Refresh } from '@mui/icons-material';
+import { type } from '@/lib/type';
 
 export interface IngestionProgress {
   total_videos: number;
@@ -142,8 +143,7 @@ export default function ProfileIngestionStatus({
             sx={{
               bgcolor: statusColor,
               color: '#ffffff',
-              fontWeight: 600,
-              fontSize: '0.75rem',
+              ...type.captionStrong,
             }}
             icon={
               isCompleted ? (
@@ -154,7 +154,7 @@ export default function ProfileIngestionStatus({
             }
           />
           {!isCompleted && !isFailed && (
-            <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+            <Typography variant="body2" color="text.secondary">
               {progress.percentage}%
             </Typography>
           )}
@@ -182,14 +182,14 @@ export default function ProfileIngestionStatus({
         {/* Progress Details */}
         {!isCompleted && !isFailed && (
           <Stack spacing={0.5}>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+            <Typography variant="caption" color="text.secondary">
               Stage: {getStatusLabel(status.status)}
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+            <Typography variant="caption" color="text.secondary">
               Videos: {progress.videos_completed} of {progress.total_videos} processed
             </Typography>
             {progress.total_videos > 0 && (
-              <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+              <Typography variant="caption" color="text.secondary">
                 Downloaded: {progress.videos_downloaded} • 
                 Analyzed: {progress.videos_analyzed} • 
                 Audio: {progress.videos_audio_processed} • 
@@ -214,7 +214,7 @@ export default function ProfileIngestionStatus({
               </Button>
             }
           >
-            <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+            <Typography variant="body2">
               {status.error}
             </Typography>
           </Alert>
@@ -230,7 +230,7 @@ export default function ProfileIngestionStatus({
               border: '1px solid rgba(76, 175, 80, 0.3)',
             }}
           >
-            <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+            <Typography variant="body2">
               Profile processing completed successfully!
             </Typography>
           </Alert>

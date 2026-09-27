@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { type } from '@/lib/type';
 
 /**
  * Hero fan of source cards, modelled on ElevenReader's book-cover fan.
@@ -69,7 +70,7 @@ function CardFace({ card }: { card: Card }) {
       <div style={{ ...pad, background: '#111', color: '#fff', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <div style={{ fontSize: 8, letterSpacing: '0.18em', opacity: 0.6, textTransform: 'uppercase' }}>Textbook</div>
         <div>
-          <div style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em' }}>{card.title}</div>
+          <div style={{ ...type.bodyStrong }}>{card.title}</div>
           <div style={{ fontSize: 9, opacity: 0.55, marginTop: 6 }}>{card.sub}</div>
         </div>
         <div style={{ height: 3, width: 34, background: 'rgba(255,255,255,0.5)' }} />
@@ -81,7 +82,7 @@ function CardFace({ card }: { card: Card }) {
     return (
       <div style={{ ...pad, background: '#fff', display: 'flex', flexDirection: 'column', gap: 10 }}>
         <div style={{ background: '#111', color: '#fff', borderRadius: 3, padding: '7px 8px' }}>
-          <div style={{ fontSize: 10, fontWeight: 650, lineHeight: 1.2 }}>{card.title}</div>
+          <div style={{ fontSize: 10, fontWeight: 600, lineHeight: 1.2 }}>{card.title}</div>
           <div style={{ fontSize: 7, opacity: 0.6 }}>{card.sub}</div>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -124,7 +125,7 @@ function CardFace({ card }: { card: Card }) {
   if (card.kind === 'paper') {
     return (
       <div style={{ ...pad, background: '#fff' }}>
-        <div style={{ fontSize: 9.5, fontWeight: 700, lineHeight: 1.2, textAlign: 'center', marginBottom: 4 }}>
+        <div style={{ fontSize: 9.5, fontWeight: 600, lineHeight: 1.2, textAlign: 'center', marginBottom: 4 }}>
           {card.title}
         </div>
         <div style={{ fontSize: 7, opacity: 0.45, textAlign: 'center', marginBottom: 10 }}>{card.sub}</div>
@@ -140,12 +141,12 @@ function CardFace({ card }: { card: Card }) {
   return (
     <div style={{ ...pad, background: '#fff', display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12 }}>
-        <div style={{ fontSize: 7, fontWeight: 700, letterSpacing: '0.08em', color: '#fff', background: '#111', padding: '3px 5px', borderRadius: 2 }}>
+        <div style={{ fontSize: 7, fontWeight: 600, letterSpacing: '0.08em', color: '#fff', background: '#111', padding: '3px 5px', borderRadius: 2 }}>
           PDF
         </div>
         <div style={{ fontSize: 8, opacity: 0.5 }}>{card.sub}</div>
       </div>
-      <div style={{ fontSize: 11, fontWeight: 650, lineHeight: 1.25, marginBottom: 12 }}>{card.title}</div>
+      <div style={{ ...type.captionStrong, marginBottom: 12 }}>{card.title}</div>
       <Lines widths={['100%', '88%', '96%', '74%', '100%', '82%', '90%', '58%']} gap={7} />
     </div>
   );

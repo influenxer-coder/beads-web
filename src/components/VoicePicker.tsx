@@ -130,7 +130,7 @@ export default function VoicePicker({
           onChange={(e) => setQ(e.target.value)}
           placeholder="Search voices"
           aria-label="Search voices"
-          className="h-12 w-full rounded-full border border-white/15 bg-white/[0.04] pl-11 pr-11 text-[15px] text-white outline-none placeholder:text-white/35 focus:border-white/35"
+          className="h-12 w-full rounded-full border border-white/15 bg-white/[0.04] pl-11 pr-11 text-base text-white outline-none placeholder:text-white/35 focus:border-white/35"
         />
         {q && (
           <button
@@ -152,7 +152,7 @@ export default function VoicePicker({
             type="button"
             onClick={() => setFilter(f.key)}
             aria-pressed={filter === f.key}
-            className={`min-h-[36px] rounded-full border px-4 text-[13.5px] transition ${
+            className={`min-h-[36px] rounded-full border px-4 text-sm transition ${
               filter === f.key
                 ? 'border-white bg-white text-black font-semibold'
                 : 'border-white/20 bg-transparent text-white/80 hover:border-white/45 hover:text-white'
@@ -171,7 +171,7 @@ export default function VoicePicker({
       )}
 
       {!loading && shown.length === 0 && (
-        <p className="py-10 text-center text-[15px] text-white/50">No voices match that.</p>
+        <p className="py-10 text-center text-base text-white/50">No voices match that.</p>
       )}
 
       {/* Grid */}
@@ -201,7 +201,7 @@ export default function VoicePicker({
               <div className="flex items-start gap-3">
                 <span
                   aria-hidden="true"
-                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-[17px] font-bold text-white/90"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-base font-bold text-white/90"
                   style={{
                     background: `linear-gradient(145deg, hsl(${tone} 45% 42%), hsl(${(tone + 48) % 360} 42% 24%))`,
                   }}
@@ -211,14 +211,14 @@ export default function VoicePicker({
 
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="truncate text-[15.5px] font-semibold">{v.name}</span>
+                    <span className="truncate text-base font-semibold">{v.name}</span>
                   </div>
 
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {v.tags.slice(0, 3).map((t) => (
                       <span
                         key={t}
-                        className="rounded-full border border-white/20 bg-white/[0.06] px-2 py-0.5 text-[11.5px] text-white/80"
+                        className="rounded-full border border-white/20 bg-white/[0.06] px-2 py-0.5 text-xs text-white/80"
                       >
                         {t}
                       </span>
@@ -244,20 +244,20 @@ export default function VoicePicker({
               {/* Policy */}
               <div className="mt-3.5 flex items-center gap-2 border-t border-white/12 pt-3">
                 {v.policy_safe ? (
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/35 bg-emerald-400/10 px-2.5 py-1 text-[11.5px] text-emerald-300">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/35 bg-emerald-400/10 px-2.5 py-1 text-xs text-emerald-300">
                     <ShieldCheck size={12} />
                     Policy safe
                   </span>
                 ) : (
                   <span
-                    className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/35 bg-amber-400/10 px-2.5 py-1 text-[11.5px] text-amber-300"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/35 bg-amber-400/10 px-2.5 py-1 text-xs text-amber-300"
                     title={v.reason ?? 'Not cleared for publishing'}
                   >
                     <ShieldAlert size={12} />
                     Not for publishing
                   </span>
                 )}
-                <span className="ml-auto text-[11px] uppercase tracking-wider text-white/45">
+                <span className="ml-auto text-xs uppercase tracking-wider text-white/45">
                   {v.provider === 'elevenlabs' ? 'ElevenLabs' : 'Beads'}
                 </span>
               </div>

@@ -11,6 +11,7 @@ import MiniPlayer from '@/components/onboarding/MiniPlayer';
 import VoicesPanel, { loadLastVoiceId, type Voice } from '@/components/onboarding/VoicesPanel';
 import SaveSheet from '@/components/onboarding/SaveSheet';
 import Studio from '@/components/studio/Studio';
+import { type } from '@/lib/type';
 
 type Screen = 'upload' | 'parsing' | 'ready';
 
@@ -401,7 +402,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: 0,
     minHeight: 44,
     color: 'rgba(255,255,255,0.55)',
-    fontSize: 14.5,
+    ...type.callout,
     textDecoration: 'underline',
     textUnderlineOffset: 3,
     cursor: 'pointer',
@@ -416,8 +417,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#000',
     padding: '11px 18px',
     borderRadius: 999,
-    fontSize: 14.5,
-    fontWeight: 550,
+    ...type.calloutStrong,
     boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
   },
 };

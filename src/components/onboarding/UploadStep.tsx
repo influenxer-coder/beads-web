@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ui } from './ui';
+import { type } from '@/lib/type';
 
 const ACCEPT = '.pdf,.docx,.epub,.txt,.md,.ppt,.pptx,.png,.jpg,.jpeg,.heic';
 const FORMATS = 'PDF · DOCX · EPUB · slides · notes · photos';
@@ -164,13 +165,10 @@ function UploadIcon() {
 const styles: Record<string, React.CSSProperties> = {
   wrap: { width: '100%', maxWidth: 560, margin: '0 auto', textAlign: 'center' },
   h1: {
-    fontSize: 'clamp(27px, 4.4vw, 40px)',
-    lineHeight: 1.12,
-    letterSpacing: '-0.03em',
-    fontWeight: 600,
+    ...type.headline,
     margin: '0 0 12px',
   },
-  sub: { fontSize: 16.5, color: 'rgba(255,255,255,0.55)', margin: '0 0 36px' },
+  sub: { ...type.body, color: 'rgba(255,255,255,0.55)', margin: '0 0 36px' },
   drop: {
     display: 'flex',
     flexDirection: 'column',
@@ -184,11 +182,11 @@ const styles: Record<string, React.CSSProperties> = {
     transition: 'border-color 160ms ease, background 160ms ease',
     minHeight: 168,
   },
-  dropTitle: { fontSize: 16.5, fontWeight: 550 },
-  dropHint: { fontSize: 13.5, color: 'rgba(255,255,255,0.45)' },
+  dropTitle: { ...type.bodyStrong },
+  dropHint: { ...type.callout, color: 'rgba(255,255,255,0.45)' },
   orRow: { display: 'flex', alignItems: 'center', gap: 14, margin: '22px 0' },
   orLine: { flex: 1, height: 1, background: 'rgba(255,255,255,0.12)' },
-  orText: { fontSize: 12, letterSpacing: '0.14em', color: 'rgba(255,255,255,0.4)' },
+  orText: { ...type.caption, letterSpacing: '0.06em', color: 'rgba(255,255,255,0.4)' },
   linkRow: { display: 'flex' },
   linkInput: {
     width: '100%',
@@ -198,17 +196,17 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.18)',
     background: 'rgba(255,255,255,0.04)',
     color: '#fff',
-    fontSize: 15.5,
+    ...type.body,
     outline: 'none',
   },
   error: {
     marginTop: 16,
-    fontSize: 14,
+    ...type.callout,
     color: '#ff9f9f',
     background: 'rgba(255,90,90,0.08)',
     border: '1px solid rgba(255,90,90,0.25)',
     borderRadius: 8,
     padding: '10px 12px',
   },
-  footnote: { marginTop: 22, fontSize: 13, color: 'rgba(255,255,255,0.35)' },
+  footnote: { marginTop: 22, ...type.callout, color: 'rgba(255,255,255,0.35)' },
 };

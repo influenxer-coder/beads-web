@@ -6,6 +6,7 @@ import TrackedLink from '@/components/TrackedLink';
 import { notFound } from 'next/navigation';
 import PaperPlayer from '@/components/PaperPlayer';
 import { PAPERS, paperBySlug, lessonsFor } from '@/lib/papers';
+import { type, SANS } from '@/lib/type';
 
 /**
  * One paper, one URL, playable with no account.
@@ -142,52 +143,50 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 const s: Record<string, React.CSSProperties> = {
   page: {
     background: '#000', color: '#fff', minHeight: '100vh',
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif",
+    fontFamily: SANS,
     WebkitFontSmoothing: 'antialiased',
   },
   wrap: { maxWidth: 940, margin: '0 auto', padding: '36px 24px 96px' },
 
   crumbs: {
-    display: 'flex', gap: 10, alignItems: 'center', fontSize: 13.5,
+    display: 'flex', gap: 10, alignItems: 'center', ...type.callout,
     color: 'rgba(255,255,255,0.45)', marginBottom: 22,
   },
   crumb: { color: 'rgba(255,255,255,0.7)', textDecoration: 'none' },
   crumbSep: { color: 'rgba(255,255,255,0.25)' },
 
   h1: {
-    fontSize: 'clamp(30px, 4.6vw, 46px)', lineHeight: 1.12, fontWeight: 700,
-    letterSpacing: '-0.03em', margin: '0 0 12px',
+    ...type.headline, margin: '0 0 12px',
   },
-  byline: { fontSize: 16, color: 'rgba(255,255,255,0.5)', margin: '0 0 18px' },
+  byline: { ...type.body, color: 'rgba(255,255,255,0.5)', margin: '0 0 18px' },
   blurb: {
-    fontSize: 18.5, lineHeight: 1.6, color: 'rgba(255,255,255,0.8)',
+    ...type.intro, color: 'rgba(255,255,255,0.8)',
     maxWidth: 640, margin: 0,
   },
   empty: {
-    marginTop: 30, fontSize: 16, lineHeight: 1.7,
+    marginTop: 30, ...type.body,
     color: 'rgba(255,255,255,0.6)',
   },
 
   readSection: { marginTop: 64 },
   h2: {
-    fontSize: 'clamp(22px, 2.8vw, 28px)', lineHeight: 1.2, fontWeight: 600,
-    letterSpacing: '-0.02em', margin: '0 0 18px',
+    ...type.title, margin: '0 0 18px',
   },
   lessonBlock: {
     padding: '22px 0', borderTop: '1px solid rgba(255,255,255,0.1)',
   },
-  lessonTitle: { fontSize: 18, fontWeight: 600, margin: '0 0 10px' },
+  lessonTitle: { ...type.subhead, margin: '0 0 10px' },
   lessonText: {
-    fontSize: 16, lineHeight: 1.72, color: 'rgba(255,255,255,0.62)', margin: 0,
+    ...type.body, lineHeight: 1.6, color: 'rgba(255,255,255,0.62)', margin: 0,
   },
 
   sourceSection: { marginTop: 64 },
   body: {
-    fontSize: 16.5, lineHeight: 1.7, color: 'rgba(255,255,255,0.65)',
+    ...type.body, lineHeight: 1.6, color: 'rgba(255,255,255,0.65)',
     maxWidth: 620, margin: '0 0 18px',
   },
   sourceLink: {
-    color: '#fff', fontSize: 16.5, textDecoration: 'underline',
+    color: '#fff', ...type.body, textDecoration: 'underline',
     textUnderlineOffset: 4,
   },
 
@@ -197,6 +196,6 @@ const s: Record<string, React.CSSProperties> = {
     padding: '16px 0', borderTop: '1px solid rgba(255,255,255,0.1)',
     display: 'flex', flexWrap: 'wrap', gap: '4px 14px', alignItems: 'baseline',
   },
-  moreLink: { color: '#fff', fontSize: 17, textDecoration: 'none', fontWeight: 500 },
-  moreMeta: { fontSize: 14, color: 'rgba(255,255,255,0.4)' },
+  moreLink: { color: '#fff', ...type.bodyStrong, textDecoration: 'none' },
+  moreMeta: { ...type.callout, color: 'rgba(255,255,255,0.4)' },
 };

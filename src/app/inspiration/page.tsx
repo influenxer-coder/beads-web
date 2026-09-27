@@ -8,6 +8,7 @@ import {
 import { Add, Edit, Delete, PlayArrow, CheckCircle } from '@mui/icons-material';
 import ProfileIngestionStatus, { IngestionStatus } from '@/components/ProfileIngestionStatus';
 import VoiceCloneBadge, { VoiceCloneInfo, VoiceCloneStatus } from '@/components/VoiceCloneBadge';
+import { type } from '@/lib/type';
 
 type Profile = {
   id: string;
@@ -195,7 +196,7 @@ export default function InspirationPage(){
         alignItems={{ xs: 'stretch', sm: 'center' }}
         spacing={2}
       >
-        <Typography variant="h5" fontWeight={700} sx={{ fontSize: { xs: '1.5rem', md: '1.75rem' } }}>
+        <Typography variant="h3" component="h1">
           Inspiration
         </Typography>
         <Button 
@@ -282,8 +283,7 @@ export default function InspirationPage(){
                   <Typography
                     variant="h3"
                     sx={{
-                      fontSize: { xs: '3rem', md: '4rem' },
-                      fontWeight: 700,
+                      ...type.hero,
                       color: p.is_default ? '#000000' : '#ffffff',
                       opacity: 0.2,
                       position: 'relative',
@@ -312,7 +312,7 @@ export default function InspirationPage(){
                 }
                 title={
                   <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
-                    <Typography variant="h6" sx={{ fontSize: { xs: '1rem', md: '1.125rem' } }}>
+                    <Typography variant="h5">
                       {p.name}
                     </Typography>
                     {p.ingestion_status && (
@@ -334,9 +334,8 @@ export default function InspirationPage(){
                             (p.ingestion_progress && p.ingestion_progress.percentage < 75 && p.ingestion_status !== 'completed' && p.ingestion_status !== 'failed')
                               ? '#000000'
                               : '#ffffff',
-                          fontSize: '0.7rem',
+                          ...type.captionStrong,
                           height: 20,
-                          fontWeight: 600,
                         }}
                       />
                     )}
@@ -348,7 +347,6 @@ export default function InspirationPage(){
                     variant="body2" 
                     color="text.secondary"
                     sx={{ 
-                      fontSize: { xs: '0.8rem', md: '0.875rem' },
                       mt: 0.5
                     }}
                   >
@@ -361,12 +359,12 @@ export default function InspirationPage(){
                   <Chip 
                     label={`${p.source_count ?? 0} Sources`} 
                     size="small"
-                    sx={{ fontSize: '0.75rem' }}
+                    sx={{ ...type.caption }}
                   />
                   <Chip 
                     label={`${p.bead_count ?? 0} Beads`} 
                     size="small"
-                    sx={{ fontSize: '0.75rem' }}
+                    sx={{ ...type.caption }}
                   />
                   {p.is_default && (
                     <Chip 
@@ -375,7 +373,7 @@ export default function InspirationPage(){
                       sx={{ 
                         bgcolor: 'primary.main',
                         color: '#ffffff',
-                        fontSize: '0.75rem'
+                        ...type.caption
                       }}
                     />
                   )}
@@ -401,7 +399,7 @@ export default function InspirationPage(){
                   <Box sx={{ mt: 2, p: 1.5, borderRadius: 2, bgcolor: 'rgba(76, 175, 80, 0.1)', border: '1px solid rgba(76, 175, 80, 0.3)' }}>
                     <Stack direction="row" spacing={1} alignItems="center">
                       <CheckCircle sx={{ color: '#4caf50', fontSize: '20px' }} />
-                      <Typography variant="body2" sx={{ fontSize: '0.875rem', color: '#4caf50', fontWeight: 600 }}>
+                      <Typography variant="body2" sx={{ ...type.calloutStrong, color: '#4caf50' }}>
                         Profile ready! You can now analyze and generate content.
                       </Typography>
                     </Stack>
@@ -415,18 +413,18 @@ export default function InspirationPage(){
                       <Stack direction="row" spacing={1} alignItems="center">
                         <VoiceCloneBadge profile={p} size="small" showLabel={true} />
                         {p.voice_clone_status === 'completed' && p.voice_clone_id && (
-                          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                          <Typography variant="caption" color="text.secondary">
                             ID: {p.voice_clone_id.substring(0, 8)}...
                           </Typography>
                         )}
                       </Stack>
                       {p.voice_clone_status === 'failed' && p.voice_clone_error && (
-                        <Typography variant="caption" color="error" sx={{ fontSize: '0.75rem' }}>
+                        <Typography variant="caption" color="error">
                           Error: {p.voice_clone_error}
                         </Typography>
                       )}
                       {p.voice_clone_status === 'completed' && p.voice_clone_completed_at && (
-                        <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                        <Typography variant="caption" color="text.secondary">
                           Completed: {new Date(p.voice_clone_completed_at).toLocaleDateString()}
                         </Typography>
                       )}
@@ -436,7 +434,7 @@ export default function InspirationPage(){
 
                 {!!(p.analyzed_from_urls?.length) && (
                   <Stack spacing={1} sx={{ mt: p.ingestion_status && p.ingestion_status !== 'completed' ? 2 : 0 }}>
-                    <Typography variant="subtitle2" sx={{ fontSize: '0.875rem', mb: 0.5 }}>
+                    <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
                       TikTok Links
                     </Typography>
                     {p.analyzed_from_urls!.slice(0, 2).map((url, idx)=> (
@@ -447,7 +445,7 @@ export default function InspirationPage(){
                         rel="noreferrer" 
                         style={{ 
                           color: 'primary.main', 
-                          fontSize: '0.8rem',
+                          ...type.caption,
                           textDecoration: 'none',
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
@@ -471,7 +469,7 @@ export default function InspirationPage(){
                     size="small" 
                     startIcon={<Edit />} 
                     onClick={()=>onEdit(p)}
-                    sx={{ fontSize: '0.8rem' }}
+                    sx={{ ...type.captionStrong }}
                   >
                     Edit
                   </Button>
@@ -480,7 +478,7 @@ export default function InspirationPage(){
                     color="error" 
                     startIcon={<Delete />} 
                     onClick={()=>onDelete(p)}
-                    sx={{ fontSize: '0.8rem' }}
+                    sx={{ ...type.captionStrong }}
                   >
                     Delete
                   </Button>
@@ -544,7 +542,7 @@ export default function InspirationPage(){
           }
         }}
       >
-        <DialogTitle sx={{ fontSize: { xs: '1.25rem', md: '1.5rem' }, pb: 1 }}>
+        <DialogTitle sx={{ ...type.title, pb: 1 }}>
           {editing ? 'Edit Inspiration' : 'New Inspiration'}
         </DialogTitle>
         <DialogContent>

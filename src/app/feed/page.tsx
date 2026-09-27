@@ -5,6 +5,7 @@ import {
   IconButton, CircularProgress, useMediaQuery, useTheme
 } from '@mui/material';
 import { PlayArrow, Pause } from '@mui/icons-material';
+import { type } from '@/lib/type';
 
 type Bead = {
   id: string; author: string; title: string; content: string;
@@ -134,8 +135,7 @@ export default function FeedPage(){
             <Typography
               variant="h3"
               sx={{
-                fontSize: { xs: '3rem', md: '4rem' },
-                fontWeight: 700,
+                ...type.hero,
                 color: index % 2 === 0 ? '#ffffff' : '#000000',
                 opacity: 0.2,
                 position: 'relative',
@@ -155,7 +155,7 @@ export default function FeedPage(){
                     color: index % 2 === 0 ? '#ffffff' : '#000000',
                     width: { xs: 40, md: 48 },
                     height: { xs: 40, md: 48 },
-                    fontSize: { xs: '1rem', md: '1.25rem' },
+                    ...type.intro,
                     transition: 'all 0.3s ease',
                   }}
                 >
@@ -164,17 +164,13 @@ export default function FeedPage(){
                 <Box sx={{ flex: 1, minWidth: 0 }}>
                   <Typography 
                     variant="subtitle1" 
-                    sx={{ 
-                      fontWeight: 600,
-                      fontSize: { xs: '0.95rem', md: '1rem' }
-                    }}
                   >
                     {it.author || 'Anonymous'}
                   </Typography>
                   <Typography 
-                    variant="caption" 
+                    variant="body2" 
+                    component="span"
                     color="text.secondary"
-                    sx={{ fontSize: { xs: '0.75rem', md: '0.875rem' } }}
                   >
                     {new Date(it.created_at).toLocaleDateString('en-US', {
                       month: 'short',
@@ -187,12 +183,7 @@ export default function FeedPage(){
 
               {/* Title */}
               <Typography 
-                variant="h6" 
-                sx={{ 
-                  fontWeight: 700,
-                  fontSize: { xs: '1.1rem', md: '1.25rem' },
-                  lineHeight: 1.3
-                }}
+                variant="h5" 
               >
                 {it.title}
               </Typography>
@@ -201,8 +192,6 @@ export default function FeedPage(){
               <Typography 
                 sx={{ 
                   whiteSpace: 'pre-wrap',
-                  lineHeight: 1.6,
-                  fontSize: { xs: '0.9rem', md: '1rem' },
                   color: 'rgba(255, 255, 255, 0.9)'
                 }}
               >

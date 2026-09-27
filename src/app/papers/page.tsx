@@ -6,6 +6,7 @@ import SiteHeader from '@/components/SiteHeader';
 import TrackedLink from '@/components/TrackedLink';
 import { PAPERS, paperSummaries, paperBySlug, lessonsFor } from '@/lib/papers';
 import PaperPlayer from '@/components/PaperPlayer';
+import { type, SANS, MONO } from '@/lib/type';
 
 /**
  * The shelf.
@@ -144,19 +145,18 @@ export default async function Page() {
 const s: Record<string, React.CSSProperties> = {
   page: {
     background: '#000', color: '#fff', minHeight: '100vh',
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif",
+    fontFamily: SANS,
     WebkitFontSmoothing: 'antialiased',
   },
   wrap: { maxWidth: 860, margin: '0 auto', padding: '44px 24px 96px' },
 
   h1: {
-    fontSize: 'clamp(30px, 4.6vw, 46px)', lineHeight: 1.08, fontWeight: 700,
-    letterSpacing: '-0.035em', margin: '0 0 24px', maxWidth: '20ch',
+    ...type.headline, margin: '0 0 24px', maxWidth: '20ch',
   },
 
   lead: { margin: '0 0 40px' },
   more: {
-    fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em',
+    ...type.subhead,
     margin: '0 0 16px', color: 'rgba(255,255,255,0.9)',
   },
 
@@ -189,15 +189,14 @@ const s: Record<string, React.CSSProperties> = {
 
   rowBody: { display: 'grid', gap: 5, minWidth: 0, flex: 1 },
   rowTitle: {
-    fontSize: 'clamp(17px, 2vw, 20px)', lineHeight: 1.28, fontWeight: 600,
-    letterSpacing: '-0.015em', color: '#fff',
+    ...type.subhead, color: '#fff',
   },
   rowMeta: {
-    fontFamily: "'SF Mono', ui-monospace, Menlo, monospace", fontSize: 11.5,
+    ...type.caption, fontFamily: MONO,
     color: 'rgba(255,255,255,0.4)',
   },
   rowBlurb: {
-    fontSize: 15, lineHeight: 1.6, color: 'rgba(255,255,255,0.58)',
+    ...type.body, color: 'rgba(255,255,255,0.58)',
     maxWidth: 560,
   },
   rowGo: { color: 'rgba(255,255,255,0.35)', fontSize: 20, flexShrink: 0 },
@@ -208,10 +207,10 @@ const s: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.13)',
     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
   },
-  ctaNote: { margin: 0, fontSize: 16, color: 'rgba(255,255,255,0.68)', textAlign: 'center' },
+  ctaNote: { margin: 0, ...type.body, color: 'rgba(255,255,255,0.68)', textAlign: 'center' },
   ctaBtn: {
     display: 'inline-flex', alignItems: 'center', minHeight: 52, padding: '0 28px',
-    borderRadius: 999, background: '#fff', color: '#0a0a0a', fontSize: 16,
-    fontWeight: 600, textDecoration: 'none',
+    borderRadius: 999, background: '#fff', color: '#0a0a0a', ...type.bodyStrong,
+    textDecoration: 'none',
   },
 };

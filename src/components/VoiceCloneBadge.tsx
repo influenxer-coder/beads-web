@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { Chip, Tooltip, Box, CircularProgress } from '@mui/material';
 import { CheckCircle, Error as ErrorIcon, HourglassEmpty, Mic } from '@mui/icons-material';
+import { type } from '@/lib/type';
 
 export type VoiceCloneStatus = 'pending' | 'cloning' | 'completed' | 'failed';
 
@@ -104,8 +105,7 @@ export default function VoiceCloneBadge({
         sx={{
           bgcolor: statusColor,
           color: '#ffffff',
-          fontWeight: 600,
-          fontSize: size === 'small' ? '0.7rem' : '0.75rem',
+          ...type.captionStrong,
           height: size === 'small' ? 20 : 24,
           '& .MuiChip-icon': {
             color: '#ffffff !important',

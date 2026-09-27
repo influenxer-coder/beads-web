@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { usePlayer } from '@/lib/player';
 import { track } from '@/lib/analytics';
+import { type } from '@/lib/type';
 
 type Turn = { host: string; text: string };
 
@@ -100,8 +101,8 @@ export default function AudioOverview({
 const styles: Record<string, React.CSSProperties> = {
   pad: { padding: '18px 16px 22px' },
   head: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, marginBottom: 16 },
-  title: { fontSize: 18, fontWeight: 600, letterSpacing: '-0.01em' },
-  hosts: { fontSize: 13.5, color: 'rgba(255,255,255,0.5)', marginTop: 3 },
+  title: { ...type.subhead },
+  hosts: { ...type.callout, color: 'rgba(255,255,255,0.5)', marginTop: 3 },
   play: {
     width: 50,
     height: 50,
@@ -109,7 +110,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: 0,
     background: '#fff',
     color: '#000',
-    fontSize: 15,
+    ...type.body,
     cursor: 'pointer',
     flexShrink: 0,
   },
@@ -120,21 +121,19 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.24)',
     background: 'transparent',
     color: '#fff',
-    fontSize: 14.5,
-    fontWeight: 600,
+    ...type.calloutStrong,
     cursor: 'pointer',
     flexShrink: 0,
   },
-  note: { fontSize: 13.5, color: 'rgba(255,255,255,0.45)', margin: '0 0 12px' },
-  error: { fontSize: 14, color: '#ffb0b0', margin: '0 0 12px' },
+  note: { ...type.callout, color: 'rgba(255,255,255,0.45)', margin: '0 0 12px' },
+  error: { ...type.callout, color: '#ffb0b0', margin: '0 0 12px' },
   turns: { listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 14 },
   turn: { display: 'flex', gap: 12, alignItems: 'baseline' },
   host: {
-    fontSize: 12.5,
-    fontWeight: 700,
+    ...type.captionStrong,
     color: 'rgba(255,255,255,0.55)',
     minWidth: 46,
     flexShrink: 0,
   },
-  text: { fontSize: 15, lineHeight: 1.6, color: 'rgba(255,255,255,0.85)' },
+  text: { ...type.body, color: 'rgba(255,255,255,0.85)' },
 };

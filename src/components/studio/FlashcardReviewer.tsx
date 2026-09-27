@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { track } from '@/lib/analytics';
 import Cite from './Cite';
+import { type } from '@/lib/type';
 
 /**
  * Flashcard reviewer with spaced repetition.
@@ -230,7 +231,7 @@ const styles: Record<string, React.CSSProperties> = {
   progressRow: {
     display: 'flex',
     justifyContent: 'space-between',
-    fontSize: 13,
+    ...type.callout,
     color: 'rgba(255,255,255,0.5)',
     margin: '10px 0 18px',
   },
@@ -250,9 +251,9 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     textAlign: 'left',
   },
-  cardSide: { fontSize: 11.5, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' },
-  cardText: { fontSize: 20, lineHeight: 1.4, fontWeight: 500 },
-  tapHint: { fontSize: 13, color: 'rgba(255,255,255,0.35)' },
+  cardSide: { ...type.caption, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.4)' },
+  cardText: { ...type.subhead },
+  tapHint: { ...type.callout, color: 'rgba(255,255,255,0.35)' },
   gradeRow: { display: 'flex', gap: 10, marginTop: 16 },
   grade: {
     flex: 1,
@@ -261,8 +262,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.2)',
     background: 'transparent',
     color: '#fff',
-    fontSize: 15.5,
-    fontWeight: 600,
+    ...type.bodyStrong,
     cursor: 'pointer',
     display: 'inline-flex',
     alignItems: 'center',
@@ -272,7 +272,7 @@ const styles: Record<string, React.CSSProperties> = {
   again: { borderColor: 'rgba(255,140,140,0.45)' },
   good: { borderColor: 'rgba(94,224,138,0.5)' },
   gradeHint: {
-    fontSize: 11,
+    ...type.caption,
     opacity: 0.45,
     border: '1px solid currentColor',
     borderRadius: 4,
@@ -287,8 +287,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: 0,
     background: '#fff',
     color: '#000',
-    fontSize: 15.5,
-    fontWeight: 600,
+    ...type.bodyStrong,
     cursor: 'pointer',
   },
   secondary: {
@@ -299,11 +298,11 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.22)',
     background: 'transparent',
     color: '#fff',
-    fontSize: 14.5,
+    ...type.callout,
     cursor: 'pointer',
   },
   done: { padding: '38px 20px', textAlign: 'center' },
-  doneTitle: { fontSize: 18, fontWeight: 600, margin: '0 0 8px' },
-  doneSub: { fontSize: 14.5, color: 'rgba(255,255,255,0.55)', margin: 0 },
-  empty: { padding: 26, color: 'rgba(255,255,255,0.5)', fontSize: 14.5 },
+  doneTitle: { ...type.subhead, margin: '0 0 8px' },
+  doneSub: { ...type.callout, color: 'rgba(255,255,255,0.55)', margin: 0 },
+  empty: { padding: 26, color: 'rgba(255,255,255,0.5)', ...type.callout },
 };

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ui } from './ui';
+import { type } from '@/lib/type';
 
 export type Voice = {
   id: string;
@@ -110,7 +111,7 @@ export default function VoicesPanel({
           {!loading && voices.length === 0 && (
             <div style={styles.empty}>
               <p style={styles.muted}>No voices yet.</p>
-              <p style={{ ...styles.muted, fontSize: 13.5 }}>
+              <p style={{ ...styles.muted, ...type.callout }}>
                 Add an inspiration and Beads will learn that voice.
               </p>
             </div>
@@ -203,7 +204,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'space-between',
     padding: '20px 20px 10px',
   },
-  h3: { margin: 0, fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em' },
+  h3: { margin: 0, ...type.subhead },
   close: {
     width: 44,
     height: 44,
@@ -211,10 +212,10 @@ const styles: Record<string, React.CSSProperties> = {
     border: 0,
     background: 'transparent',
     color: 'rgba(255,255,255,0.7)',
-    fontSize: 16,
+    ...type.body,
     cursor: 'pointer',
   },
-  blurb: { margin: '0 20px 16px', fontSize: 14, color: 'rgba(255,255,255,0.55)' },
+  blurb: { margin: '0 20px 16px', ...type.callout, color: 'rgba(255,255,255,0.55)' },
   list: { flex: 1, overflowY: 'auto', padding: '0 20px 20px', display: 'flex', flexDirection: 'column', gap: 9 },
   voiceRow: {
     display: 'flex',
@@ -236,12 +237,11 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: 16,
-    fontWeight: 600,
+    ...type.bodyStrong,
     flexShrink: 0,
   },
-  voiceName: { display: 'block', fontSize: 15.5, fontWeight: 550 },
-  voiceLang: { display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.45)', marginTop: 2 },
+  voiceName: { display: 'block', ...type.bodyStrong },
+  voiceLang: { display: 'block', ...type.callout, color: 'rgba(255,255,255,0.45)', marginTop: 2 },
   samplePlay: {
     width: 44,
     height: 44,
@@ -250,10 +250,10 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: 12,
+    ...type.caption,
     flexShrink: 0,
   },
   foot: { padding: 20, borderTop: '1px solid rgba(255,255,255,0.1)' },
-  muted: { color: 'rgba(255,255,255,0.5)', fontSize: 14.5, margin: '6px 0' },
+  muted: { color: 'rgba(255,255,255,0.5)', ...type.callout, margin: '6px 0' },
   empty: { padding: '24px 4px' },
 };

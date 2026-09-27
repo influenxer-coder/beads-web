@@ -91,11 +91,11 @@ export default function AudiosPage() {
             onChange={(e) => setQ(e.target.value)}
             placeholder="Search audios"
             aria-label="Search audios"
-            className="h-10 flex-1 rounded-full border border-white/12 bg-white/[0.04] px-4 text-[14.5px] text-white outline-none placeholder:text-white/35 focus:border-white/35"
+            className="h-10 flex-1 rounded-full border border-white/12 bg-white/[0.04] px-4 text-sm text-white outline-none placeholder:text-white/35 focus:border-white/35"
           />
           <Link
             href="/start"
-            className="flex h-10 items-center rounded-full bg-white px-4 text-[14px] font-semibold text-black no-underline"
+            className="flex h-10 items-center rounded-full bg-white px-4 text-sm font-semibold text-black no-underline"
           >
             New
           </Link>
@@ -103,18 +103,18 @@ export default function AudiosPage() {
       </header>
 
       <div className="mx-auto max-w-4xl px-5 pt-7">
-        <h1 className="mb-1 text-2xl font-semibold tracking-tight">All audios</h1>
-        <p className="mb-7 text-[15px] text-white/50">
+        <h1 className="mb-1 text-2xl font-semibold">All audios</h1>
+        <p className="mb-7 text-base text-white/50">
           {loading ? 'Loading' : `${shown.length} ready to publish`}
         </p>
 
         {!loading && shown.length === 0 && (
           <div className="py-16 text-center">
-            <p className="mb-2 text-[18px] font-semibold">Nothing here yet</p>
-            <p className="mb-6 text-[15px] text-white/50">Turn a reading into audio to get started.</p>
+            <p className="mb-2 text-lg font-semibold">Nothing here yet</p>
+            <p className="mb-6 text-base text-white/50">Turn a reading into audio to get started.</p>
             <Link
               href="/start"
-              className="inline-flex min-h-[48px] items-center rounded-full bg-white px-7 text-[15px] font-semibold text-black no-underline"
+              className="inline-flex min-h-[48px] items-center rounded-full bg-white px-7 text-base font-semibold text-black no-underline"
             >
               Upload a file
             </Link>
@@ -221,14 +221,14 @@ function AudioRow({ row, player }: { row: Row; player: ReturnType<typeof usePlay
             className="absolute inset-0 h-full w-full object-cover"
           />
         )}
-        <span className="absolute inset-0 flex items-center justify-center bg-black/45 text-[13px]">
+        <span className="absolute inset-0 flex items-center justify-center bg-black/45 text-sm">
           {isCurrent && player.playing ? '❚❚' : '▶'}
         </span>
       </button>
 
       <div className="min-w-0 flex-1">
-        <div className="truncate text-[15.5px] font-semibold">{row.title}</div>
-        <div className="mt-0.5 truncate text-[13.5px] text-white/50">
+        <div className="truncate text-base font-semibold">{row.title}</div>
+        <div className="mt-0.5 truncate text-sm text-white/50">
           {row.sourceTitle}
           {row.citedTo ? ` · ${row.citedTo}` : ''}
         </div>
@@ -238,7 +238,7 @@ function AudioRow({ row, player }: { row: Row; player: ReturnType<typeof usePlay
         type="button"
         onClick={download}
         title="Audio, cover and episode text"
-        className="shrink-0 rounded-full border border-white/22 bg-transparent px-3.5 py-1.5 text-[12.5px] text-white/85 transition hover:border-white/50"
+        className="shrink-0 rounded-full border border-white/22 bg-transparent px-3.5 py-1.5 text-xs text-white/85 transition hover:border-white/50"
       >
         {state === 'working' ? 'Packing…' : state === 'failed' ? 'Failed' : 'Download'}
       </button>

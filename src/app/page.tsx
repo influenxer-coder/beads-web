@@ -10,8 +10,7 @@ import { identify } from '@/lib/analytics';
 import { claimAnonymousDocuments } from '@/lib/identity';
 import SocialProof from '@/components/SocialProof';
 import MicroBriefPreview from '@/components/MicroBriefPreview';
-
-const MONO = "'SF Mono', ui-monospace, SFMono-Regular, Menlo, monospace";
+import { type, SANS, MONO } from '@/lib/type';
 
 const styles: Record<string, React.CSSProperties> = {
   page: {
@@ -19,7 +18,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#fff',
     minHeight: '100vh',
     width: '100%',
-    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif",
+    fontFamily: SANS,
     WebkitFontSmoothing: 'antialiased',
   },
   wrap: { maxWidth: 920, margin: '0 auto', padding: '0 24px' },
@@ -40,13 +39,12 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.28)',
     color: '#fff',
     textDecoration: 'none',
-    fontSize: 14,
-    fontWeight: 600,
+    ...type.calloutStrong,
   },
   navLink: {
     color: 'rgba(255,255,255,0.55)',
     textDecoration: 'none',
-    fontSize: 14,
+    ...type.callout,
     marginLeft: 26,
   },
   hero: {
@@ -58,17 +56,14 @@ const styles: Record<string, React.CSSProperties> = {
   },
   eyebrow: {
     fontFamily: MONO,
-    fontSize: 12,
-    letterSpacing: '0.14em',
+    ...type.caption,
+    letterSpacing: '0.06em',
     textTransform: 'uppercase',
     color: 'rgba(255,255,255,0.45)',
     margin: '0 0 26px',
   },
   h1: {
-    fontSize: 'clamp(34px, 5.6vw, 60px)',
-    lineHeight: 1.06,
-    letterSpacing: '-0.035em',
-    fontWeight: 600,
+    ...type.hero,
     margin: '40px 0 22px',
     // keeps the headline to two balanced lines instead of a long widow
     maxWidth: '14ch',
@@ -76,8 +71,7 @@ const styles: Record<string, React.CSSProperties> = {
   } as React.CSSProperties,
   dim: { color: 'rgba(255,255,255,0.45)' },
   sub: {
-    fontSize: 18,
-    lineHeight: 1.6,
+    ...type.intro,
     color: 'rgba(255,255,255,0.58)',
     maxWidth: 440,
     margin: '0 0 34px',
@@ -91,7 +85,7 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: 54,
   },
   badge: { display: 'flex', alignItems: 'center', gap: 8 },
-  badgeText: { fontSize: 15, color: 'rgba(255,255,255,0.8)', whiteSpace: 'nowrap' },
+  badgeText: { ...type.body, color: 'rgba(255,255,255,0.8)', whiteSpace: 'nowrap' },
   ctaSolid: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -102,8 +96,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '0 30px',
     borderRadius: 999,
     textDecoration: 'none',
-    fontSize: 15.5,
-    fontWeight: 550,
+    ...type.bodyStrong,
   },
   ctaGhost: {
     display: 'inline-flex',
@@ -115,30 +108,25 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '0 30px',
     borderRadius: 999,
     textDecoration: 'none',
-    fontSize: 15.5,
-    fontWeight: 550,
+    ...type.bodyStrong,
   },
   rule: { height: 1, background: 'rgba(255,255,255,0.12)', border: 0, margin: 0 },
   section: { padding: '84px 0' },
   sectionLabel: {
     fontFamily: MONO,
-    fontSize: 12,
-    letterSpacing: '0.14em',
+    ...type.caption,
+    letterSpacing: '0.06em',
     textTransform: 'uppercase',
     color: 'rgba(255,255,255,0.45)',
     margin: '0 0 44px',
   },
   h2: {
-    fontSize: 'clamp(26px, 3.4vw, 36px)',
-    lineHeight: 1.18,
-    letterSpacing: '-0.025em',
-    fontWeight: 600,
+    ...type.headline,
     margin: '0 0 18px',
     maxWidth: 640,
   },
   body: {
-    fontSize: 16,
-    lineHeight: 1.68,
+    ...type.body,
     color: 'rgba(255,255,255,0.62)',
     maxWidth: 560,
     margin: 0,
@@ -158,15 +146,15 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'rgba(255,255,255,0.12)',
     border: '1px solid rgba(255,255,255,0.12)',
   },
-  momentWhen: { fontSize: 17, fontWeight: 600, margin: '0 0 8px', letterSpacing: '-0.01em' },
+  momentWhen: { ...type.bodyStrong, margin: '0 0 8px' },
   stepNum: {
     fontFamily: MONO,
-    fontSize: 12,
+    ...type.caption,
     color: 'rgba(255,255,255,0.4)',
     margin: '0 0 18px',
   },
-  cellTitle: { fontSize: 17, fontWeight: 600, margin: '0 0 10px', letterSpacing: '-0.01em' },
-  cellBody: { fontSize: 15, lineHeight: 1.6, color: 'rgba(255,255,255,0.55)', margin: 0 },
+  cellTitle: { ...type.bodyStrong, margin: '0 0 10px' },
+  cellBody: { ...type.body, color: 'rgba(255,255,255,0.55)', margin: 0 },
   twoCol: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -175,8 +163,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   list: { listStyle: 'none', padding: 0, margin: '26px 0 0' },
   li: {
-    fontSize: 15,
-    lineHeight: 1.5,
+    ...type.body,
     color: 'rgba(255,255,255,0.62)',
     padding: '13px 0',
     borderTop: '1px solid rgba(255,255,255,0.1)',
@@ -184,7 +171,7 @@ const styles: Record<string, React.CSSProperties> = {
   seeAll: { margin: '4px 0 0', textAlign: 'center' },
   seeAllLink: {
     display: 'inline-flex', alignItems: 'center', minHeight: 44,
-    color: '#fff', fontSize: 16, fontWeight: 600, textDecoration: 'none',
+    color: '#fff', ...type.bodyStrong, textDecoration: 'none',
     borderBottom: '1px solid rgba(255,255,255,0.3)',
   },
   footer: {
@@ -193,7 +180,7 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'space-between',
     flexWrap: 'wrap',
     gap: 16,
-    fontSize: 13,
+    ...type.callout,
     color: 'rgba(255,255,255,0.35)',
   },
 };

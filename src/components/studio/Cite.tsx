@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { track } from '@/lib/analytics';
+import { type } from '@/lib/type';
 
 /**
  * Where an item came from in the source.
@@ -68,6 +69,6 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.16)',
     background: 'transparent',
     color: 'rgba(255,255,255,0.6)',
-    fontSize: 12.5,
+    ...type.caption,
   },
 };

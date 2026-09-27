@@ -112,7 +112,7 @@ export default function MicroLessonFeed({ userId }: { userId?: string | null }) 
 
   return (
     <section className="w-full text-white">
-      <h2 className="mb-5 text-[28px] font-semibold tracking-tight">Your Micro-Lessons</h2>
+      <h2 className="mb-5 text-2xl font-semibold">Your Micro-Lessons</h2>
 
       <div className="mb-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
@@ -124,7 +124,7 @@ export default function MicroLessonFeed({ userId }: { userId?: string | null }) 
               track('lesson_filter_changed', { filter: f.key });
             }}
             aria-pressed={filter === f.key}
-            className={`min-h-[38px] rounded-full border px-4 text-[13.5px] transition ${
+            className={`min-h-[38px] rounded-full border px-4 text-sm transition ${
               filter === f.key
                 ? 'border-white bg-white font-semibold text-black'
                 : 'border-white/20 bg-transparent text-white/80 hover:border-white/45 hover:text-white'
@@ -149,7 +149,7 @@ export default function MicroLessonFeed({ userId }: { userId?: string | null }) 
 
       {!loading && shown.length === 0 && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.03] py-16 text-center">
-          <p className="mb-2 text-[16px] text-white/70">
+          <p className="mb-2 text-base text-white/70">
             {lessons.length === 0
               ? 'Upload a book or document to synthesize your first 1-minute lesson.'
               : 'No micro-lessons found for this category.'}
@@ -157,7 +157,7 @@ export default function MicroLessonFeed({ userId }: { userId?: string | null }) 
           {lessons.length === 0 && (
             <Link
               href="/start"
-              className="mt-4 inline-flex min-h-[46px] items-center rounded-full bg-white px-6 text-[14.5px] font-semibold text-black no-underline"
+              className="mt-4 inline-flex min-h-[46px] items-center rounded-full bg-white px-6 text-sm font-semibold text-black no-underline"
             >
               Upload a book
             </Link>
@@ -234,30 +234,30 @@ function LessonCard({
           />
         )}
 
-        <span className="absolute left-2 top-2 rounded-full bg-black/65 px-2.5 py-1 text-[10.5px] font-semibold text-white">
+        <span className="absolute left-2 top-2 rounded-full bg-black/65 px-2.5 py-1 text-xs font-semibold text-white">
           1 Min Audio
         </span>
 
         {isCompleted && (
-          <span className="absolute right-2 top-2 rounded-full bg-emerald-400/90 px-2.5 py-1 text-[10.5px] font-semibold text-black">
+          <span className="absolute right-2 top-2 rounded-full bg-emerald-400/90 px-2.5 py-1 text-xs font-semibold text-black">
             Completed
           </span>
         )}
         {!isCompleted && isCurrent && !isPlaying && (
-          <span className="absolute right-2 top-2 rounded-full bg-white/85 px-2.5 py-1 text-[10.5px] font-semibold text-black">
+          <span className="absolute right-2 top-2 rounded-full bg-white/85 px-2.5 py-1 text-xs font-semibold text-black">
             Paused
           </span>
         )}
 
         {lesson.clonedVoice && (
-          <span className="absolute bottom-2 left-2 rounded-full bg-indigo-400/90 px-2.5 py-1 text-[10.5px] font-semibold text-black">
+          <span className="absolute bottom-2 left-2 rounded-full bg-indigo-400/90 px-2.5 py-1 text-xs font-semibold text-black">
             Voice Clone
           </span>
         )}
       </div>
 
-      <div className="mb-1 truncate text-[12.5px] text-white/50">{lesson.sourceTitle}</div>
-      <h3 className="mb-3 line-clamp-2 text-[15.5px] font-semibold leading-snug">{lesson.title}</h3>
+      <div className="mb-1 truncate text-xs text-white/50">{lesson.sourceTitle}</div>
+      <h3 className="mb-3 line-clamp-2 text-base font-semibold">{lesson.title}</h3>
 
       <div className="mt-auto flex items-center gap-2">
         <button
@@ -285,7 +285,7 @@ function LessonCard({
             type="button"
             onClick={onQueue}
             disabled={!lesson.audioUrl || inQueue}
-            className="flex-1 rounded-full border border-white/20 bg-transparent px-3 py-2 text-[12.5px] text-white/85 transition hover:border-white/50 disabled:opacity-40"
+            className="flex-1 rounded-full border border-white/20 bg-transparent px-3 py-2 text-xs text-white/85 transition hover:border-white/50 disabled:opacity-40"
           >
             {inQueue ? 'In Up Next' : 'Add to Up Next'}
           </button>

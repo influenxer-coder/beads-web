@@ -4,6 +4,7 @@ import * as React from 'react';
 import { supabase } from '@/lib/supabase';
 import { track } from '@/lib/analytics';
 import Wordmark from '@/components/Wordmark';
+import { type } from '@/lib/type';
 
 /**
  * Social-first sign in.
@@ -271,9 +272,9 @@ function Spinner({ dark = false }: { dark?: boolean }) {
 
 const styles: Record<string, React.CSSProperties> = {
   card: { width: '100%', maxWidth: 400, margin: '0 auto', textAlign: 'center' },
-  logo: { fontSize: 22, fontWeight: 700, letterSpacing: '-0.03em', marginBottom: 22 },
-  h2: { fontSize: 21, fontWeight: 600, letterSpacing: '-0.02em', margin: '0 0 8px' },
-  sub: { fontSize: 15, lineHeight: 1.55, color: 'rgba(255,255,255,0.55)', margin: '0 0 26px' },
+  logo: { ...type.title, marginBottom: 22 },
+  h2: { ...type.subhead, margin: '0 0 8px' },
+  sub: { ...type.body, color: 'rgba(255,255,255,0.55)', margin: '0 0 26px' },
   stack: { display: 'flex', flexDirection: 'column', gap: 10 },
   btn: {
     display: 'inline-flex',
@@ -284,8 +285,7 @@ const styles: Record<string, React.CSSProperties> = {
     minHeight: 50,
     padding: '0 22px',
     borderRadius: 999,
-    fontSize: 15.5,
-    fontWeight: 600,
+    ...type.bodyStrong,
     cursor: 'pointer',
     border: 0,
   },
@@ -294,9 +294,9 @@ const styles: Record<string, React.CSSProperties> = {
   skeletonBtn: { height: 50, borderRadius: 999, background: 'rgba(255,255,255,0.07)' },
   divider: { display: 'flex', alignItems: 'center', gap: 12, margin: '6px 0' },
   dividerLine: { flex: 1, height: 1, background: 'rgba(255,255,255,0.14)' },
-  dividerText: { fontSize: 13, color: 'rgba(255,255,255,0.45)', whiteSpace: 'nowrap' },
+  dividerText: { ...type.callout, color: 'rgba(255,255,255,0.45)', whiteSpace: 'nowrap' },
   form: { textAlign: 'left' },
-  label: { display: 'block', fontSize: 14, marginBottom: 8, color: 'rgba(255,255,255,0.8)' },
+  label: { display: 'block', ...type.callout, marginBottom: 8, color: 'rgba(255,255,255,0.8)' },
   input: {
     width: '100%',
     minHeight: 50,
@@ -305,14 +305,13 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.28)',
     background: 'rgba(255,255,255,0.04)',
     color: '#fff',
-    fontSize: 15.5,
+    ...type.body,
     outline: 'none',
   },
-  hint: { fontSize: 13, color: 'rgba(255,255,255,0.4)', margin: '10px 0 0' },
+  hint: { ...type.callout, color: 'rgba(255,255,255,0.4)', margin: '10px 0 0' },
   error: {
     marginTop: 16,
-    fontSize: 14,
-    lineHeight: 1.5,
+    ...type.callout,
     color: '#ffb0b0',
     background: 'rgba(255,90,90,0.08)',
     border: '1px solid rgba(255,90,90,0.24)',
@@ -320,14 +319,13 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '10px 12px',
     textAlign: 'left',
   },
-  footer: { marginTop: 26, fontSize: 14.5, color: 'rgba(255,255,255,0.5)' },
+  footer: { marginTop: 26, ...type.callout, color: 'rgba(255,255,255,0.5)' },
   footerLink: {
     background: 'none',
     border: 0,
     padding: 0,
     color: '#fff',
-    fontSize: 14.5,
-    fontWeight: 600,
+    ...type.calloutStrong,
     cursor: 'pointer',
     textDecoration: 'underline',
     textUnderlineOffset: 3,
@@ -340,7 +338,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'none',
     border: 0,
     color: 'rgba(255,255,255,0.45)',
-    fontSize: 14.5,
+    ...type.callout,
     cursor: 'pointer',
   },
 };

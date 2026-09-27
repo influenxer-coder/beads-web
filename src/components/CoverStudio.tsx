@@ -235,7 +235,7 @@ export default function CoverStudio({
         {/* Controls */}
         <div className="space-y-5">
           {!documentUrl && (
-            <label className="flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-full border border-white/25 bg-transparent px-5 text-[15px] font-semibold text-white transition hover:border-white/55 hover:bg-white/5">
+            <label className="flex min-h-[48px] cursor-pointer items-center justify-center gap-2 rounded-full border border-white/25 bg-transparent px-5 text-base font-semibold text-white transition hover:border-white/55 hover:bg-white/5">
               <Upload size={16} />
               Choose a file
               <input
@@ -252,7 +252,7 @@ export default function CoverStudio({
           )}
 
           <div>
-            <label htmlFor="pad" className="mb-2 block text-[13.5px] text-white/70">
+            <label htmlFor="pad" className="mb-2 block text-sm text-white/70">
               Padding · {padding}px
             </label>
             <input
@@ -268,7 +268,7 @@ export default function CoverStudio({
           </div>
 
           <div>
-            <span className="mb-2 block text-[13.5px] text-white/70">Background</span>
+            <span className="mb-2 block text-sm text-white/70">Background</span>
             <div className="flex gap-2">
               {(
                 [
@@ -282,7 +282,7 @@ export default function CoverStudio({
                   type="button"
                   onClick={() => setFill(key)}
                   aria-pressed={fill === key}
-                  className={`min-h-[38px] flex-1 rounded-full border px-3 text-[13px] transition ${
+                  className={`min-h-[38px] flex-1 rounded-full border px-3 text-sm transition ${
                     fill === key
                       ? 'border-white bg-white font-semibold text-black'
                       : 'border-white/20 bg-transparent text-white/80 hover:border-white/45 hover:text-white'
@@ -302,12 +302,12 @@ export default function CoverStudio({
                   aria-label="Background colour"
                   className="h-10 w-14 cursor-pointer rounded border border-white/20 bg-transparent"
                 />
-                <span className="font-mono text-[13px] text-white/55">{colour}</span>
+                <span className="font-mono text-sm text-white/55">{colour}</span>
               </div>
             )}
 
             {fill === 'auto' && (
-              <p className="mt-2.5 flex items-start gap-2 text-[12.5px] leading-relaxed text-white/45">
+              <p className="mt-2.5 flex items-start gap-2 text-xs text-white/45">
                 <Wand2 size={13} className="mt-0.5 shrink-0" />
                 Takes the dominant colour from the edge of the page.
               </p>
@@ -319,7 +319,7 @@ export default function CoverStudio({
               type="button"
               onClick={download}
               disabled={!ready}
-              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-white text-[15px] font-semibold text-black transition disabled:opacity-40"
+              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-white text-base font-semibold text-black transition disabled:opacity-40"
             >
               <Download size={16} />
               Download PNG
@@ -330,7 +330,7 @@ export default function CoverStudio({
                 type="button"
                 onClick={saveToLibrary}
                 disabled={!ready || saving === 'working'}
-                className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full border border-white/25 bg-transparent text-[14.5px] font-semibold text-white transition hover:border-white/55 hover:bg-white/5 disabled:opacity-40"
+                className="flex min-h-[46px] w-full items-center justify-center gap-2 rounded-full border border-white/25 bg-transparent text-sm font-semibold text-white transition hover:border-white/55 hover:bg-white/5 disabled:opacity-40"
               >
                 {saving === 'working' ? (
                   <Loader2 size={15} className="animate-spin" />
@@ -345,7 +345,7 @@ export default function CoverStudio({
           </div>
 
           {error && (
-            <p className="rounded-lg border border-red-400/25 bg-red-400/10 p-3 text-[13.5px] text-red-200">
+            <p className="rounded-lg border border-red-400/25 bg-red-400/10 p-3 text-sm text-red-200">
               {error}
             </p>
           )}

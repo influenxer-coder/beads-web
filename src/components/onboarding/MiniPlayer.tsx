@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { fmtTime } from './ui';
+import { type } from '@/lib/type';
 
 const SPEEDS = [1, 1.25, 1.5, 2, 2.5, 3];
 
@@ -288,13 +289,12 @@ const styles: Record<string, React.CSSProperties> = {
   },
   left: { flex: 1, minWidth: 0 },
   title: {
-    fontSize: 14.5,
-    fontWeight: 550,
+    ...type.calloutStrong,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
-  sub: { fontSize: 12.5, color: 'rgba(255,255,255,0.5)', marginTop: 2 },
+  sub: { ...type.caption, color: 'rgba(255,255,255,0.5)', marginTop: 2 },
   center: { display: 'flex', alignItems: 'center', gap: 6 },
   right: { flex: 1, display: 'flex', justifyContent: 'flex-end' },
   iconBtn: {
@@ -340,16 +340,15 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 9,
     cursor: 'grab',
   },
-  grip: { color: 'rgba(255,255,255,0.35)', fontSize: 15, flexShrink: 0 },
+  grip: { color: 'rgba(255,255,255,0.35)', ...type.body, flexShrink: 0 },
   queueTitle: {
     display: 'block',
-    fontSize: 14,
-    fontWeight: 550,
+    ...type.calloutStrong,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
-  queueSub: { display: 'block', fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 1 },
+  queueSub: { display: 'block', ...type.caption, color: 'rgba(255,255,255,0.45)', marginTop: 1 },
   queueRemove: {
     width: 32,
     height: 32,
@@ -368,7 +367,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.2)',
     background: 'transparent',
     color: '#fff',
-    fontSize: 14,
+    ...type.callout,
     cursor: 'pointer',
   },
 };

@@ -9,6 +9,7 @@ import {
   CircularProgress, LinearProgress, Avatar
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
+import { type } from '@/lib/type';
 import { 
   Add,
   AttachFile, 
@@ -360,7 +361,7 @@ export default function UploadPage(){
             sx={{
               flex: 1,
               '& .MuiInputBase-input': {
-                fontSize: '1rem',
+                ...type.body,
                 py: 0.5,
                 color: 'text.primary',
                 '&::placeholder': {
@@ -432,13 +433,12 @@ export default function UploadPage(){
             '& .MuiTab-root': {
               color: 'rgba(255, 255, 255, 0.7)',
               textTransform: 'none',
-              fontSize: '0.9375rem',
-              fontWeight: 400,
+              ...type.body,
               minHeight: 48,
               px: 2,
               '&.Mui-selected': {
                 color: '#ffffff',
-                fontWeight: 500,
+                fontWeight: 600,
               },
             },
             '& .MuiTabs-indicator': {
@@ -518,9 +518,7 @@ export default function UploadPage(){
                 <Typography
                   variant="body2"
                   sx={{
-                    fontSize: '0.8125rem',
                     color: 'rgba(255, 255, 255, 0.9)',
-                    lineHeight: 1.4,
                     mb: 0.5,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
@@ -534,9 +532,7 @@ export default function UploadPage(){
                 <Typography
                   variant="caption"
                   sx={{
-                    fontSize: '0.75rem',
                     color: 'rgba(255, 255, 255, 0.5)',
-                    lineHeight: 1.3,
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',
                     display: '-webkit-box',
@@ -564,7 +560,7 @@ export default function UploadPage(){
           }
         }}
       >
-        <DialogTitle sx={{ fontSize: '1.25rem', pb: 1 }}>
+        <DialogTitle sx={{ ...type.subhead, pb: 1 }}>
           {selectedFlow?.title}
         </DialogTitle>
         <DialogContent>
@@ -628,7 +624,7 @@ export default function UploadPage(){
           }
         }}
       >
-        <DialogTitle sx={{ fontSize: '1.25rem', pb: 1 }}>
+        <DialogTitle sx={{ ...type.subhead, pb: 1 }}>
           Select Inspiration Style
         </DialogTitle>
         <DialogContent>
@@ -637,7 +633,7 @@ export default function UploadPage(){
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1 }}>
                 Uploaded file:
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600 }}>
                 {uploadedFile.name}
               </Typography>
             </Box>
@@ -703,7 +699,7 @@ export default function UploadPage(){
                           color: inspiration.is_default ? '#000000' : '#ffffff',
                           width: 56,
                           height: 56,
-                          fontSize: '1.5rem',
+                          ...type.title,
                         }}
                       >
                         {inspiration.name?.[0]?.toUpperCase() || 'I'}
@@ -714,7 +710,7 @@ export default function UploadPage(){
                     <Typography
                       variant="body2"
                       sx={{
-                        fontWeight: 500,
+                        fontWeight: 600,
                         color: 'text.primary',
                         mb: 0.5,
                         overflow: 'hidden',
@@ -769,7 +765,7 @@ export default function UploadPage(){
           }}
         >
           <Stack spacing={1.5}>
-            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+            <Typography variant="body2" sx={{ fontWeight: 600 }}>
               Generating bead...
             </Typography>
             <Typography variant="caption" color="text.secondary">

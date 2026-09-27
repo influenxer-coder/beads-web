@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ui } from './ui';
+import { type } from '@/lib/type';
 
 export type Phase = {
   key: string;
@@ -76,7 +77,7 @@ export default function ParsingStep({
             </span>
             <span
               style={{
-                fontSize: 14.5,
+                ...type.callout,
                 color: i <= idx ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.35)',
               }}
             >
@@ -118,7 +119,7 @@ function Spinner() {
 
 const styles: Record<string, React.CSSProperties> = {
   wrap: { width: '100%', maxWidth: 560, margin: '0 auto' },
-  h2: { fontSize: 24, fontWeight: 600, letterSpacing: '-0.02em', margin: '0 0 22px' },
+  h2: { ...type.title, margin: '0 0 22px' },
   track: {
     height: 6,
     borderRadius: 999,
@@ -138,13 +139,12 @@ const styles: Record<string, React.CSSProperties> = {
     gap: 12,
     marginTop: 12,
   },
-  status: { fontSize: 15, color: 'rgba(255,255,255,0.9)' },
+  status: { ...type.body, color: 'rgba(255,255,255,0.9)' },
   dots: { opacity: 0.5 },
-  eta: { fontSize: 13.5, color: 'rgba(255,255,255,0.45)', whiteSpace: 'nowrap' },
+  eta: { ...type.callout, color: 'rgba(255,255,255,0.45)', whiteSpace: 'nowrap' },
   degraded: {
     marginTop: 16,
-    fontSize: 14,
-    lineHeight: 1.5,
+    ...type.callout,
     color: 'rgba(255,255,255,0.7)',
     background: 'rgba(255,255,255,0.05)',
     border: '1px solid rgba(255,255,255,0.14)',

@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { type } from '@/lib/type';
 
 /** Shared bits so the onboarding screens stay visually consistent. */
 export const ui: Record<string, CSSProperties> = {
@@ -12,8 +13,7 @@ export const ui: Record<string, CSSProperties> = {
     border: 0,
     background: '#fff',
     color: '#000',
-    fontSize: 15.5,
-    fontWeight: 600,
+    ...type.bodyStrong,
     cursor: 'pointer',
   },
   ghostBtn: {
@@ -26,8 +26,7 @@ export const ui: Record<string, CSSProperties> = {
     background: 'transparent',
     border: '1px solid rgba(255,255,255,0.25)',
     color: '#fff',
-    fontSize: 15.5,
-    fontWeight: 550,
+    ...type.bodyStrong,
     cursor: 'pointer',
   },
   chip: {
@@ -37,7 +36,7 @@ export const ui: Record<string, CSSProperties> = {
     padding: '6px 12px',
     borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.16)',
-    fontSize: 13,
+    ...type.callout,
     color: 'rgba(255,255,255,0.72)',
   },
   card: {

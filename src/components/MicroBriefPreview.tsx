@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { track } from '@/lib/analytics';
+import { type } from '@/lib/type';
 
 /**
  * Sample a 1-Minute Micro-Brief.
@@ -413,16 +414,16 @@ const LINE = 'rgba(255,255,255,0.13)';
 const s: Record<string, React.CSSProperties> = {
   section: { padding: '64px 0' },
   h2: {
-    fontSize: 'clamp(28px, 3.6vw, 38px)', lineHeight: 1.12, margin: '0 0 10px',
-    fontWeight: 700, letterSpacing: '-0.025em', color: '#fff',
+    ...type.headline, margin: '0 0 10px',
+    color: '#fff',
   },
-  sub: { fontSize: 16.5, color: 'rgba(255,255,255,0.5)', margin: '0 0 26px' },
+  sub: { ...type.body, color: 'rgba(255,255,255,0.5)', margin: '0 0 26px' },
 
   tabs: { display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 20 },
   tab: {
     minHeight: 48, padding: '0 22px', borderRadius: 999, cursor: 'pointer',
     background: 'rgba(255,255,255,0.05)', border: `1px solid ${LINE}`,
-    color: 'rgba(255,255,255,0.82)', fontSize: 15, maxWidth: 270,
+    color: 'rgba(255,255,255,0.82)', ...type.body, maxWidth: 270,
     overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis',
   },
   tabOn: { background: '#fff', color: '#0a0a0a', fontWeight: 600, borderColor: '#fff' },
@@ -436,32 +437,32 @@ const s: Record<string, React.CSSProperties> = {
   badge: {
     display: 'inline-flex', alignItems: 'center', gap: 8,
     padding: '7px 14px', borderRadius: 999, background: 'rgba(52,211,153,0.12)',
-    color: '#34d399', fontSize: 12, fontWeight: 700, letterSpacing: '0.08em',
+    color: '#34d399', ...type.captionStrong, letterSpacing: '0.06em',
     marginBottom: 20,
   },
   badgeDot: { width: 7, height: 7, borderRadius: 999, background: '#34d399' },
 
   title: {
-    fontSize: 'clamp(21px, 2.5vw, 27px)', lineHeight: 1.22, fontWeight: 700,
-    letterSpacing: '-0.02em', color: '#fff', margin: '0 0 12px',
+    ...type.title,
+    color: '#fff', margin: '0 0 12px',
   },
-  meta: { fontSize: 15, color: 'rgba(255,255,255,0.42)', margin: '0 0 30px' },
+  meta: { ...type.body, color: 'rgba(255,255,255,0.42)', margin: '0 0 30px' },
 
   controls: { display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
   playBtn: {
     display: 'inline-flex', alignItems: 'center', gap: 10, minHeight: 52,
     padding: '0 22px', borderRadius: 999, background: '#fff', color: '#0a0a0a',
-    border: 0, fontSize: 15.5, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap',
+    border: 0, ...type.bodyStrong, cursor: 'pointer', whiteSpace: 'nowrap',
   },
   round: {
     minWidth: 48, height: 48, borderRadius: 999, background: 'transparent',
     border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.8)',
-    fontSize: 13, cursor: 'pointer', padding: '0 10px', whiteSpace: 'nowrap',
+    ...type.callout, cursor: 'pointer', padding: '0 10px', whiteSpace: 'nowrap',
   },
   speedBtn: {
     minHeight: 44, padding: '0 16px', borderRadius: 999, background: 'transparent',
     border: `1px solid ${LINE}`, color: 'rgba(255,255,255,0.8)',
-    fontSize: 14, cursor: 'pointer', marginLeft: 'auto', whiteSpace: 'nowrap',
+    ...type.callout, cursor: 'pointer', marginLeft: 'auto', whiteSpace: 'nowrap',
   },
 
   dashes: {
@@ -472,11 +473,11 @@ const s: Record<string, React.CSSProperties> = {
 
   range: { display: 'block', width: '100%', margin: 0 },
   armed: {
-    margin: '10px 0 0', fontSize: 13.5, color: '#C8553D', fontWeight: 600,
+    margin: '10px 0 0', ...type.calloutStrong, color: '#C8553D',
   },
   times: {
     display: 'flex', justifyContent: 'space-between',
-    fontSize: 13.5, color: 'rgba(255,255,255,0.45)', marginTop: 10,
+    ...type.callout, color: 'rgba(255,255,255,0.45)', marginTop: 10,
   },
 
   right: { background: '#fff', padding: '30px 32px', minWidth: 0 },
@@ -485,15 +486,15 @@ const s: Record<string, React.CSSProperties> = {
     gap: 14, flexWrap: 'wrap',
     paddingBottom: 16, borderBottom: '1px solid #e8e8e8', marginBottom: 20,
   },
-  rightTitle: { fontSize: 17, fontWeight: 700, color: '#141414', margin: 0 },
+  rightTitle: { ...type.bodyStrong, color: '#141414', margin: 0 },
   sync: {
     display: 'inline-flex', alignItems: 'center', gap: 7,
-    fontSize: 13.5, fontWeight: 600, color: '#ef4444',
+    ...type.calloutStrong, color: '#ef4444',
   },
   syncDot: { width: 7, height: 7, borderRadius: 999, background: '#ef4444' },
 
   transcript: {
-    fontSize: 16.5, lineHeight: 1.78, color: '#8b8b8b',
+    ...type.body, color: '#8b8b8b',
     maxHeight: 280, overflowY: 'auto',
   },
   sentence: { transition: 'background 140ms ease, color 140ms ease' },
@@ -508,10 +509,10 @@ const s: Record<string, React.CSSProperties> = {
     background: 'rgba(255,255,255,0.045)', border: `1px solid ${LINE}`,
     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
   },
-  ctaNote: { margin: 0, fontSize: 15, color: 'rgba(255,255,255,0.6)', textAlign: 'center' },
+  ctaNote: { margin: 0, ...type.body, color: 'rgba(255,255,255,0.6)', textAlign: 'center' },
   ctaBtn: {
     display: 'inline-flex', alignItems: 'center', minHeight: 52, padding: '0 28px',
-    borderRadius: 999, background: '#fff', color: '#0a0a0a', fontSize: 16,
-    fontWeight: 600, textDecoration: 'none', textAlign: 'center',
+    borderRadius: 999, background: '#fff', color: '#0a0a0a', ...type.bodyStrong,
+    textDecoration: 'none', textAlign: 'center',
   },
 };

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import LoginCard from '@/components/onboarding/LoginCard';
+import { type } from '@/lib/type';
 
 /**
  * Sign in on its own page.
@@ -58,7 +59,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '48px 20px',
   },
   inner: { width: '100%' },
-  note: { fontSize: 16, color: 'rgba(255,255,255,0.65)', marginBottom: 20 },
+  note: { ...type.body, color: 'rgba(255,255,255,0.65)', marginBottom: 20 },
   cta: {
     minHeight: 48,
     padding: '0 28px',
@@ -66,8 +67,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: 0,
     background: '#fff',
     color: '#000',
-    fontSize: 15.5,
-    fontWeight: 600,
+    ...type.bodyStrong,
     cursor: 'pointer',
   },
 };

@@ -9,6 +9,7 @@ import {
   type Review,
   type Rating,
 } from '@/data/reviews';
+import { type } from '@/lib/type';
 
 /**
  * Social proof band, modelled on ElevenReader's "Loved by listeners".
@@ -202,14 +203,11 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.16)',
     color: 'rgba(255,255,255,0.75)',
-    fontSize: 13.5,
+    ...type.callout,
     marginBottom: 26,
   },
   h2: {
-    fontSize: 'clamp(28px, 3.8vw, 44px)',
-    lineHeight: 1.1,
-    letterSpacing: '-0.03em',
-    fontWeight: 600,
+    ...type.headline,
     margin: '0 0 34px',
     maxWidth: '13ch',
   },
@@ -226,12 +224,11 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'center',
     flexShrink: 0,
   },
-  ratingValue: { fontSize: 17, fontWeight: 600, lineHeight: 1.2 },
-  ratingLabel: { fontSize: 13.5, color: 'rgba(255,255,255,0.5)', marginTop: 2 },
+  ratingValue: { ...type.bodyStrong },
+  ratingLabel: { ...type.callout, color: 'rgba(255,255,255,0.5)', marginTop: 2 },
   devNote: {
     marginTop: 30,
-    fontSize: 12.5,
-    lineHeight: 1.5,
+    ...type.caption,
     color: 'rgba(255,255,255,0.38)',
     border: '1px dashed rgba(255,255,255,0.2)',
     padding: '10px 12px',
@@ -249,19 +246,19 @@ const styles: Record<string, React.CSSProperties> = {
     scrollSnapAlign: 'start',
   },
   stars: { display: 'flex', gap: 4, color: '#F5A524', marginBottom: 16 },
-  quote: { fontSize: 16, lineHeight: 1.6, color: 'rgba(255,255,255,0.88)', margin: 0 },
+  quote: { ...type.body, color: 'rgba(255,255,255,0.88)', margin: 0 },
   cardFoot: {
     marginTop: 20,
     paddingTop: 18,
     borderTop: '1px solid rgba(255,255,255,0.09)',
   },
-  name: { fontSize: 15, fontWeight: 600 },
-  role: { fontSize: 13.5, color: 'rgba(255,255,255,0.5)', marginTop: 3 },
+  name: { ...type.bodyStrong },
+  role: { ...type.callout, color: 'rgba(255,255,255,0.5)', marginTop: 3 },
   chip: {
     display: 'inline-flex',
     alignItems: 'center',
     gap: 9,
-    fontSize: 13.5,
+    ...type.callout,
     color: 'rgba(255,255,255,0.45)',
   },
   chipLink: { color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 },

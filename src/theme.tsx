@@ -1,5 +1,6 @@
 'use client';
 import { createTheme } from '@mui/material/styles';
+import { SANS, REGULAR, SEMIBOLD, type } from '@/lib/type';
 
 // Color Palette: Burmese Red Ruby & Yellow Sapphire with Pastels
 const rubyRed = '#DC2626';        // Deep Burmese ruby red
@@ -79,8 +80,8 @@ export const theme = createTheme({
           textTransform: 'none',
           borderRadius: 12,
           padding: '10px 24px',
-          fontSize: '15px',
-          letterSpacing: '-0.01em',
+          fontSize: '17px',
+          letterSpacing: '-0.022em',
           boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
@@ -104,8 +105,8 @@ export const theme = createTheme({
           textTransform: 'none',
           borderRadius: 12,
           padding: '10px 24px',
-          fontSize: '15px',
-          letterSpacing: '-0.01em',
+          fontSize: '17px',
+          letterSpacing: '-0.022em',
           borderWidth: '1.5px',
           '&:hover': {
             borderColor: rubyRed,
@@ -117,8 +118,8 @@ export const theme = createTheme({
           color: '#ffffff',
           textTransform: 'none',
           padding: '10px 16px',
-          fontSize: '15px',
-          letterSpacing: '-0.01em',
+          fontSize: '17px',
+          letterSpacing: '-0.022em',
           '&:hover': {
             backgroundColor: 'rgba(255, 255, 255, 0.08)',
           }
@@ -131,7 +132,7 @@ export const theme = createTheme({
           '& .MuiOutlinedInput-root': {
             backgroundColor: 'rgba(255, 255, 255, 0.04)',
             borderRadius: 12,
-            fontSize: '15px',
+            fontSize: '17px',
             '& fieldset': {
               borderColor: 'rgba(255, 255, 255, 0.15)',
               borderWidth: '1.5px',
@@ -163,8 +164,8 @@ export const theme = createTheme({
           backgroundColor: 'rgba(255, 255, 255, 0.08)',
           color: '#ffffff',
           borderRadius: 10,
-          fontSize: '13px',
-          fontWeight: 500,
+          fontSize: '14px',
+          fontWeight: 600,
           height: 28,
         }
       }
@@ -220,70 +221,24 @@ export const theme = createTheme({
     }
   },
   typography: {
-    fontFamily: [
-      '-apple-system',
-      'BlinkMacSystemFont',
-      'SF Pro Text',
-      'SF Pro Display',
-      'Segoe UI',
-      'Roboto',
-      'Helvetica Neue',
-      'Arial',
-      'sans-serif'
-    ].join(','),
-    h1: { 
-      fontWeight: 700, 
-      fontSize: '2.5rem',
-      letterSpacing: '-0.02em',
-      lineHeight: 1.2
-    },
-    h2: { 
-      fontWeight: 700, 
-      fontSize: '2rem',
-      letterSpacing: '-0.02em',
-      lineHeight: 1.25
-    },
-    h3: { 
-      fontWeight: 700, 
-      fontSize: '1.75rem',
-      letterSpacing: '-0.01em',
-      lineHeight: 1.3
-    },
-    h4: { 
-      fontWeight: 600, 
-      fontSize: '1.5rem',
-      letterSpacing: '-0.01em',
-      lineHeight: 1.35
-    },
-    h5: { 
-      fontWeight: 600, 
-      fontSize: '1.25rem',
-      letterSpacing: '-0.01em',
-      lineHeight: 1.4
-    },
-    h6: { 
-      fontWeight: 600, 
-      fontSize: '1.125rem',
-      letterSpacing: '-0.01em',
-      lineHeight: 1.4
-    },
-    body1: {
-      fontSize: '16px',
-      lineHeight: 1.6,
-      letterSpacing: '-0.01em',
-    },
-    body2: {
-      fontSize: '14px',
-      lineHeight: 1.5,
-      letterSpacing: '-0.01em',
-    },
-    button: { 
-      fontWeight: 600,
-      letterSpacing: '-0.01em',
-    },
-    caption: {
-      fontSize: '12px',
-      letterSpacing: '0.01em',
-    }
+    // Scale lives in src/lib/type.ts so inline styles and MUI stay in step.
+    fontFamily: SANS,
+    fontWeightLight: REGULAR,
+    fontWeightRegular: REGULAR,
+    fontWeightMedium: SEMIBOLD,
+    fontWeightBold: SEMIBOLD,
+    h1: type.hero,
+    h2: type.headline,
+    h3: type.title,
+    h4: { ...type.title, fontSize: 24, lineHeight: 1.167 },
+    h5: type.subhead,
+    h6: type.bodyStrong,
+    subtitle1: type.bodyStrong,
+    subtitle2: type.calloutStrong,
+    body1: type.body,
+    body2: type.callout,
+    button: { ...type.bodyStrong, textTransform: 'none' },
+    caption: type.caption,
+    overline: { ...type.captionStrong, letterSpacing: '0.06em' },
   }
 });

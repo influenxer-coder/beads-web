@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { ui, fmtTime } from './ui';
+import { type } from '@/lib/type';
 
 export type Lesson = {
   id: string;
@@ -168,11 +169,11 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     alignItems: 'center',
     gap: 8,
-    fontSize: 13.5,
+    ...type.callout,
     color: 'rgba(255,255,255,0.5)',
     marginBottom: 10,
   },
-  title: { fontSize: 24, lineHeight: 1.22, letterSpacing: '-0.02em', fontWeight: 600, margin: '0 0 18px' },
+  title: { ...type.title, margin: '0 0 18px' },
   chips: { display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 24 },
   actions: { display: 'flex', alignItems: 'center', gap: 16 },
   bigPlay: {
@@ -188,27 +189,27 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
     flexShrink: 0,
   },
-  playLabel: { fontSize: 16, fontWeight: 550 },
+  playLabel: { ...type.bodyStrong },
   voiceLink: {
     background: 'none',
     border: 0,
     padding: 0,
     marginTop: 4,
     color: 'rgba(255,255,255,0.55)',
-    fontSize: 14,
+    ...type.callout,
     textDecoration: 'underline',
     textUnderlineOffset: 3,
     cursor: 'pointer',
   },
   library: { marginTop: 30, opacity: 0.5 },
   libraryLabel: {
-    fontSize: 12,
-    letterSpacing: '0.12em',
+    ...type.caption,
+    letterSpacing: '0.06em',
     textTransform: 'uppercase',
     color: 'rgba(255,255,255,0.45)',
     marginBottom: 12,
   },
   libraryList: { listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 11 },
-  libraryItem: { display: 'flex', alignItems: 'center', gap: 10, fontSize: 14.5, color: 'rgba(255,255,255,0.75)' },
+  libraryItem: { display: 'flex', alignItems: 'center', gap: 10, ...type.callout, color: 'rgba(255,255,255,0.75)' },
   libraryDot: { width: 5, height: 5, borderRadius: 999, background: 'rgba(255,255,255,0.35)', flexShrink: 0 },
 };

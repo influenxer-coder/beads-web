@@ -9,6 +9,7 @@ import { anonId } from '@/lib/identity';
 import SourceGrid, { type Source, subjectOf } from '@/components/SourceGrid';
 import Wordmark from '@/components/Wordmark';
 import MicroLessonFeed from '@/components/MicroLessonFeed';
+import { type } from '@/lib/type';
 
 /**
  * Episode title and description, ready to paste into Spotify.
@@ -640,7 +641,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: 14,
   },
-  logo: { fontSize: 19, fontWeight: 700, letterSpacing: '-0.03em', color: '#fff', textDecoration: 'none', flexShrink: 0 },
+  logo: { ...type.subhead, color: '#fff', textDecoration: 'none', flexShrink: 0 },
   searchWrap: {
     flex: 1,
     minWidth: 0,
@@ -653,7 +654,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.12)',
     background: 'rgba(255,255,255,0.04)',
   },
-  search: { flex: 1, minWidth: 0, background: 'transparent', border: 0, color: '#fff', fontSize: 14.5, outline: 'none' },
+  search: { flex: 1, minWidth: 0, background: 'transparent', border: 0, color: '#fff', ...type.callout, outline: 'none' },
   topbarRight: { display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 },
   newBtn: {
     display: 'inline-flex',
@@ -664,8 +665,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     background: '#fff',
     color: '#000',
-    fontSize: 14.5,
-    fontWeight: 600,
+    ...type.calloutStrong,
     textDecoration: 'none',
   },
   newBtnLabel: { whiteSpace: 'nowrap' },
@@ -676,8 +676,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.18)',
     background: 'rgba(255,255,255,0.07)',
     color: '#fff',
-    fontSize: 15,
-    fontWeight: 600,
+    ...type.bodyStrong,
     cursor: 'pointer',
   },
   menu: {
@@ -691,7 +690,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: 8,
     boxShadow: '0 14px 40px rgba(0,0,0,0.6)',
   },
-  menuEmail: { fontSize: 13, color: 'rgba(255,255,255,0.5)', padding: '8px 10px', wordBreak: 'break-all' },
+  menuEmail: { ...type.callout, color: 'rgba(255,255,255,0.5)', padding: '8px 10px', wordBreak: 'break-all' },
   menuItem: {
     display: 'block',
     width: '100%',
@@ -702,7 +701,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: 0,
     borderRadius: 8,
     color: '#fff',
-    fontSize: 14.5,
+    ...type.callout,
     cursor: 'pointer',
   },
   inner: { maxWidth: 900, margin: '0 auto', padding: '26px 20px 0' },
@@ -726,10 +725,10 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'center',
     flexShrink: 0,
   },
-  newCardTitle: { fontSize: 16.5, fontWeight: 600 },
-  newCardSub: { fontSize: 14, color: 'rgba(255,255,255,0.55)', marginTop: 3 },
+  newCardTitle: { ...type.bodyStrong },
+  newCardSub: { ...type.callout, color: 'rgba(255,255,255,0.55)', marginTop: 3 },
   section: { marginTop: 34 },
-  sectionTitle: { fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', margin: '0 0 14px' },
+  sectionTitle: { ...type.callout, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', margin: '0 0 14px' },
   continueCard: {
     display: 'flex',
     alignItems: 'center',
@@ -739,7 +738,7 @@ const styles: Record<string, React.CSSProperties> = {
     background: 'rgba(255,255,255,0.06)',
     border: '1px solid rgba(255,255,255,0.1)',
   },
-  continueTitle: { fontSize: 16.5, fontWeight: 600, lineHeight: 1.3 },
+  continueTitle: { ...type.bodyStrong },
   bigPlay: {
     width: 52,
     height: 52,
@@ -799,14 +798,13 @@ const styles: Record<string, React.CSSProperties> = {
     flexShrink: 0,
   },
   rowTitle: {
-    fontSize: 15.5,
-    fontWeight: 600,
+    ...type.bodyStrong,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
   rowMeta: {
-    fontSize: 13.5,
+    ...type.callout,
     color: 'rgba(255,255,255,0.5)',
     marginTop: 3,
     whiteSpace: 'nowrap',
@@ -815,7 +813,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
   rowChips: { display: 'flex', gap: 7, marginTop: 6 },
   chip: {
-    fontSize: 11.5,
+    ...type.caption,
     padding: '3px 9px',
     borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.16)',
@@ -826,7 +824,7 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     gap: 6,
     minHeight: 28,
-    fontSize: 11.5,
+    ...type.caption,
     padding: '3px 9px',
     borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.22)',
@@ -835,14 +833,14 @@ const styles: Record<string, React.CSSProperties> = {
     cursor: 'pointer',
   },
   chipLink: {
-    fontSize: 11.5,
+    ...type.caption,
     padding: '3px 9px',
     borderRadius: 999,
     border: '1px solid rgba(255,255,255,0.22)',
     color: 'rgba(255,255,255,0.8)',
     textDecoration: 'none',
   },
-  chipMuted: { fontSize: 11.5, padding: '3px 9px', borderRadius: 999, background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)' },
+  chipMuted: { ...type.caption, padding: '3px 9px', borderRadius: 999, background: 'rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.45)' },
   scrim: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.62)', zIndex: 960 },
   confirm: {
     position: 'fixed',
@@ -856,8 +854,8 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 16,
     padding: 24,
   },
-  confirmTitle: { fontSize: 19, fontWeight: 600, margin: '0 0 10px' },
-  confirmBody: { fontSize: 14.5, lineHeight: 1.55, color: 'rgba(255,255,255,0.6)', margin: '0 0 22px' },
+  confirmTitle: { ...type.subhead, margin: '0 0 10px' },
+  confirmBody: { ...type.callout, color: 'rgba(255,255,255,0.6)', margin: '0 0 22px' },
   confirmRow: { display: 'flex', gap: 10 },
   confirmCancel: {
     flex: 1,
@@ -866,7 +864,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.22)',
     background: 'transparent',
     color: '#fff',
-    fontSize: 15,
+    ...type.body,
     cursor: 'pointer',
   },
   confirmDelete: {
@@ -876,8 +874,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: 0,
     background: '#ff6b6b',
     color: '#1a0000',
-    fontSize: 15,
-    fontWeight: 600,
+    ...type.bodyStrong,
     cursor: 'pointer',
   },
   empty: { textAlign: 'center', padding: '54px 20px' },
@@ -891,8 +888,8 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  emptyTitle: { fontSize: 19, fontWeight: 600, margin: '0 0 8px' },
-  emptySub: { fontSize: 15, color: 'rgba(255,255,255,0.5)', margin: '0 0 24px' },
+  emptyTitle: { ...type.subhead, margin: '0 0 8px' },
+  emptySub: { ...type.body, color: 'rgba(255,255,255,0.5)', margin: '0 0 24px' },
   emptyCta: {
     display: 'inline-flex',
     alignItems: 'center',
@@ -902,8 +899,7 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 999,
     background: '#fff',
     color: '#000',
-    fontSize: 15.5,
-    fontWeight: 600,
+    ...type.bodyStrong,
     textDecoration: 'none',
   },
 };

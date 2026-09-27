@@ -8,6 +8,7 @@
 }
 
 html {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -22,6 +23,11 @@ body {
     radial-gradient(at 100% 100%, rgba(245, 158, 11, 0.03) 0px, transparent 50%);
   color: #ffffff;
   overflow-x: hidden;
+}
+
+/* Controls do not inherit the page font by default, so they fell back to Arial */
+button, input, select, textarea {
+  font-family: inherit;
 }
 
 /* Smooth scrolling */

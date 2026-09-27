@@ -6,6 +6,7 @@ import FlashcardReviewer from './FlashcardReviewer';
 import MindMap from './MindMap';
 import Quiz from './Quiz';
 import AudioOverview from './AudioOverview';
+import { type } from '@/lib/type';
 
 /**
  * Study artifacts for one document.
@@ -207,8 +208,8 @@ function Spin() {
 const styles: Record<string, React.CSSProperties> = {
   wrap: { width: '100%' },
   head: { marginBottom: 16 },
-  h2: { fontSize: 13, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', margin: 0 },
-  sub: { fontSize: 15, color: 'rgba(255,255,255,0.6)', margin: '8px 0 0' },
+  h2: { ...type.callout, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', margin: 0 },
+  sub: { ...type.body, color: 'rgba(255,255,255,0.6)', margin: '8px 0 0' },
   grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 10 },
   tile: {
     display: 'flex',
@@ -233,12 +234,12 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: 'center',
     flexShrink: 0,
   },
-  tileLabel: { display: 'block', fontSize: 15, fontWeight: 600 },
-  tileBlurb: { display: 'block', fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 2 },
+  tileLabel: { display: 'block', ...type.bodyStrong },
+  tileBlurb: { display: 'block', ...type.callout, color: 'rgba(255,255,255,0.5)', marginTop: 2 },
   readyDot: { width: 7, height: 7, borderRadius: 999, background: '#5ee08a', flexShrink: 0 },
   error: {
     marginTop: 14,
-    fontSize: 14,
+    ...type.callout,
     color: '#ffb0b0',
     background: 'rgba(255,90,90,0.08)',
     border: '1px solid rgba(255,90,90,0.24)',
@@ -259,7 +260,7 @@ const styles: Record<string, React.CSSProperties> = {
     padding: '13px 16px',
     borderBottom: '1px solid rgba(255,255,255,0.1)',
   },
-  viewerTitle: { fontSize: 14.5, fontWeight: 600 },
+  viewerTitle: { ...type.calloutStrong },
   smallBtn: {
     minHeight: 36,
     padding: '0 14px',
@@ -267,7 +268,7 @@ const styles: Record<string, React.CSSProperties> = {
     border: '1px solid rgba(255,255,255,0.2)',
     background: 'transparent',
     color: '#fff',
-    fontSize: 13.5,
+    ...type.callout,
     cursor: 'pointer',
   },
 };

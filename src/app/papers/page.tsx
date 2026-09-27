@@ -144,7 +144,7 @@ export default async function Page() {
 const s: Record<string, React.CSSProperties> = {
   page: {
     background: '#000', color: '#fff', minHeight: '100vh',
-    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif",
     WebkitFontSmoothing: 'antialiased',
   },
   wrap: { maxWidth: 860, margin: '0 auto', padding: '44px 24px 96px' },

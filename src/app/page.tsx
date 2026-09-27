@@ -19,7 +19,7 @@ const styles: Record<string, React.CSSProperties> = {
     color: '#fff',
     minHeight: '100vh',
     width: '100%',
-    fontFamily: "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Helvetica Neue', 'Segoe UI', Roboto, Arial, sans-serif",
     WebkitFontSmoothing: 'antialiased',
   },
   wrap: { maxWidth: 920, margin: '0 auto', padding: '0 24px' },

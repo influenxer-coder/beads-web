@@ -223,9 +223,8 @@ export const theme = createTheme({
     fontFamily: [
       '-apple-system',
       'BlinkMacSystemFont',
-      'SF Pro Display',
       'SF Pro Text',
-      'Inter',
+      'SF Pro Display',
       'Segoe UI',
       'Roboto',
       'Helvetica Neue',

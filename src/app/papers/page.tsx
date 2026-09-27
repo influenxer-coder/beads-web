@@ -15,7 +15,7 @@ import PaperPlayer from '@/components/PaperPlayer';
  * page, which is where the audio is.
  */
 
-const TITLE = 'Must-read papers, as one-minute audio';
+const TITLE = 'Papers to become dangerously educated';
 const DESCRIPTION =
   'The papers everyone cites and nobody finishes, as one-minute audio lessons. '
   + 'Press play, no account needed.';
@@ -63,7 +63,7 @@ export default async function Page() {
       <SiteHeader />
 
       <div style={s.wrap}>
-        <h1 style={s.h1}>Must-read papers. Just listen.</h1>
+        <h1 style={s.h1}>Papers to become dangerously educated</h1>
 
         {lead && leadLessons.length > 0 && (
           <section style={s.lead}>
@@ -151,7 +151,7 @@ const s: Record<string, React.CSSProperties> = {
 
   h1: {
     fontSize: 'clamp(30px, 4.6vw, 46px)', lineHeight: 1.08, fontWeight: 700,
-    letterSpacing: '-0.035em', margin: '0 0 24px', maxWidth: '16ch',
+    letterSpacing: '-0.035em', margin: '0 0 24px', maxWidth: '20ch',
   },
 
   lead: { margin: '0 0 40px' },

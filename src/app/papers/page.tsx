@@ -65,6 +65,9 @@ export default async function Page() {
 
       <div style={s.wrap}>
         <h1 style={s.h1}>Papers to become dangerously educated</h1>
+        <p style={s.usedBy}>
+          Used by research students, engineers, executives and founders to stay on top of cutting-edge research.
+        </p>
 
         {lead && leadLessons.length > 0 && (
           <section style={s.lead}>
@@ -134,8 +137,9 @@ const s: Record<string, React.CSSProperties> = {
   wrap: { maxWidth: 860, margin: '0 auto', padding: '44px 24px 96px' },
 
   h1: {
-    ...type.headline, margin: '0 0 24px', maxWidth: '20ch',
+    ...type.headline, margin: '0 0 12px', maxWidth: '20ch',
   },
+  usedBy: { ...type.callout, color: 'rgba(255,255,255,0.55)', margin: '0 0 28px', maxWidth: '52ch' },
 
   lead: { margin: '0 0 40px' },
   more: {

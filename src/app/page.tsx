@@ -87,6 +87,7 @@ const styles: Record<string, React.CSSProperties> = {
     marginTop: 54,
   },
   badge: { display: 'flex', alignItems: 'center', gap: 8 },
+  usedBy: { ...type.callout, color: 'rgba(255,255,255,0.55)', margin: '28px auto 0', maxWidth: '44ch' },
   badgeText: { ...type.body, color: 'rgba(255,255,255,0.8)', whiteSpace: 'nowrap' },
   ctaSolid: {
     display: 'inline-flex',
@@ -328,6 +329,12 @@ export default function Home() {
               </div>
             ))}
           </div>
+
+          {/* Who uses it. Confirmed by the founder, 2026-09-27; see
+              CONTENT_GUIDELINES.md before changing it. */}
+          <p style={styles.usedBy}>
+            Used by research students, engineers, executives and founders to stay on top of cutting-edge research.
+          </p>
         </section>
       </div>
 

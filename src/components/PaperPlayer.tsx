@@ -7,6 +7,8 @@ import { track } from '@/lib/analytics';
 import { tiktokTrack } from '@/lib/tiktok';
 import type { Lesson } from '@/lib/papers';
 import { type, MONO } from '@/lib/type';
+import BookmarkCards from '@/components/BookmarkCards';
+import { type Bookmark, loadBookmarks, saveBookmarks, isDuplicate } from '@/lib/bookmarks';
 
 /**
  * The player on a paper page.
@@ -97,6 +99,23 @@ export default function PaperPlayer({
   // leaving the page cannot leave them behind.
   const cleanupWake = React.useRef<(() => void) | null>(null);
   const lesson = lessons[active];
+
+  // Flagged points and the cards made from them. Loaded after mount because
+  // they live in localStorage, which the server cannot see.
+  const [view, setView] = React.useState<'listen' | 'cards'>('listen');
+  const [cards, setCards] = React.useState<Bookmark[]>([]);
+  const [toast, setToast] = React.useState('');
+  const [clipPlaying, setClipPlaying] = React.useState<string | null>(null);
+  const clipRef = React.useRef<{ audio: HTMLAudioElement; timer: number } | null>(null);
+  const flagRef = React.useRef<((via: 'button' | 'earbud') => void) | null>(null);
+
+  React.useEffect(() => { setCards(loadBookmarks(paperSlug)); }, [paperSlug]);
+
+  React.useEffect(() => {
+    if (!toast) return;
+    const id = window.setTimeout(() => setToast(''), 2600);
+    return () => window.clearTimeout(id);
+  }, [toast]);
 
   const sentences = React.useMemo(
     () => splitSentences(lesson?.script_text ?? ''), [lesson?.id, lesson?.script_text],
@@ -205,7 +224,30 @@ export default function PaperPlayer({
     if (audioRef.current) audioRef.current.playbackRate = speed;
   }, [speed]);
 
-  React.useEffect(() => () => audioRef.current?.pause(), []);
+  React.useEffect(() => () => {
+    audioRef.current?.pause();
+    if (clipRef.current) {
+      clipRef.current.audio.pause();
+      window.clearTimeout(clipRef.current.timer);
+    }
+  }, []);
+
+  // Earbuds: most send "next track" on a double tap. While this page is open
+  // that gesture flags the current point instead, so a listener can save a
+  // line without taking the phone out. Browsers that do not pass the gesture
+  // through still have the on-screen button.
+  React.useEffect(() => {
+    const ms = typeof navigator !== 'undefined' ? navigator.mediaSession : undefined;
+    if (!ms) return;
+    try {
+      ms.setActionHandler('nexttrack', () => flagRef.current?.('earbud'));
+    } catch {
+      return;
+    }
+    return () => {
+      try { ms.setActionHandler('nexttrack', null); } catch { /* unsupported */ }
+    };
+  }, []);
 
   const progress = dur ? t / dur : 0;
   const currentIdx = React.useMemo(() => {
@@ -279,6 +321,76 @@ export default function PaperPlayer({
     track('paper_lesson_selected', { paper: paperSlug, lesson: lessons[i]?.title });
   };
 
+  const flag = (via: 'button' | 'earbud') => {
+    const a = audioRef.current;
+    if (!a || !lesson) return;
+    if (a.currentTime <= 0) {
+      setToast('Press play first, then flag a point.');
+      return;
+    }
+    const p = a.duration ? a.currentTime / a.duration : 0;
+    let idx = 0;
+    for (let i = 0; i < at.length; i++) if (p >= at[i]) idx = i;
+    const line = sentences[idx];
+    if (!line) return;
+    const draft = { lessonId: lesson.id, lessonTitle: lesson.title, at: a.currentTime, line };
+    if (isDuplicate(cards, draft)) {
+      setToast('Already in your cards.');
+      return;
+    }
+    const b: Bookmark = {
+      ...draft,
+      id: `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`,
+      createdAt: Date.now(),
+    };
+    const next = [...cards, b];
+    setCards(next);
+    saveBookmarks(paperSlug, next);
+    setToast(`Saved to Cards at ${clock(b.at)}`);
+    track('paper_point_flagged', { paper: paperSlug, lesson: lesson.title, at: Math.round(b.at), via });
+  };
+  flagRef.current = flag;
+
+  const stopClip = () => {
+    if (!clipRef.current) return;
+    clipRef.current.audio.pause();
+    window.clearTimeout(clipRef.current.timer);
+    clipRef.current = null;
+    setClipPlaying(null);
+  };
+
+  // Replays about eight seconds around a flagged point on its own audio
+  // element, so the lesson that is loaded keeps its place.
+  const playClip = (b: Bookmark) => {
+    if (clipPlaying === b.id) { stopClip(); return; }
+    stopClip();
+    const src = lessons.find((l) => l.id === b.lessonId)?.audio_url;
+    if (!src) return;
+    const main = audioRef.current;
+    if (main && !main.paused) { main.pause(); setPlaying(false); }
+    const c = new Audio(src);
+    c.onloadedmetadata = () => {
+      c.currentTime = Math.max(0, b.at - 4);
+      c.play().catch(() => stopClip());
+    };
+    c.onended = () => stopClip();
+    clipRef.current = { audio: c, timer: window.setTimeout(stopClip, 8500) };
+    setClipPlaying(b.id);
+    track('paper_card_clip_played', { paper: paperSlug, lesson: b.lessonTitle });
+  };
+
+  const removeCard = (id: string) => {
+    if (clipPlaying === id) stopClip();
+    const next = cards.filter((c) => c.id !== id);
+    setCards(next);
+    saveBookmarks(paperSlug, next);
+  };
+
+  const openView = (v: 'listen' | 'cards') => {
+    setView(v);
+    if (v === 'cards') track('paper_cards_opened', { paper: paperSlug, cards: cards.length });
+  };
+
   const cycleRate = () => {
     const i = SPEEDS.indexOf(speed as typeof SPEEDS[number]);
     const r = SPEEDS[(i + 1) % SPEEDS.length];
@@ -300,7 +412,22 @@ export default function PaperPlayer({
                 the four rivals put a signup in front of playback, so it is
                 worth saying out loud. */}
             <span style={s.badgeQuiet}>No account needed</span>
+            <span style={s.tabs} role="tablist" aria-label="Lesson view">
+              <button type="button" role="tab" aria-selected={view === 'listen'}
+                      onClick={() => openView('listen')}
+                      style={{ ...s.tab, ...(view === 'listen' ? s.tabOn : null) }}>Listen</button>
+              <button type="button" role="tab" aria-selected={view === 'cards'}
+                      onClick={() => openView('cards')}
+                      style={{ ...s.tab, ...(view === 'cards' ? s.tabOn : null) }}>
+                Cards ({cards.length})
+              </button>
+            </span>
           </div>
+
+          {view === 'cards' ? (
+            <BookmarkCards cards={cards} clipPlaying={clipPlaying} onPlayClip={playClip}
+                           onRemove={removeCard} onBack={() => openView('listen')} />
+          ) : (<>
 
           <div style={s.nowRow}>
             <Cover id={lesson.id} size={104} />
@@ -355,6 +482,26 @@ export default function PaperPlayer({
             <span>{clock(dur)}</span>
           </div>
 
+          <div className="pp-flag" style={s.flagBox}>
+            <span style={s.flagIcon} aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 18v-6a9 9 0 0 1 18 0v6" />
+                <path d="M21 19a2 2 0 0 1-2 2h-1v-6h3zM3 19a2 2 0 0 0 2 2h1v-6H3z" />
+              </svg>
+            </span>
+            <span style={{ minWidth: 0, flex: 1 }}>
+              <span style={s.flagTitle}>Save the line you just heard</span>
+              <span style={s.flagSub}>It becomes a card. On some earbuds, a double tap does it too.</span>
+            </span>
+            <button type="button" onClick={() => flag('button')} style={s.flagBtn}>
+              Flag this point
+            </button>
+          </div>
+          <p role="status" aria-live="polite" style={{ ...s.toast, opacity: toast ? 1 : 0 }}>
+            {toast || '\u00a0'}
+          </p>
+
           {lessons.length > 1 && (
             <ol style={s.list}>
               {lessons.map((l, i) => (
@@ -378,6 +525,7 @@ export default function PaperPlayer({
               ))}
             </ol>
           )}
+          </>)}
         </div>
 
         {/* ---------------------------- transcript ---------------------------- */}
@@ -439,6 +587,30 @@ export default function PaperPlayer({
 const LINE = 'rgba(255,255,255,0.13)';
 
 const s: Record<string, React.CSSProperties> = {
+  tabs: {
+    display: 'inline-flex', marginLeft: 'auto', padding: 3, borderRadius: 999,
+    border: `1px solid ${LINE}`, background: 'rgba(255,255,255,0.04)',
+  },
+  tab: {
+    ...type.calloutStrong, minHeight: 32, padding: '0 14px', borderRadius: 999, border: 0,
+    background: 'transparent', color: 'rgba(255,255,255,0.6)', cursor: 'pointer',
+  },
+  tabOn: { background: '#fff', color: '#000' },
+  flagBox: {
+    display: 'flex', alignItems: 'center', gap: 12, marginTop: 20, padding: '14px 14px 14px 16px',
+    borderRadius: 16, border: '1px dashed rgba(255,255,255,0.22)',
+  },
+  flagIcon: {
+    flex: '0 0 auto', width: 38, height: 38, borderRadius: 999, display: 'inline-flex',
+    alignItems: 'center', justifyContent: 'center', background: 'rgba(255,255,255,0.08)', color: '#fff',
+  },
+  flagTitle: { ...type.calloutStrong, display: 'block', color: '#fff' },
+  flagSub: { ...type.caption, display: 'block', color: 'rgba(255,255,255,0.55)', marginTop: 2 },
+  flagBtn: {
+    ...type.calloutStrong, flex: '0 0 auto', minHeight: 40, padding: '0 16px', borderRadius: 999,
+    border: 0, background: '#e11d2e', color: '#fff', cursor: 'pointer',
+  },
+  toast: { ...type.caption, margin: '8px 2px 0', color: '#7ee2a8', transition: 'opacity 200ms ease' },
   wrap: { margin: '36px 0 0' },
   grid: { borderRadius: 22, overflow: 'hidden', border: `1px solid ${LINE}` },
   left: { background: '#0b0b0b', padding: '30px 28px 34px', minWidth: 0,

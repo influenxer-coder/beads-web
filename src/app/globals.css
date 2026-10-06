@@ -202,3 +202,9 @@ audio::-webkit-media-controls-play-button {
 @media (max-width: 480px) {
   .nav-wide { display: none; }
 }
+
+/* Paper player: on phones the flag button drops under its label */
+@media (max-width: 460px) {
+  .pp-flag { flex-wrap: wrap; }
+  .pp-flag button { width: 100%; }
+}

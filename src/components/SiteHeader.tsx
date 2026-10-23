@@ -19,8 +19,8 @@ export default function SiteHeader() {
           <Wordmark style={s.wordmark} />
         </Link>
         <nav className="sh-nav" style={s.nav}>
-          <Link href="/papers" style={s.link}>Papers</Link>
-          <Link href="/audios" className="sh-wide" style={s.link}>All audios</Link>
+          <Link href="/papers" style={s.link}>Browse Papers</Link>
+          <Link href="/#how-it-works" className="sh-wide" style={s.link}>How it works</Link>
           <Link href="/start" style={s.cta}>Upload</Link>
         </nav>
       </div>

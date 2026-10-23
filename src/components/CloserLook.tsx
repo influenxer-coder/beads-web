@@ -22,7 +22,7 @@ export default function CloserLook() {
   const [active, setActive] = React.useState(0);
 
   return (
-    <section style={s.section} aria-labelledby="cl-heading">
+    <section id="how-it-works" style={s.section} aria-labelledby="cl-heading">
       <h2 id="cl-heading" style={s.h2}>Take a closer look.</h2>
 
       <div className="cl-grid" style={s.grid}>
@@ -66,7 +66,7 @@ const s: Record<string, React.CSSProperties> = {
     padding: '48px 32px',
     borderRadius: 28,
     background: '#161617',
-    border: '1px solid rgba(255,255,255,0.08)',
+    border: '1px solid rgba(255,255,255,0.18)',
   },
   list: { listStyle: 'none', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', gap: 12 },
   pill: {
@@ -86,7 +86,7 @@ const s: Record<string, React.CSSProperties> = {
     width: 22, height: 22, borderRadius: 999, display: 'inline-flex', alignItems: 'center',
     justifyContent: 'center', border: '1.5px solid currentColor', fontSize: 15, lineHeight: 1,
   },
-  body: { ...type.body, color: 'rgba(255,255,255,0.7)', margin: '14px 0 8px 14px', maxWidth: 360 },
+  body: { ...type.intro, color: 'rgba(255,255,255,0.82)', margin: '14px 0 8px 14px', maxWidth: 360 },
   stage: { position: 'relative', display: 'grid', justifyItems: 'center' },
   layer: { gridArea: '1 / 1', width: '100%', display: 'flex', justifyContent: 'center', transition: 'opacity 400ms ease' },
 };

@@ -200,7 +200,9 @@ audio::-webkit-media-controls-play-button {
 
 /* Home nav: drop the secondary link on narrow phones so the bar fits */
 @media (max-width: 480px) {
-  .nav-wide { display: none; }
+  .nav-wide { display: none !important; }
+  /* Sign in is hidden here, so the two remaining links can sit closer */
+  .home-nav a { margin-left: 16px !important; }
 }
 
 /* Paper player: on phones the flag button drops under its label */
@@ -225,3 +227,6 @@ audio::-webkit-media-controls-play-button {
     overflow: hidden;
   }
 }
+
+/* "How it works" anchor: land with the heading in view, not under the edge */
+#how-it-works { scroll-margin-top: 24px; }

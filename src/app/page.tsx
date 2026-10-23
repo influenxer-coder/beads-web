@@ -5,6 +5,7 @@ import Link from 'next/link';
 import HeroFan from '@/components/HeroFan';
 import Highlights from '@/components/Highlights';
 import CloserLook from '@/components/CloserLook';
+import VoiceSamples from '@/components/VoiceSamples';
 import Wordmark from '@/components/Wordmark';
 import LibraryHome from '@/components/LibraryHome';
 import { supabase } from '@/lib/supabase';
@@ -66,12 +67,24 @@ const styles: Record<string, React.CSSProperties> = {
   },
   h1: {
     ...type.hero,
-    margin: '40px 0 22px',
-    // keeps the headline to two balanced lines instead of a long widow
-    maxWidth: '14ch',
+    // A full sentence, so it sits a step below the 80px hero size.
+    fontSize: 'clamp(36px, 4.6vw, 64px)',
+    lineHeight: 1.08,
+    margin: '40px 0 16px',
+    maxWidth: '18ch',
     textWrap: 'balance',
   } as React.CSSProperties,
   dim: { color: 'rgba(255,255,255,0.45)' },
+  trust: {
+    ...type.bodyStrong,
+    color: '#7ee2a8',
+    margin: '0 0 18px',
+  },
+  textLink: {
+    ...type.body,
+    display: 'inline-flex', alignItems: 'center', minHeight: 44, marginTop: 10,
+    color: 'rgba(255,255,255,0.72)', textDecoration: 'underline', textUnderlineOffset: 4,
+  },
   sub: {
     ...type.intro,
     color: 'rgba(255,255,255,0.58)',
@@ -189,7 +202,7 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const BADGES = ['No account needed', 'Any paper PDF', '1-minute lessons'];
+const BADGES = ['Any paper PDF', '1-minute lessons'];
 
 function Laurel({ flip = false }: { flip?: boolean }) {
   return (
@@ -234,12 +247,6 @@ const SOURCES = [
 ];
 
 
-const VOICE_STEPS = [
-  'Warm',
-  'Deep',
-  'Bright',
-  'Energetic',
-];
 
 export default function Home() {
   // Signed in people get their library; everyone else gets the pitch.
@@ -290,12 +297,12 @@ export default function Home() {
   return (
     <main style={styles.page}>
       <div style={styles.wrap}>
-        <nav style={styles.navRow}>
+        <nav className="home-nav" style={styles.navRow}>
           <Wordmark style={styles.wordmark} />
           <div>
-            <Link href="/papers" style={styles.navLink}>Papers</Link>
-            <Link href="/audios" className="nav-wide" style={styles.navLink}>All audios</Link>
-            <Link href="/login" style={styles.navSignIn}>Sign in</Link>
+            <Link href="/papers" style={styles.navLink}>Browse Papers</Link>
+            <a href="#how-it-works" style={styles.navLink}>How it works</a>
+            <Link href="/login" className="nav-wide" style={styles.navSignIn}>Sign in</Link>
           </div>
         </nav>
       </div>
@@ -306,17 +313,23 @@ export default function Home() {
         <section style={styles.hero}>
           <HeroFan />
 
-          <h1 style={styles.h1}>The real paper. One minute at a time.</h1>
+          <h1 style={styles.h1}>Understand any research paper in 5 minutes, no PhD required.</h1>
+
+          {/* Measured: the two uploads PostHog timed reached their first
+              lesson in 57s and 125s. Do not shorten this without new data. */}
+          <p style={styles.trust}>No account needed. Upload and listen in about 2 minutes.</p>
 
           <p style={styles.sub}>
             Beads turns a research paper into short audio lessons. Listen
             first. Then read it with the paper open.
           </p>
 
+          {/* One primary action. Playing a paper stays available, but as a
+              quieter link so the two do not compete. */}
           <div style={styles.ctaRow}>
-            <Link href="/papers" style={styles.ctaSolid}>Play a paper</Link>
-            <Link href="/start" style={styles.ctaGhost}>Upload a PDF</Link>
+            <Link href="/start" style={styles.ctaSolid}>Upload a PDF</Link>
           </div>
+          <Link href="/papers" style={styles.textLink}>or play a paper first &rarr;</Link>
 
           {/* Swap these for real numbers once we have them. Nothing here claims
               a rating, an award or an install count we have not earned. */}
@@ -396,11 +409,7 @@ export default function Home() {
                 voice before you press play.
               </p>
             </div>
-            <ul style={styles.list}>
-              {VOICE_STEPS.map((s) => (
-                <li key={s} style={styles.li}>{s}</li>
-              ))}
-            </ul>
+            <VoiceSamples itemStyle={styles.li} />
           </div>
         </section>
       </div>

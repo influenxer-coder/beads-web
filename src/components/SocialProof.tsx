@@ -39,11 +39,11 @@ export default function SocialProof() {
         <div className="sp-left" style={styles.left}>
           <div style={styles.eyebrowChip}>
             <Heart />
-            <span>What students say</span>
+            <span>In their words</span>
           </div>
 
           <h2 id="social-proof-heading" style={styles.h2}>
-            Built with students, in their words
+            How people use it
           </h2>
 
           {ratings.length > 0 && (
@@ -111,7 +111,10 @@ export default function SocialProof() {
 }
 
 function SourceLabel({ review }: { review: Review }) {
-  const text = `Review on ${review.source}`;
+  const text = review.source === 'Founder' ? 'From the founder'
+    : review.source === 'Interview' ? 'From an interview'
+    : review.source === 'Email' ? 'From an email'
+    : `Review on ${review.source}`;
   if (!review.href) return <span>{text}</span>;
   return (
     <a href={review.href} target="_blank" rel="noopener noreferrer" style={styles.chipLink}>

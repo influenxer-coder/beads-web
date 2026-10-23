@@ -9,8 +9,8 @@
  * 3. Never paste a review of another app here. A quote about Speechify or
  *    ElevenReader on this page reads as a quote about Beads, which is a lie.
  *
- * Both arrays are empty on purpose: Beads has no users yet. The band hides
- * itself in production until there is at least one real review.
+ * The band hides itself in production while REVIEWS is empty. A quote from
+ * someone who works on Beads must say so in its role, never pass as a user.
  *
  * SAMPLE_* below exists only so the layout can be reviewed in local dev. It is
  * never rendered in a production build.
@@ -19,7 +19,7 @@
 export type Review = {
   quote: string;
   /** Where it came from, shown in the chip. */
-  source: 'App Store' | 'Play Store' | 'TikTok' | 'Reddit' | 'Email' | 'Interview';
+  source: 'App Store' | 'Play Store' | 'TikTok' | 'Reddit' | 'Email' | 'Interview' | 'Founder';
   /** Link a visitor can follow to verify the quote. */
   href?: string;
   /** Attribution. Use only what the person agreed to publish. */
@@ -38,7 +38,25 @@ export type Rating = {
 };
 
 /** Real reviews. Add here as they arrive. */
-export const REVIEWS: Review[] = [];
+export const REVIEWS: Review[] = [
+  {
+    // The founder's own use, labelled as such. Given 2026-10-23.
+    quote:
+      'I study spiritual texts. I translated and understood Sanskrit books from the 12th century, to get at what the sages actually wrote.',
+    source: 'Founder',
+    name: 'Amritashwar Lal',
+    role: 'Founder of Beads, studying spiritual texts',
+  },
+  {
+    // Described by the founder 2026-10-23. Founder confirmed the same day
+    // that Anthony agreed to the wording, his name and MIT being shown.
+    quote:
+      'I am a physics PhD student. I use Beads to listen through publications from fellow students when I grade their work.',
+    source: 'Interview',
+    name: 'Anthony',
+    role: 'Physics PhD student, MIT',
+  },
+];
 
 /** Real store ratings. Add here once the listings are live and rated. */
 export const RATINGS: Rating[] = [];
